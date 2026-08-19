@@ -121,6 +121,18 @@ export default function AdminPage() {
     }
   }, []);
 
+  // Cross-Tab & Realtime Sync Helper
+  const notifyDataChanged = () => {
+    try {
+      window.dispatchEvent(new Event('sara_data_updated'));
+      if (typeof BroadcastChannel !== 'undefined') {
+        const broadcast = new BroadcastChannel('sara_power_sync');
+        broadcast.postMessage({ type: 'DATA_CHANGED', timestamp: Date.now() });
+        broadcast.close();
+      }
+    } catch (err) {}
+  };
+
   // Toast Helper
   const showToast = (msg: string) => {
     setSuccessToast(msg);
@@ -285,6 +297,7 @@ export default function AdminPage() {
 
       setSubmitting(false);
       setIsProductModalOpen(false);
+      notifyDataChanged();
       showToast(`Product "${prodName}" updated successfully!`);
     } else {
       // CREATE NEW PRODUCT
@@ -333,6 +346,7 @@ export default function AdminPage() {
       setProducts((prev) => [newProductItem, ...prev]);
       setSubmitting(false);
       setIsProductModalOpen(false);
+      notifyDataChanged();
       showToast(`Product "${prodName}" created successfully!`);
     }
   };
@@ -341,6 +355,7 @@ export default function AdminPage() {
     if (confirm(`Are you sure you want to delete "${name}" from the catalog?`)) {
       await deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
+      notifyDataChanged();
       showToast(`Product "${name}" deleted.`);
     }
   };
@@ -351,6 +366,7 @@ export default function AdminPage() {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, stock_status: nextStatus } : p))
     );
+    notifyDataChanged();
     showToast(`Stock status updated to ${nextStatus.replace('_', ' ')}.`);
   };
 
@@ -359,6 +375,7 @@ export default function AdminPage() {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, is_featured: !currentFeatured } : p))
     );
+    notifyDataChanged();
     showToast(`Featured status toggled.`);
   };
 
@@ -457,17 +474,20 @@ export default function AdminPage() {
       };
 
       setCategories((prev) => [...prev, catItem]);
+      notifyDataChanged();
       showToast(`Category "${catName}" added.`);
     }
 
     setSubmitting(false);
     setIsCategoryModalOpen(false);
+    notifyDataChanged();
   };
 
   const handleDeleteCategory = async (id: string, name: string) => {
     if (confirm(`Are you sure you want to delete category "${name}"?`)) {
       await deleteCategory(id);
       setCategories((prev) => prev.filter((c) => c.id !== id));
+      notifyDataChanged();
       showToast(`Category "${name}" deleted.`);
     }
   };
@@ -562,17 +582,20 @@ export default function AdminPage() {
       };
 
       setServices((prev) => [...prev, srvItem]);
+      notifyDataChanged();
       showToast(`Service "${srvTitle}" added.`);
     }
 
     setSubmitting(false);
     setIsServiceModalOpen(false);
+    notifyDataChanged();
   };
 
   const handleDeleteService = async (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete service "${title}"?`)) {
       await deleteService(id);
       setServices((prev) => prev.filter((s) => s.id !== id));
+      notifyDataChanged();
       showToast(`Service "${title}" deleted.`);
     }
   };

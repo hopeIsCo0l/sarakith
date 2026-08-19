@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle } from 'lucide-react';
-import { getProducts } from '@/lib/supabase';
+import { getProducts, supabase } from '@/lib/supabase';
 import { Product } from '@/lib/types';
 import { ProductGrid } from '@/components/ProductGrid';
 import { QuickViewModal } from '@/components/QuickViewModal';
@@ -21,6 +21,35 @@ export default function HomePage() {
       setFeaturedProducts(data);
     }
     loadData();
+
+    // 1. Instant re-fetch on window focus
+    const handleFocus = () => loadData();
+    window.addEventListener('focus', handleFocus);
+
+    // 2. Cross-tab & intra-window broadcast sync
+    const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('sara_power_sync') : null;
+    if (broadcast) {
+      broadcast.onmessage = () => loadData();
+    }
+    window.addEventListener('sara_data_updated', loadData);
+
+    // 3. Live Supabase Realtime Postgres Changes Subscription
+    let channel: any;
+    if (supabase) {
+      channel = supabase
+        .channel('realtime_home_products')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+          loadData();
+        })
+        .subscribe();
+    }
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('sara_data_updated', loadData);
+      if (broadcast) broadcast.close();
+      if (channel && supabase) supabase.removeChannel(channel);
+    };
   }, []);
 
   return (

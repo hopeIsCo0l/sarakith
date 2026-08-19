@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getServices } from '@/lib/supabase';
+import { getServices, supabase } from '@/lib/supabase';
 import { Service } from '@/lib/types';
 import { ServiceCard } from '@/components/ServiceCard';
 import { PRIMARY_PHONE, WHATSAPP_LINK } from '@/lib/constants';
@@ -16,6 +16,35 @@ export default function ServicesPage() {
       setServices(data);
     }
     loadServices();
+
+    // 1. Instant re-fetch on window focus
+    const handleFocus = () => loadServices();
+    window.addEventListener('focus', handleFocus);
+
+    // 2. Cross-tab & intra-window broadcast sync
+    const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('sara_power_sync') : null;
+    if (broadcast) {
+      broadcast.onmessage = () => loadServices();
+    }
+    window.addEventListener('sara_data_updated', loadServices);
+
+    // 3. Live Supabase Realtime Postgres Changes Subscription
+    let channel: any;
+    if (supabase) {
+      channel = supabase
+        .channel('realtime_services_page')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'services' }, () => {
+          loadServices();
+        })
+        .subscribe();
+    }
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('sara_data_updated', loadServices);
+      if (broadcast) broadcast.close();
+      if (channel && supabase) supabase.removeChannel(channel);
+    };
   }, []);
 
   const workflowSteps = [

@@ -385,3 +385,11 @@ VALUES
     3300
 )
 ON CONFLICT DO NOTHING;
+
+-- ====================================================================
+-- 7. ENABLE REALTIME BROADCASTING
+-- ====================================================================
+-- Enables Supabase Realtime engine for instant live data streaming
+ALTER PUBLICATION supabase_realtime ADD TABLE public.products;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.categories;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.services;

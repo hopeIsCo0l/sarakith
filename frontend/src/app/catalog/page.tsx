@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { getCategories, getProducts } from '@/lib/supabase';
+import { getCategories, getProducts, supabase } from '@/lib/supabase';
 import { Category, FilterState, Product } from '@/lib/types';
 import { FilterSidebar } from '@/components/FilterSidebar';
 import { ProductGrid } from '@/components/ProductGrid';
@@ -31,6 +31,38 @@ export default function CatalogPage() {
       setAllProducts(prods);
     }
     loadData();
+
+    // 1. Instant re-fetch on window focus
+    const handleFocus = () => loadData();
+    window.addEventListener('focus', handleFocus);
+
+    // 2. Cross-tab & intra-window broadcast sync
+    const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('sara_power_sync') : null;
+    if (broadcast) {
+      broadcast.onmessage = () => loadData();
+    }
+    window.addEventListener('sara_data_updated', loadData);
+
+    // 3. Live Supabase Realtime Postgres Changes Subscription
+    let channel: any;
+    if (supabase) {
+      channel = supabase
+        .channel('realtime_catalog_page')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+          loadData();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
+          loadData();
+        })
+        .subscribe();
+    }
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('sara_data_updated', loadData);
+      if (broadcast) broadcast.close();
+      if (channel && supabase) supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleFilterChange = (updated: Partial<FilterState>) => {
