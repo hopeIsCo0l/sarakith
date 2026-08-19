@@ -36,6 +36,7 @@ import {
   updateService,
   deleteService,
   uploadImageToSupabase,
+  getDatabaseDiagnostics,
   supabase,
 } from '@/lib/supabase';
 import { Category, Product, Service, StockStatus } from '@/lib/types';
@@ -72,6 +73,17 @@ export default function AdminPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
+
+  // Database Diagnostics State
+  const [dbDiag, setDbDiag] = useState<{
+    connected: boolean;
+    url: string;
+    categoriesCount: number;
+    productsCount: number;
+    servicesCount: number;
+    error: string | null;
+  } | null>(null);
 
   // -------------------------------------------------------------
   // FORM STATE: PRODUCT
@@ -133,26 +145,30 @@ export default function AdminPage() {
     } catch (err) {}
   };
 
-  // Toast Helper
+  // Toast Helpers
   const showToast = (msg: string) => {
     setSuccessToast(msg);
     setTimeout(() => setSuccessToast(null), 3500);
   };
 
-  // Load Data
+  const showErrorToast = (msg: string) => {
+    setErrorToast(msg);
+    setTimeout(() => setErrorToast(null), 6000);
+  };
+
+  // Load Data and Run Diagnostics
   const loadAllData = async () => {
     setLoading(true);
-    const [cats, prods, srvs] = await Promise.all([
+    const [cats, prods, srvs, diag] = await Promise.all([
       getCategories(),
       getProducts(),
       getServices(),
+      getDatabaseDiagnostics(),
     ]);
     setCategories(cats);
     setProducts(prods);
     setServices(srvs);
-    if (cats.length > 0 && !prodCategorySlug) {
-      setProdCategorySlug(cats[0].slug);
-    }
+    setDbDiag(diag);
     setLoading(false);
   };
 
@@ -253,7 +269,7 @@ export default function AdminPage() {
 
     if (editingProductId) {
       // UPDATE EXISTING PRODUCT
-      const success = await updateProduct(
+      const { success, error } = await updateProduct(
         editingProductId,
         {
           name: prodName,
@@ -267,6 +283,12 @@ export default function AdminPage() {
         },
         finalImages
       );
+
+      if (error) {
+        showErrorToast(`Database Error: ${error}`);
+      } else {
+        showToast(`Product "${prodName}" updated successfully!`);
+      }
 
       // Local state update for instant UI feedback
       setProducts((prev) =>
@@ -298,10 +320,10 @@ export default function AdminPage() {
       setSubmitting(false);
       setIsProductModalOpen(false);
       notifyDataChanged();
-      showToast(`Product "${prodName}" updated successfully!`);
+      loadAllData();
     } else {
       // CREATE NEW PRODUCT
-      const newProd = await createProduct(
+      const { product: newProd, error } = await createProduct(
         {
           category_id: selectedCat?.id,
           name: prodName,
@@ -317,6 +339,12 @@ export default function AdminPage() {
         },
         finalImages
       );
+
+      if (error) {
+        showErrorToast(`Database Error: ${error}`);
+      } else {
+        showToast(`Product "${prodName}" created successfully!`);
+      }
 
       // Fallback local addition if running without backend tables
       const newProductItem: Product = newProd || {
@@ -347,16 +375,21 @@ export default function AdminPage() {
       setSubmitting(false);
       setIsProductModalOpen(false);
       notifyDataChanged();
-      showToast(`Product "${prodName}" created successfully!`);
+      loadAllData();
     }
   };
 
   const handleDeleteProduct = async (id: string, name: string) => {
     if (confirm(`Are you sure you want to delete "${name}" from the catalog?`)) {
-      await deleteProduct(id);
+      const { error } = await deleteProduct(id);
+      if (error) {
+        showErrorToast(`Database Delete Error: ${error}`);
+      } else {
+        showToast(`Product "${name}" deleted.`);
+      }
       setProducts((prev) => prev.filter((p) => p.id !== id));
       notifyDataChanged();
-      showToast(`Product "${name}" deleted.`);
+      loadAllData();
     }
   };
 
@@ -440,12 +473,18 @@ export default function AdminPage() {
 
     if (editingCategoryId) {
       // UPDATE CATEGORY
-      await updateCategory(editingCategoryId, {
+      const { success, error } = await updateCategory(editingCategoryId, {
         name: catName,
         slug,
         description: catDescription,
         display_order: Number(catDisplayOrder),
       });
+
+      if (error) {
+        showErrorToast(`Database Category Error: ${error}`);
+      } else {
+        showToast(`Category "${catName}" updated.`);
+      }
 
       setCategories((prev) =>
         prev.map((c) =>
@@ -454,15 +493,20 @@ export default function AdminPage() {
             : c
         )
       );
-      showToast(`Category "${catName}" updated.`);
     } else {
       // CREATE CATEGORY
-      const newCat = await createCategory({
+      const { category: newCat, error } = await createCategory({
         name: catName,
         slug,
         description: catDescription,
         display_order: Number(catDisplayOrder),
       });
+
+      if (error) {
+        showErrorToast(`Database Category Error: ${error}`);
+      } else {
+        showToast(`Category "${catName}" added.`);
+      }
 
       const catItem: Category = newCat || {
         id: `cat-${Date.now()}`,
@@ -474,21 +518,25 @@ export default function AdminPage() {
       };
 
       setCategories((prev) => [...prev, catItem]);
-      notifyDataChanged();
-      showToast(`Category "${catName}" added.`);
     }
 
     setSubmitting(false);
     setIsCategoryModalOpen(false);
     notifyDataChanged();
+    loadAllData();
   };
 
   const handleDeleteCategory = async (id: string, name: string) => {
     if (confirm(`Are you sure you want to delete category "${name}"?`)) {
-      await deleteCategory(id);
+      const { error } = await deleteCategory(id);
+      if (error) {
+        showErrorToast(`Database Delete Error: ${error}`);
+      } else {
+        showToast(`Category "${name}" deleted.`);
+      }
       setCategories((prev) => prev.filter((c) => c.id !== id));
       notifyDataChanged();
-      showToast(`Category "${name}" deleted.`);
+      loadAllData();
     }
   };
 
@@ -530,7 +578,7 @@ export default function AdminPage() {
 
     if (editingServiceId) {
       // UPDATE SERVICE
-      await updateService(editingServiceId, {
+      const { success, error } = await updateService(editingServiceId, {
         title: srvTitle,
         slug,
         subtitle: srvSubtitle,
@@ -538,6 +586,12 @@ export default function AdminPage() {
         specifications: specsArray,
         price_range: srvPriceRange,
       });
+
+      if (error) {
+        showErrorToast(`Database Service Error: ${error}`);
+      } else {
+        showToast(`Service "${srvTitle}" updated.`);
+      }
 
       setServices((prev) =>
         prev.map((s) =>
@@ -554,10 +608,9 @@ export default function AdminPage() {
             : s
         )
       );
-      showToast(`Service "${srvTitle}" updated.`);
     } else {
       // CREATE SERVICE
-      const newSrv = await createService({
+      const { service: newSrv, error } = await createService({
         title: srvTitle,
         slug,
         subtitle: srvSubtitle,
@@ -567,6 +620,12 @@ export default function AdminPage() {
         is_active: true,
         display_order: services.length + 1,
       });
+
+      if (error) {
+        showErrorToast(`Database Service Error: ${error}`);
+      } else {
+        showToast(`Service "${srvTitle}" added.`);
+      }
 
       const srvItem: Service = newSrv || {
         id: `srv-${Date.now()}`,
@@ -582,21 +641,25 @@ export default function AdminPage() {
       };
 
       setServices((prev) => [...prev, srvItem]);
-      notifyDataChanged();
-      showToast(`Service "${srvTitle}" added.`);
     }
 
     setSubmitting(false);
     setIsServiceModalOpen(false);
     notifyDataChanged();
+    loadAllData();
   };
 
   const handleDeleteService = async (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete service "${title}"?`)) {
-      await deleteService(id);
+      const { error } = await deleteService(id);
+      if (error) {
+        showErrorToast(`Database Delete Error: ${error}`);
+      } else {
+        showToast(`Service "${title}" deleted.`);
+      }
       setServices((prev) => prev.filter((s) => s.id !== id));
       notifyDataChanged();
-      showToast(`Service "${title}" deleted.`);
+      loadAllData();
     }
   };
 
@@ -666,11 +729,48 @@ export default function AdminPage() {
 
   return (
     <div className="max-w-[1700px] mx-auto px-4 sm:px-8 py-10 space-y-8">
-      {/* Toast Notification */}
+      {/* Toast Notifications */}
       {successToast && (
         <div className="fixed bottom-6 right-6 z-50 p-4 bg-emerald-600 text-white font-mono text-xs uppercase tracking-wider font-bold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3">
           <CheckCircle2 className="w-4 h-4" />
           <span>{successToast}</span>
+        </div>
+      )}
+
+      {errorToast && (
+        <div className="fixed bottom-6 right-6 z-50 p-4 bg-rose-600 text-white font-mono text-xs uppercase tracking-wider font-bold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 max-w-lg">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+          <span>{errorToast}</span>
+        </div>
+      )}
+
+      {/* Supabase Live Diagnostics Banner */}
+      {dbDiag && (
+        <div className={`p-4 border font-mono text-xs ${
+          dbDiag.connected
+            ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
+            : 'bg-rose-950/20 border-rose-500/40 text-rose-300'
+        }`}>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className={`w-3 h-3 rounded-full ${dbDiag.connected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+              <div>
+                <span className="font-bold uppercase tracking-wider">
+                  {dbDiag.connected ? 'SUPABASE LIVE DATABASE: CONNECTED & SYNCHRONIZED' : 'SUPABASE DATABASE: ATTENTION REQUIRED'}
+                </span>
+                <p className="text-[11px] opacity-80 mt-0.5">
+                  Target: <span className="underline">{dbDiag.url}</span>
+                  {dbDiag.connected && ` // Live Records in DB: ${dbDiag.productsCount} Products, ${dbDiag.categoriesCount} Categories, ${dbDiag.servicesCount} Services`}
+                </p>
+              </div>
+            </div>
+
+            {dbDiag.error && (
+              <div className="text-[10px] bg-rose-900/60 p-2 border border-rose-500/50 rounded text-white max-w-xl">
+                ⚠️ {dbDiag.error}
+              </div>
+            )}
+          </div>
         </div>
       )}
 

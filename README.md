@@ -1,4 +1,4 @@
-# ⚡ Sara Power Solution plc — Solar Energy Showcase
+# Sara Power Solution plc — Solar Energy Showcase
 
 > **High-Performance Equipment Showcase & Telegram Bot Admin Panel**  
 > *Addis Ababa, Ethiopia*
@@ -20,11 +20,10 @@
 ## Key Features
 
 - **Solar Energy Inventory**: Tier-1 Monocrystalline Solar Panels, 5.5kW Hybrid Pure Sine Wave Inverters, LiFePO4 Lithium Battery Storage Packs, Gel Deep Cycle Batteries, and 60A MPPT Controllers.
-
-- 🌓 **Adaptive System Theme**: Supports **System Mode**, **Dark Mode** (Obsidian), and **Light Mode** (Alabaster) with zero flash of unstyled content (FOUC).
-- 💬 **1-Click WhatsApp Direct Inquiries**: Instant pre-filled spec inquiry links directly to Sara Power Solution's sales desk (`+251 95 483 4159`).
-- 🤖 **Telegram Admin Bot Panel**: Async Python Telegram Bot ([@sebrtradebot](https://t.me/sebrtradebot)) powered by `aiogram 3` and `FastAPI` for updating stock levels, uploading photos to Supabase Storage, and managing catalog items.
-- 📊 **Dynamic Filter & Sort Matrix**: Category selection, search query matching, stock availability filters, and range sliders in Ethiopian Birr (`ETB`).
+- **Adaptive System Theme**: Supports System Mode, Dark Mode (Obsidian), and Light Mode (Alabaster) with zero flash of unstyled content (FOUC).
+- **1-Click WhatsApp Direct Inquiries**: Instant pre-filled spec inquiry links directly to Sara Power Solution's sales desk (+251 95 483 4159).
+- **Telegram Admin Bot Panel**: Async Python Telegram Bot ([@sebrtradebot](https://t.me/sebrtradebot)) powered by aiogram 3 and FastAPI for updating stock levels, uploading photos to Supabase Storage, and managing catalog items.
+- **Dynamic Filter & Sort Matrix**: Category selection, search query matching, stock availability filters, and range sliders in Ethiopian Birr (ETB).
 
 ---
 

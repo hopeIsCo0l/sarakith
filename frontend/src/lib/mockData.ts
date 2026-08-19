@@ -170,7 +170,7 @@ export const MOCK_PRODUCTS: Product[] = [
       {
         id: 'img-8a',
         product_id: 'prod-8',
-        url: 'https://images.unsplash.com/photo-1558441719-674508053d56?q=80&w=1000&auto=format&fit=crop',
+        url: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1000&auto=format&fit=crop',
         alt_text: 'MPPT Solar Charge Controller',
         is_primary: true,
         display_order: 0,
