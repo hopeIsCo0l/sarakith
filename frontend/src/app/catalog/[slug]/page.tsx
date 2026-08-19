@@ -133,16 +133,20 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
           {/* Equipment Technical Specs */}
           {product.details && Object.keys(product.details).length > 0 && (
             <div className="space-y-3 border-t border-kith-border pt-6">
-              <h3 className="text-[10px] font-mono tracking-superwide uppercase text-kith-muted">
+              <h3 className="text-[10px] font-mono tracking-superwide uppercase text-sara-red dark:text-red-400 font-bold">
                 EQUIPMENT TECHNICAL SPECIFICATIONS MATRIX
               </h3>
               <div className="divide-y divide-kith-border/60 text-xs font-mono">
-                {Object.entries(product.details).map(([key, val]) => (
-                  <div key={key} className="py-2 flex items-center justify-between">
-                    <span className="capitalize text-kith-darkMuted">{key.replace('_', ' ')}</span>
-                    <span className="text-kith-bone font-medium">{val}</span>
-                  </div>
-                ))}
+                {Object.entries(product.details)
+                  .filter(([key]) => key !== 'delivery_available')
+                  .map(([key, val]) => (
+                    <div key={key} className="py-2.5 flex items-center justify-between">
+                      <span className="capitalize text-kith-darkMuted tracking-wider">
+                        {key === 'power_output' ? 'Capacity / Output' : key.replace('_', ' ')}
+                      </span>
+                      <span className="text-kith-bone font-medium">{val}</span>
+                    </div>
+                  ))}
               </div>
             </div>
           )}
@@ -159,15 +163,22 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               CONTACT VIA WHATSAPP ({PRIMARY_PHONE})
             </a>
 
-            {/* Service badges */}
-            <div className="grid grid-cols-2 gap-2 text-[10px] font-mono text-kith-darkMuted pt-2">
-              <div className="flex items-center gap-1.5 border border-kith-border/60 p-2">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                GENUINE WARRANTY
+            {/* Service & Delivery Badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono text-kith-darkMuted pt-2">
+              <div className="flex items-center gap-2 border border-kith-border/60 p-2.5 bg-kith-subBg/40">
+                <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                <span className="truncate uppercase">
+                  {product.details?.warranty || 'GENUINE WARRANTY'}
+                </span>
               </div>
-              <div className="flex items-center gap-1.5 border border-kith-border/60 p-2">
-                <Truck className="w-3.5 h-3.5 text-sky-500" />
-                ADDIS ABABA DELIVERY
+              <div className="flex items-center gap-2 border border-kith-border/60 p-2.5 bg-kith-subBg/40">
+                <Truck className="w-4 h-4 text-sky-500 flex-shrink-0" />
+                <span className="truncate uppercase">
+                  {product.details?.delivery_available ||
+                    (typeof product.delivery_available === 'string'
+                      ? product.delivery_available
+                      : 'ADDIS ABABA DELIVERY')}
+                </span>
               </div>
             </div>
           </div>

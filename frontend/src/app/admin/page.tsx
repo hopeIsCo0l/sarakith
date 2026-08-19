@@ -87,11 +87,13 @@ export default function AdminPage() {
   const [manualUrlInput, setManualUrlInput] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Tech Specs Fields
+  // Tech Specs Matrix & Delivery Fields
   const [specBrand, setSpecBrand] = useState('Sara Power Certified');
-  const [specPower, setSpecPower] = useState('');
+  const [specCapacity, setSpecCapacity] = useState('');
   const [specVoltage, setSpecVoltage] = useState('');
-  const [specWarranty, setSpecWarranty] = useState('2-Year Warranty');
+  const [specWeight, setSpecWeight] = useState('');
+  const [specWarranty, setSpecWarranty] = useState('5-Year Manufacturer Warranty / 6,000+ Cycles');
+  const [deliveryAvailable, setDeliveryAvailable] = useState('Addis Ababa Delivery Available');
 
   // -------------------------------------------------------------
   // FORM STATE: CATEGORY
@@ -180,9 +182,11 @@ export default function AdminPage() {
     setProdImageUrls([]);
     setManualUrlInput('');
     setSpecBrand('Sara Power Certified');
-    setSpecPower('');
+    setSpecCapacity('');
     setSpecVoltage('');
-    setSpecWarranty('2-Year Warranty');
+    setSpecWeight('');
+    setSpecWarranty('5-Year Manufacturer Warranty / 6,000+ Cycles');
+    setDeliveryAvailable('Addis Ababa Delivery Available');
     setIsProductModalOpen(true);
   };
 
@@ -199,9 +203,15 @@ export default function AdminPage() {
     setProdImageUrls(existingImages);
     setManualUrlInput('');
     setSpecBrand(product.details?.brand || 'Sara Power Certified');
-    setSpecPower(product.details?.power_output || '');
+    setSpecCapacity(product.details?.capacity || product.details?.power_output || '');
     setSpecVoltage(product.details?.voltage || '');
-    setSpecWarranty(product.details?.warranty || '2-Year Warranty');
+    setSpecWeight(product.details?.weight || '');
+    setSpecWarranty(product.details?.warranty || '5-Year Manufacturer Warranty / 6,000+ Cycles');
+    setDeliveryAvailable(
+      typeof product.delivery_available === 'string'
+        ? product.delivery_available
+        : product.details?.delivery_available || 'Addis Ababa Delivery Available'
+    );
     setIsProductModalOpen(true);
   };
 
@@ -222,10 +232,12 @@ export default function AdminPage() {
         : ['https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1000&auto=format&fit=crop'];
 
     const detailsObj: Record<string, string> = {};
-    if (specBrand) detailsObj.brand = specBrand;
-    if (specPower) detailsObj.power_output = specPower;
-    if (specVoltage) detailsObj.voltage = specVoltage;
-    if (specWarranty) detailsObj.warranty = specWarranty;
+    if (specBrand) detailsObj.brand = specBrand.trim();
+    if (specCapacity) detailsObj.capacity = specCapacity.trim();
+    if (specVoltage) detailsObj.voltage = specVoltage.trim();
+    if (specWeight) detailsObj.weight = specWeight.trim();
+    if (specWarranty) detailsObj.warranty = specWarranty.trim();
+    if (deliveryAvailable) detailsObj.delivery_available = deliveryAvailable.trim();
 
     if (editingProductId) {
       // UPDATE EXISTING PRODUCT
@@ -1094,40 +1106,103 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Technical Specifications */}
-              <div className="space-y-2 border-t border-kith-border pt-4">
-                <label className="text-[10px] uppercase text-kith-bone font-bold block">
-                  TECHNICAL SPECIFICATIONS
+              {/* Overview / Description */}
+              <div className="space-y-1 border-t border-kith-border pt-4">
+                <label className="text-[10px] uppercase text-kith-muted font-bold">
+                  OVERVIEW / PRODUCT DESCRIPTION
+                </label>
+                <textarea
+                  rows={3}
+                  value={prodDescription}
+                  onChange={(e) => setProdDescription(e.target.value)}
+                  placeholder="Detailed product technical overview (e.g. Wall-mounted LiFePO4 solar energy storage pack with built-in smart BMS...)"
+                  className="w-full bg-kith-subBg border border-kith-border p-3 text-kith-bone focus:outline-none"
+                />
+              </div>
+
+              {/* EQUIPMENT TECHNICAL SPECIFICATIONS MATRIX */}
+              <div className="space-y-3 border-t border-kith-border pt-4">
+                <label className="text-[10px] uppercase text-sara-red dark:text-red-400 font-bold tracking-widest block">
+                  EQUIPMENT TECHNICAL SPECIFICATIONS MATRIX
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-kith-muted">1. Brand</label>
+                    <input
+                      type="text"
+                      value={specBrand}
+                      onChange={(e) => setSpecBrand(e.target.value)}
+                      placeholder="e.g. Felicity Solar / Jinko / Must"
+                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-kith-muted">2. Capacity / Power</label>
+                    <input
+                      type="text"
+                      value={specCapacity}
+                      onChange={(e) => setSpecCapacity(e.target.value)}
+                      placeholder="e.g. 100Ah / 5.12 kWh or 550W TOPCon"
+                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-kith-muted">3. Voltage</label>
+                    <input
+                      type="text"
+                      value={specVoltage}
+                      onChange={(e) => setSpecVoltage(e.target.value)}
+                      placeholder="e.g. 51.2V Nominal / 48VDC / 230VAC"
+                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-kith-muted">4. Weight</label>
+                    <input
+                      type="text"
+                      value={specWeight}
+                      onChange={(e) => setSpecWeight(e.target.value)}
+                      placeholder="e.g. 48 kg / 28 kg"
+                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                    />
+                  </div>
+                  <div className="space-y-1 sm:col-span-2">
+                    <label className="text-[9px] uppercase text-kith-muted">5. Warranty</label>
+                    <input
+                      type="text"
+                      value={specWarranty}
+                      onChange={(e) => setSpecWarranty(e.target.value)}
+                      placeholder="e.g. 5-Year Manufacturer Warranty / 6000+ Cycles"
+                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Delivery Availability */}
+              <div className="space-y-1 border-t border-kith-border pt-4">
+                <label className="text-[10px] uppercase text-kith-bone font-bold block">
+                  AVAILABILITY OF DELIVERY
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
-                    value={specBrand}
-                    onChange={(e) => setSpecBrand(e.target.value)}
-                    placeholder="Brand (e.g. Felicity / Jinko)"
-                    className="bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                    value={deliveryAvailable}
+                    onChange={(e) => setDeliveryAvailable(e.target.value)}
+                    placeholder="e.g. Addis Ababa Delivery Available"
+                    className="flex-1 bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
                   />
-                  <input
-                    type="text"
-                    value={specPower}
-                    onChange={(e) => setSpecPower(e.target.value)}
-                    placeholder="Power (e.g. 550W / 2000W)"
-                    className="bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                  />
-                  <input
-                    type="text"
-                    value={specVoltage}
-                    onChange={(e) => setSpecVoltage(e.target.value)}
-                    placeholder="Voltage (e.g. 48V / 230V)"
-                    className="bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                  />
-                  <input
-                    type="text"
-                    value={specWarranty}
-                    onChange={(e) => setSpecWarranty(e.target.value)}
-                    placeholder="Warranty (e.g. 2-Year)"
-                    className="bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                  />
+                  <select
+                    onChange={(e) => setDeliveryAvailable(e.target.value)}
+                    className="bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone uppercase text-[10px]"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Quick Options</option>
+                    <option value="Addis Ababa Delivery Available">Addis Ababa Delivery Available</option>
+                    <option value="Addis Ababa & Regional Shipping">Addis Ababa & Regional Shipping</option>
+                    <option value="Nationwide Logistics Available">Nationwide Logistics Available</option>
+                    <option value="In-Store Pickup Only">In-Store Pickup Only</option>
+                  </select>
                 </div>
               </div>
 

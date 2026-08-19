@@ -20,14 +20,13 @@ export interface ProductImage {
 
 export interface ProductDetails {
   brand?: string;
-  power_output?: string;
   capacity?: string;
   voltage?: string;
-  frequency_response?: string;
-  impedance?: string;
-  warranty?: string;
-  dimensions?: string;
   weight?: string;
+  warranty?: string;
+  power_output?: string;
+  dimensions?: string;
+  delivery_available?: string;
   [key: string]: string | undefined;
 }
 
@@ -57,6 +56,7 @@ export interface Product {
   is_featured: boolean;
   is_visible: boolean;
   stock_status: StockStatus;
+  delivery_available?: string | boolean;
   images: ProductImage[];
   solar_attributes?: SolarAttribute[];
   created_at: string;
