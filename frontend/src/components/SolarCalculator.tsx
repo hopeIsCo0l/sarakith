@@ -264,7 +264,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
             onClick={() => setMode('appliance')}
             className={`px-4 py-2 text-xs font-mono tracking-wider uppercase font-bold flex items-center gap-2 transition-all ${
               mode === 'appliance'
-                ? 'bg-kith-bone text-black shadow-md'
+                ? 'bg-sara-red text-white shadow-md'
                 : 'text-kith-muted hover:text-kith-bone'
             }`}
           >
@@ -275,7 +275,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
             onClick={() => setMode('direct')}
             className={`px-4 py-2 text-xs font-mono tracking-wider uppercase font-bold flex items-center gap-2 transition-all ${
               mode === 'direct'
-                ? 'bg-kith-bone text-black shadow-md'
+                ? 'bg-sara-red text-white shadow-md'
                 : 'text-kith-muted hover:text-kith-bone'
             }`}
           >
@@ -499,7 +499,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-kith-bone text-black text-xs font-mono font-bold uppercase hover:bg-white transition-colors"
+                      className="px-6 py-2 bg-sara-red text-white text-xs font-mono font-bold uppercase hover:bg-sara-redLight transition-colors"
                     >
                       Add Load
                     </button>
@@ -895,8 +895,8 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
                     rel="noopener noreferrer"
                     className={`w-full py-2.5 text-xs font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-2 transition-all ${
                       pkg.is_featured
-                        ? 'bg-amber-500 text-black hover:bg-amber-400'
-                        : 'bg-kith-bone text-black hover:bg-white'
+                        ? 'bg-sara-red text-white hover:bg-sara-redLight shadow-md'
+                        : 'bg-sara-red text-white hover:bg-sara-redLight'
                     }`}
                   >
                     <span>ORDER THIS KIT</span>
