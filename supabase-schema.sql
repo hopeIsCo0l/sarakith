@@ -285,7 +285,7 @@ VALUES
 ),
 (
     'a3333333-3333-3333-3333-333333333333',
-    'https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1000&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1000&auto=format&fit=crop',
     'Jinko Tiger Neo 550W Solar Panel',
     true,
     0

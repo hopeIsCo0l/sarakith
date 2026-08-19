@@ -744,36 +744,6 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* Supabase Live Diagnostics Banner */}
-      {dbDiag && (
-        <div className={`p-4 border font-mono text-xs ${
-          dbDiag.connected
-            ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
-            : 'bg-rose-950/20 border-rose-500/40 text-rose-300'
-        }`}>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className={`w-3 h-3 rounded-full ${dbDiag.connected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-              <div>
-                <span className="font-bold uppercase tracking-wider">
-                  {dbDiag.connected ? 'SUPABASE LIVE DATABASE: CONNECTED & SYNCHRONIZED' : 'SUPABASE DATABASE: ATTENTION REQUIRED'}
-                </span>
-                <p className="text-[11px] opacity-80 mt-0.5">
-                  Target: <span className="underline">{dbDiag.url}</span>
-                  {dbDiag.connected && ` // Live Records in DB: ${dbDiag.productsCount} Products, ${dbDiag.categoriesCount} Categories, ${dbDiag.servicesCount} Services`}
-                </p>
-              </div>
-            </div>
-
-            {dbDiag.error && (
-              <div className="text-[10px] bg-rose-900/60 p-2 border border-rose-500/50 rounded text-white max-w-xl">
-                ⚠️ {dbDiag.error}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Top Admin Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-kith-border pb-6 gap-4">
         <div>
