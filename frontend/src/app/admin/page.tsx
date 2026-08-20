@@ -1558,6 +1558,84 @@ export default function AdminPage() {
                     </div>
                   );
                 })}
+          </div>
+
+          {/* Section 4: Social Media Links (Telegram, Instagram, TikTok, LinkedIn) */}
+          <div className="space-y-4 pt-4">
+            <h3 className="text-sm font-bold font-mono text-kith-bone uppercase border-b border-kith-border pb-2 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-sara-red dark:text-red-400" />
+              4. SOCIAL MEDIA PLATFORMS (TELEGRAM, INSTAGRAM, TIKTOK, LINKEDIN)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Object.entries(siteSettingsMap)
+                .filter(([_, s]) => s.category === 'social')
+                .map(([key, setting]) => {
+                  const isSaving = savingSettingKey === key;
+
+                  return (
+                    <div
+                      key={key}
+                      className="bg-kith-card border border-kith-border p-5 rounded-sm space-y-4 shadow-lg flex flex-col justify-between"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between border-b border-kith-border pb-3">
+                          <span className="font-mono text-xs font-bold text-kith-bone uppercase tracking-wider">
+                            {setting.name || key}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 bg-sara-red/10 border border-sara-red/30 text-sara-red dark:text-red-400 uppercase font-bold">
+                            social
+                          </span>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-kith-muted uppercase font-bold">
+                            TARGET PLATFORM URL
+                          </label>
+                          <input
+                            type="text"
+                            value={setting.url || ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setSiteSettingsMap((prev) => ({
+                                ...prev,
+                                [key]: { ...prev[key], url: val },
+                              }));
+                            }}
+                            className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-xs font-mono text-kith-bone focus:outline-none focus:border-kith-bone"
+                            placeholder="https://..."
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-kith-border">
+                        <button
+                          type="button"
+                          disabled={isSaving}
+                          onClick={() =>
+                            handleSaveSiteSetting(
+                              key,
+                              setting.name || key,
+                              setting.url || '',
+                              'social',
+                              setting.alt_text
+                            )
+                          }
+                          className="w-full py-2.5 bg-kith-btnPrimaryBg text-kith-btnPrimaryText hover:bg-kith-btnPrimaryHover text-xs font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-2 transition-all shadow-md"
+                        >
+                          {isSaving ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" /> SAVING LINK...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-4 h-4" /> SAVE SOCIAL LINK
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         </div>

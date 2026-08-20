@@ -524,6 +524,38 @@ VALUES
     'Full https URL'
 ),
 (
+    'social_telegram',
+    'Telegram Official Channel / Group',
+    'https://t.me/sarapower',
+    'social',
+    'Telegram Official Link',
+    'Full https URL'
+),
+(
+    'social_instagram',
+    'Instagram Official Profile',
+    'https://instagram.com/sarapower',
+    'social',
+    'Instagram Official Link',
+    'Full https URL'
+),
+(
+    'social_tiktok',
+    'TikTok Official Page',
+    'https://tiktok.com/@sarapower',
+    'social',
+    'TikTok Official Link',
+    'Full https URL'
+),
+(
+    'social_linkedin',
+    'LinkedIn Company Page',
+    'https://linkedin.com/company/sarapower',
+    'social',
+    'LinkedIn Official Link',
+    'Full https URL'
+),
+(
     'stat_installed_mw',
     'Installed Capacity Metric',
     '5.5+ MW',

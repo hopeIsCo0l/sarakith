@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Phone, Mail, MapPin, ShieldCheck, Zap, ArrowUpRight, Cpu } from 'lucide-react';
+import { Phone, Mail, MapPin, ShieldCheck, Zap, ArrowUpRight, Cpu, Send, Instagram, Linkedin, Video } from 'lucide-react';
 import {
   COMPANY_NAME,
   COMPANY_SHORT_NAME,
@@ -32,6 +32,10 @@ export const Footer: React.FC = () => {
   const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
   const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251911234567');
+  const telegramUrl = getSettingValue('social_telegram', 'https://t.me/sarapower');
+  const instagramUrl = getSettingValue('social_instagram', 'https://instagram.com/sarapower');
+  const tiktokUrl = getSettingValue('social_tiktok', 'https://tiktok.com/@sarapower');
+  const linkedinUrl = getSettingValue('social_linkedin', 'https://linkedin.com/company/sarapower');
 
   return (
     <footer className="border-t border-sara-red/30 bg-kith-subBg text-kith-bone relative overflow-hidden transition-colors">
@@ -67,6 +71,59 @@ export const Footer: React.FC = () => {
                 <ShieldCheck className="w-3.5 h-3.5" />
                 OFFICIAL WARRANTY BACKED
               </span>
+            </div>
+
+            {/* Admin-Managed Social Platforms */}
+            <div className="pt-2 space-y-2">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-sara-red dark:text-red-400 font-bold">
+                OFFICIAL SOCIAL TELEMETRY
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {telegramUrl && (
+                  <a
+                    href={telegramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
+                  >
+                    <Send className="w-3.5 h-3.5 text-sky-400" />
+                    <span>TELEGRAM</span>
+                  </a>
+                )}
+                {instagramUrl && (
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
+                  >
+                    <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                    <span>INSTAGRAM</span>
+                  </a>
+                )}
+                {tiktokUrl && (
+                  <a
+                    href={tiktokUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
+                  >
+                    <Video className="w-3.5 h-3.5 text-teal-400" />
+                    <span>TIKTOK</span>
+                  </a>
+                )}
+                {linkedinUrl && (
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
+                  >
+                    <Linkedin className="w-3.5 h-3.5 text-blue-500" />
+                    <span>LINKEDIN</span>
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Display mode toggle in footer */}
