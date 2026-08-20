@@ -2,8 +2,64 @@
 
 @font-face {
   font-family: 'Mostin';
-  src: local('Mostin'), local('Mostin Regular'), local('Mostin-Regular'), local('Mostin Display'), local('MostinSans');
-  font-weight: 100 900;
+  src: url('/MostinThin-z8p0w.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mostin';
+  src: url('/MostinExtralight-ALA4D.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mostin';
+  src: url('/MostinLight-jEJWO.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mostin';
+  src: url('/MostinRegular-516lZ.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mostin';
+  src: url('/MostinMedium-GOAvP.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mostin';
+  src: url('/MostinBold-JRAOo.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mostin';
+  src: url('/MostinBlack-qZJBd.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mostin Outline';
+  src: url('/MostinOutline-VG5Vx.otf') format('opentype');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }

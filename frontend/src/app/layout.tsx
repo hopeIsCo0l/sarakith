@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
+import localFont from 'next/font/local';
 import '@/styles/globals.css';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -13,10 +13,46 @@ import {
   PRIMARY_PHONE,
 } from '@/lib/constants';
 
-const fontMostin = Montserrat({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
+const fontMostin = localFont({
+  src: [
+    {
+      path: '../../public/MostinThin-z8p0w.otf',
+      weight: '100',
+      style: 'normal',
+    },
+    {
+      path: '../../public/MostinExtralight-ALA4D.otf',
+      weight: '200',
+      style: 'normal',
+    },
+    {
+      path: '../../public/MostinLight-jEJWO.otf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../../public/MostinRegular-516lZ.otf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../public/MostinMedium-GOAvP.otf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/MostinBold-JRAOo.otf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../../public/MostinBlack-qZJBd.otf',
+      weight: '900',
+      style: 'normal',
+    },
+  ],
   variable: '--font-mostin',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
