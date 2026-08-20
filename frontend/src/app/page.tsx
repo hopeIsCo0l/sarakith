@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle } from 'lucide-react';
+import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle, Building2, Award, Users } from 'lucide-react';
 import { getProducts, supabase } from '@/lib/supabase';
 import { Product } from '@/lib/types';
 import { ProductGrid } from '@/components/ProductGrid';
@@ -282,6 +282,66 @@ export default function HomePage() {
               <div className="text-[9px] font-mono font-bold text-sara-red dark:text-red-400 tracking-widest uppercase">Direct Inquiry</div>
               <div className="text-sm font-black font-mono text-kith-bone uppercase">WhatsApp Output</div>
               <div className="text-[10px] font-mono text-kith-muted">Pre-populated payloads</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Us Showcase Section */}
+      <section className="max-w-[1700px] mx-auto px-4 sm:px-8 relative z-10">
+        <div className="tech-panel p-8 sm:p-12 border border-sara-red/30 rounded-sm bg-kith-card space-y-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-b border-sara-red/25 pb-8">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-sara-red/10 border border-sara-red/30 text-sara-red dark:text-red-400 text-[10px] font-mono font-bold tracking-superwide uppercase rounded-sm">
+                <Building2 className="w-3.5 h-3.5" />
+                ABOUT SARA POWER SOLUTION // ADDIS ABABA, ETHIOPIA
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black font-mono tracking-widest text-kith-bone uppercase">
+                ENGINEERING EXCELLENCE & TIER-1 SOLAR SYSTEMS
+              </h2>
+              <p className="text-xs font-mono text-kith-muted leading-relaxed border-l-2 border-sara-red/50 pl-4">
+                Sara Power Solution PLC is Ethiopia's premier distributor and systems contractor for high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery storage systems.
+              </p>
+            </div>
+            <Link
+              href="/about"
+              className="px-6 py-3.5 bg-sara-red text-white hover:bg-sara-redLight border border-sara-red/60 text-xs font-mono font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 rounded-sm self-start lg:self-center shadow-md"
+            >
+              <span>LEARN MORE ABOUT US</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Pillars Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+            <div className="p-6 bg-kith-subBg/60 border border-sara-red/20 space-y-2 rounded-sm hover:border-sara-red/40 transition-colors">
+              <div className="w-10 h-10 bg-sara-red/10 border border-sara-red/30 flex items-center justify-center mb-3">
+                <Award className="w-5 h-5 text-sara-red dark:text-red-400" />
+              </div>
+              <h3 className="text-sm font-bold font-mono text-kith-bone uppercase">Factory Direct Tier-1</h3>
+              <p className="text-xs font-mono text-kith-muted leading-relaxed">
+                Directly partnered with global Tier-1 leaders for genuine, high-efficiency equipment with full manufacturer warranties.
+              </p>
+            </div>
+
+            <div className="p-6 bg-kith-subBg/60 border border-sara-red/20 space-y-2 rounded-sm hover:border-sara-red/40 transition-colors">
+              <div className="w-10 h-10 bg-sara-red/10 border border-sara-red/30 flex items-center justify-center mb-3">
+                <ShieldCheck className="w-5 h-5 text-sara-red dark:text-red-400" />
+              </div>
+              <h3 className="text-sm font-bold font-mono text-kith-bone uppercase">Local 5-Year Warranty</h3>
+              <p className="text-xs font-mono text-kith-muted leading-relaxed">
+                No international shipping delays. Local hardware replacement and technical servicing center in Addis Ababa.
+              </p>
+            </div>
+
+            <div className="p-6 bg-kith-subBg/60 border border-sara-red/20 space-y-2 rounded-sm hover:border-sara-red/40 transition-colors">
+              <div className="w-10 h-10 bg-sara-red/10 border border-sara-red/30 flex items-center justify-center mb-3">
+                <Users className="w-5 h-5 text-sara-red dark:text-red-400" />
+              </div>
+              <h3 className="text-sm font-bold font-mono text-kith-bone uppercase">Turnkey Installation</h3>
+              <p className="text-xs font-mono text-kith-muted leading-relaxed">
+                Site load auditing, certified electrical sizing, structural mounting, and preventative telemetry maintenance.
+              </p>
             </div>
           </div>
         </div>

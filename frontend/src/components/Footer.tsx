@@ -19,11 +19,19 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 export const Footer: React.FC = () => {
   const { theme } = useTheme();
-  const { getSettingUrl } = useSiteSettings();
+  const { getSettingUrl, getSettingValue } = useSiteSettings();
 
   const activeLogoUrl = theme === 'light'
     ? getSettingUrl('logo_light', '/logo.png')
     : getSettingUrl('logo_dark', '/logo.png');
+
+  const companyName = getSettingValue('company_name', 'Sara Power Solution PLC');
+  const physicalAddress = getSettingValue('contact_address', 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia');
+  const primaryPhone = getSettingValue('contact_phone_primary', '+251 91 123 4567');
+  const secondaryPhone = getSettingValue('contact_phone_secondary', '+251 91 765 4321');
+  const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
+  const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
+  const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251911234567');
 
   return (
     <footer className="border-t border-sara-red/30 bg-kith-subBg text-kith-bone relative overflow-hidden transition-colors">
@@ -38,7 +46,7 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 border border-sara-red/40 bg-black/60 p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
-                <img src={activeLogoUrl} alt="Sara Power Solution" className="h-full w-full object-contain" />
+                <img src={activeLogoUrl} alt={companyName} className="h-full w-full object-contain" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-black tracking-widest text-kith-bone font-mono uppercase">
@@ -139,6 +147,12 @@ export const Footer: React.FC = () => {
                   C&I Solar Micro-Grids
                 </Link>
               </li>
+              <li>
+                <Link href="/about" className="text-sara-red dark:text-red-400 font-bold hover:underline flex items-center gap-1">
+                  <ArrowUpRight className="w-3 h-3" />
+                  About {companyName}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -151,22 +165,22 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 text-xs font-mono text-kith-muted">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0 mt-0.5" />
-                <span>{PHYSICAL_ADDRESS}</span>
+                <span>{physicalAddress}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0" />
-                <a href={WHATSAPP_LINK} className="hover:text-sara-red dark:hover:text-red-400 transition-colors">
-                  {PRIMARY_PHONE} / {SECONDARY_PHONE}
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-sara-red dark:hover:text-red-400 transition-colors">
+                  {primaryPhone} {secondaryPhone ? `/ ${secondaryPhone}` : ''}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0" />
-                <a href={`mailto:${OFFICIAL_EMAIL}`} className="hover:text-sara-red dark:hover:text-red-400 transition-colors">
-                  {OFFICIAL_EMAIL}
+                <a href={`mailto:${officialEmail}`} className="hover:text-sara-red dark:hover:text-red-400 transition-colors">
+                  {officialEmail}
                 </a>
               </div>
               <div className="pt-2 text-[10px] text-kith-darkMuted border-t border-sara-red/10">
-                {BUSINESS_HOURS}
+                {businessHours}
               </div>
             </div>
           </div>
@@ -175,7 +189,7 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-sara-red/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-kith-darkMuted">
           <div>
-            © {new Date().getFullYear()} {COMPANY_NAME}. All engineering telemetry rights reserved.
+            © {new Date().getFullYear()} {companyName}. All engineering telemetry rights reserved.
           </div>
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5 text-sara-red dark:text-red-400">

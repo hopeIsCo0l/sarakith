@@ -9,6 +9,7 @@ interface SiteSettingsContextType {
   loading: boolean;
   refreshSettings: () => Promise<void>;
   getSettingUrl: (key: string, fallback?: string) => string;
+  getSettingValue: (key: string, fallback?: string) => string;
 }
 
 const SiteSettingsContext = createContext<SiteSettingsContextType>({
@@ -16,6 +17,7 @@ const SiteSettingsContext = createContext<SiteSettingsContextType>({
   loading: true,
   refreshSettings: async () => {},
   getSettingUrl: () => '',
+  getSettingValue: () => '',
 });
 
 export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -82,6 +84,17 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return fallback;
   };
 
+  const getSettingValue = (key: string, fallback: string = ''): string => {
+    if (settings[key] && settings[key].url) {
+      return settings[key].url;
+    }
+    const defaultItem = DEFAULT_SITE_SETTINGS[key];
+    if (defaultItem && defaultItem.url) {
+      return defaultItem.url;
+    }
+    return fallback;
+  };
+
   return (
     <SiteSettingsContext.Provider
       value={{
@@ -89,6 +102,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
         loading,
         refreshSettings: fetchSettings,
         getSettingUrl,
+        getSettingValue,
       }}
     >
       {children}

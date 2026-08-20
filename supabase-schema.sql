@@ -450,6 +450,102 @@ VALUES
     'banner',
     'Solar Sizing Engine Header',
     '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)'
+),
+(
+    'company_name',
+    'Company Official Name',
+    'Sara Power Solution PLC',
+    'company',
+    'Official registered company title',
+    'Plain text title'
+),
+(
+    'about_mission',
+    'Company Mission & Overview',
+    'Sara Power Solution PLC is Ethiopia''s premier distributor and systems engineering contractor for high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery energy storage.',
+    'about',
+    'Full company mission statement',
+    'Multi-line text summary'
+),
+(
+    'about_vision',
+    'Company Vision Statement',
+    'Powering homes, commercial facilities, and agricultural projects across Ethiopia with reliable, clean solar energy.',
+    'about',
+    'Company long-term vision',
+    'Multi-line text summary'
+),
+(
+    'contact_address',
+    'Physical Showroom & Office Address',
+    'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia',
+    'contact',
+    'Headquarters physical address',
+    'Full street address'
+),
+(
+    'contact_phone_primary',
+    'Primary Contact Phone',
+    '+251 91 123 4567',
+    'contact',
+    'Main hotline phone number',
+    'International phone format'
+),
+(
+    'contact_phone_secondary',
+    'Secondary Contact Phone',
+    '+251 91 765 4321',
+    'contact',
+    'Alternative hotline phone number',
+    'International phone format'
+),
+(
+    'contact_email',
+    'Official Email Address',
+    'info@sarapowersolution.com',
+    'contact',
+    'Official contact email',
+    'Valid email address'
+),
+(
+    'contact_business_hours',
+    'Business Operating Hours',
+    'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)',
+    'contact',
+    'Weekly operating hours',
+    'Working days & hours'
+),
+(
+    'contact_whatsapp',
+    'WhatsApp Direct Contact Link',
+    'https://wa.me/251911234567',
+    'contact',
+    'Direct WhatsApp chat URL',
+    'Full https URL'
+),
+(
+    'stat_installed_mw',
+    'Installed Capacity Metric',
+    '5.5+ MW',
+    'about',
+    'Total installed capacity in megawatts',
+    'Short numeric string'
+),
+(
+    'stat_completed_projects',
+    'Completed Projects Count',
+    '500+',
+    'about',
+    'Total completed solar installations',
+    'Short count string'
+),
+(
+    'stat_warranty_years',
+    'Standard Local Warranty',
+    '5 YEARS',
+    'about',
+    'Official local warranty duration',
+    'Short duration string'
 )
 ON CONFLICT (key) DO UPDATE SET
     recommended_dimensions = EXCLUDED.recommended_dimensions;
