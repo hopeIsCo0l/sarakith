@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import '@/styles/globals.css';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -13,7 +13,11 @@ import {
   PRIMARY_PHONE,
 } from '@/lib/constants';
 
-const inter = Inter({ subsets: ['latin'] });
+const fontMostin = Montserrat({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-mostin',
+});
 
 export const metadata: Metadata = {
   title: `${COMPANY_NAME} | Tier-1 Solar Inverters, Lithium Batteries & Panels`,
@@ -32,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={fontMostin.variable}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -57,7 +61,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={fontMostin.className}>
         <ThemeProvider>
           <SiteSettingsProvider>
             <div className="flex flex-col min-h-screen">

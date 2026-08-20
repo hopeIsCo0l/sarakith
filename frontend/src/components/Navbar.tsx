@@ -39,18 +39,24 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
     ? getSettingUrl('logo_light', '/logo.png')
     : getSettingUrl('logo_dark', '/logo.png');
 
-  const leftNavLinks = [
+  interface NavLinkItem {
+    label: string;
+    href: string;
+    highlight?: boolean;
+  }
+
+  const leftNavLinks: NavLinkItem[] = [
     { label: 'Equipment Catalog', href: '/catalog' },
     { label: 'Solar Calculator', href: '/calculator', highlight: true },
     { label: 'Solar Services', href: '/services' },
   ];
 
-  const rightNavLinks = [
+  const rightNavLinks: NavLinkItem[] = [
     { label: 'Featured Products', href: '/#featured' },
     { label: 'About Us', href: '/about' },
   ];
 
-  const allMobileNavLinks = [...leftNavLinks, ...rightNavLinks];
+  const allMobileNavLinks: NavLinkItem[] = [...leftNavLinks, ...rightNavLinks];
 
   return (
     <header

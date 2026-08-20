@@ -1,8 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+@font-face {
+  font-family: 'Mostin';
+  src: local('Mostin'), local('Mostin Regular'), local('Mostin-Regular'), local('Mostin Display'), local('MostinSans');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  * {
+    font-family: 'Mostin', var(--font-mostin), 'Montserrat', sans-serif;
+  }
+
   :root, html.dark {
     /* SARA POWER RED & WHITE DARK THEME */
     --kith-bg: #080404; /* Deep obsidian space with subtle crimson tone */

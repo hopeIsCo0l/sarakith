@@ -38,6 +38,11 @@ module.exports = {
           overlayBg: 'var(--kith-overlay-bg)',
         },
       },
+      fontFamily: {
+        sans: ['Mostin', 'var(--font-mostin)', 'Montserrat', 'sans-serif'],
+        mono: ['Mostin', 'var(--font-mostin)', 'Space Mono', 'monospace'],
+        display: ['Mostin', 'var(--font-mostin)', 'Montserrat', 'sans-serif'],
+      },
       letterSpacing: {
         kith: '0.15em',
         superwide: '0.3em',
