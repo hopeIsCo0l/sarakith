@@ -266,7 +266,7 @@ export async function getServices(): Promise<Service[]> {
 /**
  * Upload an image file with automatic Base64 Data URL fallback
  */
-export async function uploadImageToSupabase(file: File): Promise<string | null> {
+export async function uploadImageToSupabase(file: File, folderPrefix?: string): Promise<string | null> {
   return new Promise((resolve) => {
     const convertToBase64 = () => {
       const reader = new FileReader();
@@ -279,7 +279,8 @@ export async function uploadImageToSupabase(file: File): Promise<string | null> 
       return convertToBase64();
     }
 
-    const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '')}`;
+    const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '');
+    const filename = folderPrefix ? `${folderPrefix}_${Date.now()}_${cleanName}` : `${Date.now()}_${cleanName}`;
 
     supabase.storage
       .from('product-media')
