@@ -1558,6 +1558,7 @@ export default function AdminPage() {
                     </div>
                   );
                 })}
+            </div>
           </div>
 
           {/* Section 4: Social Media Links (Telegram, Instagram, TikTok, LinkedIn) */}
