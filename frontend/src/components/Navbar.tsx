@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { Search, Phone, Menu, X, ArrowRight, Sun, Zap } from 'lucide-react';
 import { COMPANY_SHORT_NAME, PRIMARY_PHONE, WHATSAPP_LINK } from '@/lib/constants';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/context/ThemeContext';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 interface NavbarProps {
   onSearchToggle?: () => void;
@@ -13,7 +15,13 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
   const pathname = usePathname();
+  const { theme } = useTheme();
+  const { getSettingUrl } = useSiteSettings();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const activeLogoUrl = theme === 'light'
+    ? getSettingUrl('logo_light', '/logo.png')
+    : getSettingUrl('logo_dark', '/logo.png');
 
   const navLinks = [
     { label: 'Equipment Catalog', href: '/catalog' },
@@ -42,8 +50,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3 group relative">
             <div className="absolute inset-0 -m-1 rounded-full bg-sara-red/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="relative w-10 h-10 border border-sara-red/40 bg-black p-1 flex items-center justify-center rounded-sm shadow-sm">
-              <img src="/logo.png" alt="Sara Power Solution" className="h-full w-full object-contain filter invert" />
+            <div className="relative w-10 h-10 border border-sara-red/40 bg-black/60 p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
+              <img src={activeLogoUrl} alt="Sara Power Solution" className="h-full w-full object-contain" />
             </div>
             <div className="flex flex-col hidden sm:flex">
               <span className="text-xl sm:text-2xl font-black tracking-widest text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400 transition-colors font-mono uppercase">

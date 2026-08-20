@@ -37,9 +37,11 @@ import {
   deleteService,
   uploadImageToSupabase,
   getDatabaseDiagnostics,
+  getSiteSettings,
+  updateSiteSetting,
   supabase,
 } from '@/lib/supabase';
-import { Category, Product, Service, StockStatus } from '@/lib/types';
+import { Category, Product, Service, StockStatus, SiteSetting } from '@/lib/types';
 import { COMPANY_NAME } from '@/lib/constants';
 
 export default function AdminPage() {
@@ -49,12 +51,15 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState(false);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'services'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'services' | 'settings'>('products');
 
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [siteSettingsMap, setSiteSettingsMap] = useState<Record<string, SiteSetting>>({});
+  const [savingSettingKey, setSavingSettingKey] = useState<string | null>(null);
+  const [previewBgMode, setPreviewBgMode] = useState<Record<string, 'default' | 'dark' | 'light'>>({});
   const [loading, setLoading] = useState(true);
 
   // Search & Filter
@@ -159,17 +164,82 @@ export default function AdminPage() {
   // Load Data and Run Diagnostics
   const loadAllData = async () => {
     setLoading(true);
-    const [cats, prods, srvs, diag] = await Promise.all([
+    const [cats, prods, srvs, diag, settings] = await Promise.all([
       getCategories(),
       getProducts(),
       getServices(),
       getDatabaseDiagnostics(),
+      getSiteSettings(),
     ]);
     setCategories(cats);
     setProducts(prods);
     setServices(srvs);
     setDbDiag(diag);
+    setSiteSettingsMap(settings as Record<string, SiteSetting>);
     setLoading(false);
+  };
+
+  const handleSaveSiteSetting = async (key: string, name: string, url: string, category: string, alt_text?: string) => {
+    setSavingSettingKey(key);
+    const { success, error } = await updateSiteSetting(key, name, url, category, alt_text);
+    if (error) {
+      showErrorToast(`Setting Update Error: ${error}`);
+    } else {
+      showToast(`Asset "${name}" updated successfully.`);
+      notifyDataChanged();
+      setSiteSettingsMap((prev) => ({
+        ...prev,
+        [key]: {
+          key,
+          name,
+          url,
+          category,
+          alt_text,
+          updated_at: new Date().toISOString(),
+        },
+      }));
+    }
+    setSavingSettingKey(null);
+  };
+
+  const handleAssetFileUpload = async (key: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+
+    setSavingSettingKey(key);
+    const uploadedUrl = await uploadImageToSupabase(file, `assets-${key}`);
+    if (uploadedUrl) {
+      const currentSetting = siteSettingsMap[key];
+      setSiteSettingsMap((prev) => ({
+        ...prev,
+        [key]: {
+          ...currentSetting,
+          key,
+          name: currentSetting?.name || key,
+          url: uploadedUrl,
+          category: currentSetting?.category || 'branding',
+        },
+      }));
+    } else {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Url = reader.result as string;
+        const currentSetting = siteSettingsMap[key];
+        setSiteSettingsMap((prev) => ({
+          ...prev,
+          [key]: {
+            ...currentSetting,
+            key,
+            name: currentSetting?.name || key,
+            url: base64Url,
+            category: currentSetting?.category || 'branding',
+          },
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+    setSavingSettingKey(null);
   };
 
   useEffect(() => {
@@ -859,6 +929,16 @@ export default function AdminPage() {
           >
             SERVICES ({services.length})
           </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`px-4 py-2 text-xs font-mono uppercase tracking-widest transition-all ${
+              activeTab === 'settings'
+                ? 'bg-kith-btnPrimaryBg text-kith-btnPrimaryText font-bold shadow'
+                : 'text-kith-muted hover:text-kith-bone'
+            }`}
+          >
+            BRANDING & SITE ASSETS
+          </button>
         </div>
 
         {activeTab === 'products' && (
@@ -1110,6 +1190,200 @@ export default function AdminPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* BRANDING & SITE ASSETS TAB VIEW */}
+      {/* ------------------------------------------------------------- */}
+      {activeTab === 'settings' && (
+        <div className="space-y-6">
+          <div className="bg-kith-subBg/90 border border-kith-border p-6 rounded-sm space-y-2">
+            <div className="flex items-center gap-2 text-sara-red dark:text-red-400 font-mono text-xs font-bold uppercase">
+              <Sparkles className="w-4 h-4" /> DYNAMIC BRANDING & SITE ASSET MANAGER
+            </div>
+            <p className="text-xs font-mono text-kith-muted leading-relaxed">
+              Upload custom image files or provide URLs for platform logos (light & dark mode), hero banners, and section backgrounds. All updates take effect immediately in real-time across all public pages.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {Object.entries(siteSettingsMap).map(([key, setting]) => {
+              const currentBgMode = previewBgMode[key] || 'default';
+              const isSaving = savingSettingKey === key;
+
+              return (
+                <div
+                  key={key}
+                  className="bg-kith-card border border-kith-border p-5 rounded-sm space-y-4 shadow-lg flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    {/* Key Header & Category */}
+                    <div className="flex items-center justify-between border-b border-kith-border pb-3">
+                      <div className="flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-sara-red dark:text-red-400" />
+                        <span className="font-mono text-xs font-bold text-kith-bone uppercase tracking-wider">
+                          {setting.name || key}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono px-2 py-0.5 bg-kith-subBg border border-kith-border text-kith-muted uppercase">
+                        {setting.category || 'branding'}
+                      </span>
+                    </div>
+
+                    {/* Recommended Dimensions Banner */}
+                    <div className="px-2.5 py-1.5 bg-sara-red/10 border border-sara-red/30 rounded-sm text-[10px] font-mono text-sara-red dark:text-red-400 flex items-center gap-1.5 font-semibold">
+                      <Zap className="w-3 h-3 flex-shrink-0 text-amber-500" />
+                      <span>
+                        Recommended: {setting.recommended_dimensions || (setting.category === 'logo' ? '512 x 512 px (1:1 Ratio, Transparent PNG)' : '1920 x 1080 px (16:9 Ratio)')}
+                      </span>
+                    </div>
+
+                    {/* Preview Box with Background Mode Selector */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-kith-muted">
+                        <span>LIVE PREVIEW:</span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setPreviewBgMode((prev) => ({ ...prev, [key]: 'dark' }))}
+                            className={`px-2 py-0.5 text-[9px] border ${
+                              currentBgMode === 'dark' ? 'bg-black text-white border-sara-red' : 'bg-kith-subBg border-kith-border text-kith-muted'
+                            }`}
+                          >
+                            Dark
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setPreviewBgMode((prev) => ({ ...prev, [key]: 'light' }))}
+                            className={`px-2 py-0.5 text-[9px] border ${
+                              currentBgMode === 'light' ? 'bg-white text-black border-sara-red font-bold' : 'bg-kith-subBg border-kith-border text-kith-muted'
+                            }`}
+                          >
+                            Light
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setPreviewBgMode((prev) => ({ ...prev, [key]: 'default' }))}
+                            className={`px-2 py-0.5 text-[9px] border ${
+                              currentBgMode === 'default' ? 'bg-kith-card border-kith-bone text-kith-bone' : 'bg-kith-subBg border-kith-border text-kith-muted'
+                            }`}
+                          >
+                            Auto
+                          </button>
+                        </div>
+                      </div>
+
+                      <div
+                        className={`h-36 w-full rounded border border-kith-border flex items-center justify-center p-3 overflow-hidden relative ${
+                          currentBgMode === 'dark'
+                            ? 'bg-black'
+                            : currentBgMode === 'light'
+                            ? 'bg-white'
+                            : 'bg-kith-subBg'
+                        }`}
+                      >
+                        {setting.url ? (
+                          <img
+                            src={setting.url}
+                            alt={setting.name || key}
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        ) : (
+                          <span className="text-xs font-mono text-kith-muted uppercase">No Image Uploaded</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Asset Name Field */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-kith-muted uppercase font-bold">
+                        ASSET TITLE / LABEL
+                      </label>
+                      <input
+                        type="text"
+                        value={setting.name || ''}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setSiteSettingsMap((prev) => ({
+                            ...prev,
+                            [key]: { ...prev[key], name: val },
+                          }));
+                        }}
+                        className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-xs font-mono text-kith-bone focus:outline-none focus:border-kith-bone"
+                        placeholder="Human readable asset name"
+                      />
+                    </div>
+
+                    {/* Image URL Field */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-kith-muted uppercase font-bold">
+                        IMAGE URL / BASE64 DATA
+                      </label>
+                      <input
+                        type="text"
+                        value={setting.url || ''}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setSiteSettingsMap((prev) => ({
+                            ...prev,
+                            [key]: { ...prev[key], url: val },
+                          }));
+                        }}
+                        className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-xs font-mono text-kith-bone focus:outline-none focus:border-kith-bone"
+                        placeholder="https://... or /logo.png"
+                      />
+                    </div>
+
+                    {/* File Upload Button */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-kith-muted uppercase block font-bold">
+                        UPLOAD NEW IMAGE FILE
+                      </label>
+                      <label className="w-full py-2 px-3 bg-kith-subBg border border-kith-border hover:border-sara-red text-kith-bone text-xs font-mono uppercase flex items-center justify-center gap-2 cursor-pointer transition-colors">
+                        <Upload className="w-3.5 h-3.5 text-sara-red dark:text-red-400" />
+                        <span>SELECT FILE FROM COMPUTER</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleAssetFileUpload(key, e)}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Save Action Button */}
+                  <div className="pt-2 border-t border-kith-border">
+                    <button
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() =>
+                        handleSaveSiteSetting(
+                          key,
+                          setting.name || key,
+                          setting.url || '',
+                          setting.category || 'branding',
+                          setting.alt_text
+                        )
+                      }
+                      className="w-full py-2.5 bg-kith-btnPrimaryBg text-kith-btnPrimaryText hover:bg-kith-btnPrimaryHover text-xs font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-2 transition-all shadow-md"
+                    >
+                      {isSaving ? (
+                        <>
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" /> SAVING ASSET...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-4 h-4" /> SAVE ASSET
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

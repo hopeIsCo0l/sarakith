@@ -600,3 +600,110 @@ export async function deleteService(id: string): Promise<{ success: boolean; err
     return { success: false, error: err?.message || String(err) };
   }
 }
+
+// ----------------------------------------------------------------------
+// SITE SETTINGS & BRANDING MANAGED ASSETS
+// ----------------------------------------------------------------------
+
+export const DEFAULT_SITE_SETTINGS: Record<string, { key: string; name: string; url: string; category: string; alt_text?: string; recommended_dimensions?: string }> = {
+  logo_light: {
+    key: 'logo_light',
+    name: 'Light Mode Primary Logo',
+    url: '/logo.png',
+    category: 'logo',
+    alt_text: 'Sara Power Solution Light Logo',
+    recommended_dimensions: '512 x 512 px (1:1 Ratio, Transparent PNG or SVG)',
+  },
+  logo_dark: {
+    key: 'logo_dark',
+    name: 'Dark Mode Primary Logo',
+    url: '/logo.png',
+    category: 'logo',
+    alt_text: 'Sara Power Solution Dark Logo',
+    recommended_dimensions: '512 x 512 px (1:1 Ratio, Transparent PNG or SVG)',
+  },
+  hero_banner: {
+    key: 'hero_banner',
+    name: 'Homepage Main Hero Background Banner',
+    url: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1600&auto=format&fit=crop',
+    category: 'banner',
+    alt_text: 'Sara Power Solar Installation Telemetry',
+    recommended_dimensions: '1920 x 1080 px (16:9 Landscape, WebP/JPEG, < 600KB)',
+  },
+  catalog_banner: {
+    key: 'catalog_banner',
+    name: 'Equipment Catalog Header Banner',
+    url: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1600&auto=format&fit=crop',
+    category: 'banner',
+    alt_text: 'Solar Equipment Catalog Header',
+    recommended_dimensions: '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)',
+  },
+  services_banner: {
+    key: 'services_banner',
+    name: 'Solar Engineering Services Banner',
+    url: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?q=80&w=1600&auto=format&fit=crop',
+    category: 'banner',
+    alt_text: 'Engineering Services Header',
+    recommended_dimensions: '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)',
+  },
+  calculator_banner: {
+    key: 'calculator_banner',
+    name: 'Solar Load Calculator Banner',
+    url: 'https://images.unsplash.com/photo-1548337138-e87d889cc369?q=80&w=1600&auto=format&fit=crop',
+    category: 'banner',
+    alt_text: 'Solar Sizing Engine Header',
+    recommended_dimensions: '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)',
+  },
+};
+
+/**
+ * Fetch all site settings / branding images
+ */
+export async function getSiteSettings(): Promise<Record<string, { key: string; name: string; url: string; category: string; alt_text?: string }>> {
+  if (!supabase) return DEFAULT_SITE_SETTINGS;
+
+  try {
+    const { data, error } = await supabase.from('site_settings').select('*');
+    if (error || !data || data.length === 0) return DEFAULT_SITE_SETTINGS;
+
+    const settingsMap: Record<string, any> = { ...DEFAULT_SITE_SETTINGS };
+    data.forEach((item: any) => {
+      settingsMap[item.key] = item;
+    });
+    return settingsMap;
+  } catch (err) {
+    return DEFAULT_SITE_SETTINGS;
+  }
+}
+
+/**
+ * Upsert a site setting / branding image record
+ */
+export async function updateSiteSetting(
+  key: string,
+  name: string,
+  url: string,
+  category: string = 'branding',
+  alt_text?: string
+): Promise<{ success: boolean; error: string | null }> {
+  if (!supabase) return { success: true, error: null };
+
+  try {
+    const { error } = await supabase.from('site_settings').upsert({
+      key,
+      name,
+      url,
+      category,
+      alt_text: alt_text || name,
+      updated_at: new Date().toISOString(),
+    });
+
+    if (error) {
+      console.error('Error updating site setting in Supabase:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, error: null };
+  } catch (err: any) {
+    return { success: false, error: err?.message || String(err) };
+  }
+}

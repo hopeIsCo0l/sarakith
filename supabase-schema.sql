@@ -386,6 +386,74 @@ VALUES
 )
 ON CONFLICT DO NOTHING;
 
+-- 6.6 Seed Site Settings (Logos & Banners)
+CREATE TABLE IF NOT EXISTS public.site_settings (
+    key TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT 'branding',
+    alt_text TEXT,
+    recommended_dimensions TEXT,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access to site settings" ON public.site_settings FOR SELECT USING (true);
+CREATE POLICY "Allow all access to site settings" ON public.site_settings FOR ALL USING (true) WITH CHECK (true);
+
+INSERT INTO public.site_settings (key, name, url, category, alt_text, recommended_dimensions)
+VALUES
+(
+    'logo_light',
+    'Light Mode Primary Logo',
+    '/logo.png',
+    'logo',
+    'Sara Power Solution Light Logo',
+    '512 x 512 px (1:1 Ratio, Transparent PNG or SVG)'
+),
+(
+    'logo_dark',
+    'Dark Mode Primary Logo',
+    '/logo.png',
+    'logo',
+    'Sara Power Solution Dark Logo',
+    '512 x 512 px (1:1 Ratio, Transparent PNG or SVG)'
+),
+(
+    'hero_banner',
+    'Homepage Main Hero Background Banner',
+    'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1600&auto=format&fit=crop',
+    'banner',
+    'Sara Power Solar Installation Telemetry',
+    '1920 x 1080 px (16:9 Landscape, WebP/JPEG, < 600KB)'
+),
+(
+    'catalog_banner',
+    'Equipment Catalog Header Banner',
+    'https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1600&auto=format&fit=crop',
+    'banner',
+    'Solar Equipment Catalog Header',
+    '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)'
+),
+(
+    'services_banner',
+    'Solar Engineering Services Banner',
+    'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?q=80&w=1600&auto=format&fit=crop',
+    'banner',
+    'Engineering Services Header',
+    '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)'
+),
+(
+    'calculator_banner',
+    'Solar Load Calculator Banner',
+    'https://images.unsplash.com/photo-1548337138-e87d889cc369?q=80&w=1600&auto=format&fit=crop',
+    'banner',
+    'Solar Sizing Engine Header',
+    '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)'
+)
+ON CONFLICT (key) DO UPDATE SET
+    recommended_dimensions = EXCLUDED.recommended_dimensions;
+
 -- ====================================================================
 -- 7. ENABLE REALTIME BROADCASTING
 -- ====================================================================
@@ -393,3 +461,4 @@ ON CONFLICT DO NOTHING;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.products;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.categories;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.services;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.site_settings;

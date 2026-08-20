@@ -14,8 +14,17 @@ import {
   WHATSAPP_LINK,
 } from '@/lib/constants';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/context/ThemeContext';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 export const Footer: React.FC = () => {
+  const { theme } = useTheme();
+  const { getSettingUrl } = useSiteSettings();
+
+  const activeLogoUrl = theme === 'light'
+    ? getSettingUrl('logo_light', '/logo.png')
+    : getSettingUrl('logo_dark', '/logo.png');
+
   return (
     <footer className="border-t border-sara-red/30 bg-kith-subBg text-kith-bone relative overflow-hidden transition-colors">
       {/* Background Red Glow Elements */}
@@ -28,8 +37,8 @@ export const Footer: React.FC = () => {
           {/* Column 1: Brand & Bio */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 border border-sara-red/40 bg-black p-1 flex items-center justify-center rounded-sm shadow-sm">
-                <img src="/logo.png" alt="Sara Power Solution" className="h-full w-full object-contain filter invert" />
+              <div className="w-10 h-10 border border-sara-red/40 bg-black/60 p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
+                <img src={activeLogoUrl} alt="Sara Power Solution" className="h-full w-full object-contain" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-black tracking-widest text-kith-bone font-mono uppercase">

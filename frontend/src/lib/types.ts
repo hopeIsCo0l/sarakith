@@ -83,3 +83,13 @@ export interface FilterState {
   maxPrice: number;
   sortBy: 'featured' | 'price-asc' | 'price-desc' | 'newest';
 }
+
+export interface SiteSetting {
+  key: string;
+  name: string;
+  url: string;
+  category: 'logo' | 'banner' | 'favicon' | 'branding' | string;
+  alt_text?: string;
+  recommended_dimensions?: string;
+  updated_at?: string;
+}

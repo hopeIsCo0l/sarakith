@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
 import {
   COMPANY_NAME,
   BRAND_TAGLINE,
@@ -58,11 +59,13 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeProvider>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
+          <SiteSettingsProvider>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
+          </SiteSettingsProvider>
         </ThemeProvider>
       </body>
     </html>

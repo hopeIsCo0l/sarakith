@@ -10,8 +10,10 @@ import { ProductGrid } from '@/components/ProductGrid';
 import { QuickViewModal } from '@/components/QuickViewModal';
 import { HERO_HEADER, BRAND_TAGLINE } from '@/lib/constants';
 import heroBannerImg from '@/ass/HeroBanner.png';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
 
 export default function HomePage() {
+  const { getSettingUrl } = useSiteSettings();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [selectedQuickView, setSelectedQuickView] = useState<Product | null>(null);
 
@@ -142,13 +144,10 @@ export default function HomePage() {
                 </div>
 
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
-                  <Image
-                    src={heroBannerImg}
+                  <img
+                    src={getSettingUrl('hero_banner', heroBannerImg.src)}
                     alt="Sara Power Solution Systems Hardware Banner"
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 45vw"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   {/* Subtle Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-kith-bg/90 via-transparent to-transparent pointer-events-none" />
