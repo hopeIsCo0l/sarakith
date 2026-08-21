@@ -128,7 +128,8 @@ export async function getProducts(options?: {
       .from('products')
       .select(`
         *,
-        category:categories(*),
+        category:categories!category_id(*),
+        sub_category:categories!sub_category_id(*),
         images:product_images(*)
       `)
       .order('created_at', { ascending: false });
@@ -172,7 +173,8 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       .from('products')
       .select(`
         *,
-        category:categories(*),
+        category:categories!category_id(*),
+        sub_category:categories!sub_category_id(*),
         images:product_images(*)
       `)
       .eq('slug', slug)
@@ -209,7 +211,8 @@ export async function getDynamicSolarPackages(kwLoad: number): Promise<Product[]
         *,
         product:products(
           *,
-          category:categories(*),
+          category:categories!category_id(*),
+          sub_category:categories!sub_category_id(*),
           images:product_images(*)
         )
       `)
@@ -359,7 +362,8 @@ export async function createProduct(
       })
       .select(`
         *,
-        category:categories(*)
+        category:categories!category_id(*),
+        sub_category:categories!sub_category_id(*)
       `)
       .single();
 
