@@ -72,6 +72,14 @@
   * {
     font-family: 'Mostin', var(--font-mostin), 'Montserrat', sans-serif;
   }
+  
+  body, p, span, div, a, li, button, input, select, textarea {
+    font-weight: 400;
+  }
+
+  h1, h2, h3, h4, h5, h6, .title {
+    font-weight: 700;
+  }
 
   :root, html.dark {
     /* SARA POWER RED & WHITE DARK THEME */

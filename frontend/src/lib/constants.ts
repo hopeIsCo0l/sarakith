@@ -9,7 +9,7 @@ export const SECONDARY_EMAIL = 'mube123@gmail.com';
 export const OFFICIAL_EMAIL = PRIMARY_EMAIL;
 export const PRIMARY_PHONE = '+251 95 483 4159';
 export const SECONDARY_PHONE = '+251 91 123 4567';
-export const WHATSAPP_NUMBER = '251954834159';
+export const WHATSAPP_NUMBER = '251910809090';
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 export const PHYSICAL_ADDRESS = 'Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422';

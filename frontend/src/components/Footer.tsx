@@ -31,7 +31,7 @@ export const Footer: React.FC = () => {
   const secondaryPhone = getSettingValue('contact_phone_secondary', '+251 91 765 4321');
   const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
-  const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251911234567');
+  const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251910809090');
   const telegramUrl = getSettingValue('social_telegram', 'https://t.me/sarapower');
   const instagramUrl = getSettingValue('social_instagram', 'https://instagram.com/sarapower');
   const tiktokUrl = getSettingValue('social_tiktok', 'https://tiktok.com/@sarapower');
@@ -48,18 +48,18 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Column 1: Brand & Bio */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 border border-sara-red/40 bg-black/60 p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
-                <img src={activeLogoUrl} alt={companyName} className="h-full w-full object-contain" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-widest text-kith-bone font-mono uppercase">
-                  Sara Power
-                </span>
-                <span className="text-[10px] font-mono tracking-superwide text-sara-red dark:text-red-400 uppercase font-bold">
-                  Energy Systems PLC
+            <div className="flex flex-col items-start">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 border border-sara-red/40 bg-transparent p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
+                  <img src={activeLogoUrl} alt={companyName} className="h-full w-full object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
+                </div>
+                <span className="text-[32px] sm:text-[42px] font-black leading-none tracking-widest text-kith-bone font-mono uppercase">
+                  Sara
                 </span>
               </div>
+              <span className="text-[10px] sm:text-xs font-mono tracking-widest text-sara-red dark:text-red-400 uppercase font-bold mt-1 text-center w-full">
+                Power Solutions PLC
+              </span>
             </div>
 
             <p className="text-xs font-mono text-kith-muted leading-relaxed max-w-md">

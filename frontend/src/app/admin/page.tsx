@@ -1833,7 +1833,7 @@ export default function AdminPage() {
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] uppercase text-kith-bone font-bold flex items-center gap-1.5">
                     <ImageIcon className="w-4 h-4 text-amber-500" />
-                    PRODUCT PHOTOS (MULTIPLE ALLOWED)
+                    PRODUCT PHOTOS (MULTIPLE ALLOWED) - RECOMMENDED SIZE: 800 x 800px (1:1 Ratio)
                   </label>
                   <span className="text-[10px] text-kith-muted">{prodImageUrls.length} photo(s)</span>
                 </div>

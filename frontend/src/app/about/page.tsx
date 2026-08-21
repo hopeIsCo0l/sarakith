@@ -31,7 +31,7 @@ export default function AboutPage() {
   const secondaryPhone = getSettingValue('contact_phone_secondary', '+251 91 765 4321');
   const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
-  const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251911234567');
+  const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251910809090');
 
   const statMW = getSettingValue('stat_installed_mw', '5.5+ MW');
   const statProjects = getSettingValue('stat_completed_projects', '500+');
