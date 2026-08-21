@@ -42,7 +42,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       <div className="absolute inset-0 bg-[linear-gradient(rgba(111,15,16,0.05)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20 mix-blend-overlay"></div>
 
       {/* Image Display */}
-      <div className="relative aspect-[4/3] w-full bg-black overflow-hidden border-b border-sara-red/20 p-4">
+      <div className="relative aspect-[4/3] w-full bg-white/80 overflow-hidden border-b border-sara-red/20 p-4">
         {/* Corner Brackets */}
         <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-sara-red/50 z-10"></div>
         <div className="absolute top-2 right-2 w-4 h-4 border-t border-r border-sara-red/50 z-10"></div>
