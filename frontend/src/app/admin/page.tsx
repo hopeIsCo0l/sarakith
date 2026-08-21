@@ -2029,14 +2029,18 @@ export default function AdminPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] uppercase text-kith-muted">SLUG (URL KEY)</label>
+                <div className="space-y-1 opacity-50 cursor-not-allowed">
+                  <label className="text-[10px] uppercase text-kith-muted flex items-center gap-2">
+                    SLUG (URL KEY)
+                    <span className="text-[8px] bg-kith-border px-1.5 py-0.5 rounded text-amber-500 font-bold tracking-wider">COMING SOON</span>
+                  </label>
                   <input
                     type="text"
                     value={catSlug}
+                    disabled
                     onChange={(e) => setCatSlug(e.target.value)}
-                    placeholder="e.g. solar-generators"
-                    className="w-full bg-kith-subBg border border-kith-border px-3 py-2.5 text-kith-bone focus:outline-none"
+                    placeholder="Auto-generated"
+                    className="w-full bg-kith-subBg border border-kith-border px-3 py-2.5 text-kith-bone focus:outline-none cursor-not-allowed"
                   />
                 </div>
                 <div className="space-y-1">
