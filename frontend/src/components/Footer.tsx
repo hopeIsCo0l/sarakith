@@ -248,11 +248,8 @@ export const Footer: React.FC = () => {
           <div>
             © {new Date().getFullYear()} {companyName}. All engineering telemetry rights reserved.
           </div>
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-1.5 text-sara-red dark:text-red-400">
-              <span className="w-2 h-2 rounded-full bg-sara-red animate-ping" />
-              SYSTEM ACTIVE // 99.9% UPTIME
-            </span>
+          <div className="flex items-center gap-1">
+            Developed by <a href="https://www.linkedin.com/in/abdellah-fita" target="_blank" rel="noopener noreferrer" className="text-sara-red dark:text-red-400 font-bold hover:underline">HopeLabs</a>
           </div>
         </div>
       </div>

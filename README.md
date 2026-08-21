@@ -118,3 +118,10 @@ Backend API will run on [http://localhost:8000](http://localhost:8000).
 ## License
 
 Distributed under the MIT License. Copyright © 2026 **Sara Power Solution plc**. All rights reserved.
+
+---
+
+**Developed by [HopeLabs](https://www.linkedin.com/in/abdellah-fita)**
+
+
+
