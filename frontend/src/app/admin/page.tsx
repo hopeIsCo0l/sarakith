@@ -97,6 +97,7 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   const [prodName, setProdName] = useState('');
   const [prodCategorySlug, setProdCategorySlug] = useState('');
+  const [prodSubCategorySlug, setProdSubCategorySlug] = useState('');
   const [prodPrice, setProdPrice] = useState<number>(10000);
   const [prodSku, setProdSku] = useState('');
   const [prodStockStatus, setProdStockStatus] = useState<StockStatus>('in_stock');
@@ -120,6 +121,7 @@ export default function AdminPage() {
   const [catName, setCatName] = useState('');
   const [catSlug, setCatSlug] = useState('');
   const [catDescription, setCatDescription] = useState('');
+  const [catParentId, setCatParentId] = useState('');
   const [catDisplayOrder, setCatDisplayOrder] = useState<number>(1);
 
   // -------------------------------------------------------------
@@ -274,6 +276,7 @@ export default function AdminPage() {
     setEditingProductId(null);
     setProdName('');
     setProdCategorySlug(categories[0]?.slug || '');
+    setProdSubCategorySlug('');
     setProdPrice(10000);
     setProdSku(`SEB-${Math.floor(1000 + Math.random() * 9000)}`);
     setProdStockStatus('in_stock');
@@ -294,6 +297,7 @@ export default function AdminPage() {
     setEditingProductId(product.id);
     setProdName(product.name);
     setProdCategorySlug(product.category?.slug || categories[0]?.slug || '');
+    setProdSubCategorySlug(categories.find(c => c.id === product.sub_category_id)?.slug || '');
     setProdPrice(product.price);
     setProdSku(product.sku || '');
     setProdStockStatus(product.stock_status);
@@ -346,6 +350,7 @@ export default function AdminPage() {
         {
           name: prodName,
           category_id: selectedCat?.id,
+          sub_category_id: categories.find(c => c.slug === prodSubCategorySlug)?.id || null,
           price: Number(prodPrice),
           stock_status: prodStockStatus,
           is_featured: prodIsFeatured,
@@ -398,6 +403,7 @@ export default function AdminPage() {
       const { product: newProd, error } = await createProduct(
         {
           category_id: selectedCat?.id,
+          sub_category_id: categories.find(c => c.slug === prodSubCategorySlug)?.id || null,
           name: prodName,
           slug,
           sku: prodSku || `SEB-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -523,6 +529,7 @@ export default function AdminPage() {
     setCatName('');
     setCatSlug('');
     setCatDescription('');
+    setCatParentId('');
     setCatDisplayOrder(categories.length + 1);
     setIsCategoryModalOpen(true);
   };
@@ -532,6 +539,7 @@ export default function AdminPage() {
     setCatName(cat.name);
     setCatSlug(cat.slug);
     setCatDescription(cat.description || '');
+    setCatParentId(cat.parent_id || '');
     setCatDisplayOrder(cat.display_order);
     setIsCategoryModalOpen(true);
   };
@@ -549,6 +557,7 @@ export default function AdminPage() {
         name: catName,
         slug,
         description: catDescription,
+        parent_id: catParentId || null,
         display_order: Number(catDisplayOrder),
       });
 
@@ -571,6 +580,7 @@ export default function AdminPage() {
         name: catName,
         slug,
         description: catDescription,
+        parent_id: catParentId || null,
         display_order: Number(catDisplayOrder),
       });
 
@@ -1031,6 +1041,11 @@ export default function AdminPage() {
 
                       <td className="py-3 px-4 text-kith-muted uppercase">
                         {p.category?.name || 'UNASSIGNED'}
+                        {p.sub_category_id && (
+                          <span className="block text-[9px] text-kith-darkMuted mt-1">
+                            ↳ {categories.find(c => c.id === p.sub_category_id)?.name}
+                          </span>
+                        )}
                       </td>
 
                       <td className="py-3 px-4">
@@ -1109,7 +1124,14 @@ export default function AdminPage() {
                 const prodCount = products.filter((p) => p.category?.slug === cat.slug).length;
                 return (
                   <tr key={cat.id} className="hover:bg-kith-subBg/50 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-kith-bone uppercase">{cat.name}</td>
+                    <td className="py-3.5 px-4 font-bold text-kith-bone uppercase">
+                      {cat.name}
+                      {cat.parent_id && (
+                        <span className="block text-[9px] text-kith-darkMuted mt-1">
+                          ↳ Parent: {categories.find(c => c.id === cat.parent_id)?.name || 'Unknown'}
+                        </span>
+                      )}
+                    </td>
                     <td className="py-3.5 px-4 text-sky-400 font-mono">{cat.slug}</td>
                     <td className="py-3.5 px-4 text-kith-muted max-w-md truncate">
                       {cat.description || '—'}
@@ -1683,19 +1705,45 @@ export default function AdminPage() {
               </div>
 
               {/* Category */}
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-[10px] uppercase text-kith-muted">CATEGORY *</label>
                   <select
                     value={prodCategorySlug}
-                    onChange={(e) => setProdCategorySlug(e.target.value)}
+                    onChange={(e) => {
+                      setProdCategorySlug(e.target.value);
+                      setProdSubCategorySlug(''); // Reset sub-category when main category changes
+                    }}
                     className="w-full bg-kith-subBg border border-kith-border px-3 py-2.5 text-kith-bone focus:outline-none focus:border-kith-bone uppercase"
                   >
-                    {categories.map((c) => (
+                    {categories.filter(c => !c.parent_id).map((c) => (
                       <option key={c.id} value={c.slug}>
                         {c.name}
                       </option>
                     ))}
+                  </select>
+                </div>
+
+                {/* Sub-Category (Optional) */}
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase text-kith-muted">SUB-CATEGORY (OPTIONAL)</label>
+                  <select
+                    value={prodSubCategorySlug}
+                    onChange={(e) => setProdSubCategorySlug(e.target.value)}
+                    className="w-full bg-kith-subBg border border-kith-border px-3 py-2.5 text-kith-bone focus:outline-none focus:border-kith-bone uppercase appearance-none"
+                    disabled={!prodCategorySlug}
+                  >
+                    <option value="">None</option>
+                    {categories
+                      .filter(c => {
+                        const selectedMainCat = categories.find(main => main.slug === prodCategorySlug);
+                        return c.parent_id === selectedMainCat?.id;
+                      })
+                      .map((c) => (
+                        <option key={c.id} value={c.slug}>
+                          {c.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
@@ -1960,6 +2008,24 @@ export default function AdminPage() {
                   placeholder="e.g. Solar Generators & UPS"
                   className="w-full bg-kith-subBg border border-kith-border px-3 py-2.5 text-kith-bone focus:outline-none focus:border-kith-bone"
                 />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase text-kith-muted">PARENT CATEGORY (OPTIONAL)</label>
+                <select
+                  value={catParentId}
+                  onChange={(e) => setCatParentId(e.target.value)}
+                  className="w-full bg-kith-subBg border border-kith-border px-3 py-2.5 text-kith-bone focus:outline-none appearance-none"
+                >
+                  <option value="">None (Top-Level Category)</option>
+                  {categories
+                    .filter((c) => !c.parent_id && c.id !== editingCategoryId) // Only show top-level, prevent self-parenting
+                    .map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                </select>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

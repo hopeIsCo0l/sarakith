@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.categories (
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     description TEXT,
+    parent_id UUID REFERENCES public.categories(id) ON DELETE CASCADE,
     display_order INT NOT NULL DEFAULT 1,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS public.categories (
 CREATE TABLE IF NOT EXISTS public.products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
+    sub_category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     sku TEXT,
@@ -590,3 +592,10 @@ ALTER PUBLICATION supabase_realtime ADD TABLE public.products;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.categories;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.services;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.site_settings;
+
+-- ====================================================================
+-- MIGRATION SCRIPT (Run this in your Supabase SQL Editor to apply sub-categories)
+-- ====================================================================
+-- ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS parent_id UUID REFERENCES public.categories(id) ON DELETE CASCADE;
+-- ALTER TABLE public.products ADD COLUMN IF NOT EXISTS sub_category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL;
+-- ====================================================================

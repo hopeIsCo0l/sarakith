@@ -2,6 +2,7 @@ export type StockStatus = 'in_stock' | 'low_stock' | 'preorder' | 'sold_out';
 
 export interface Category {
   id: string;
+  parent_id?: string | null;
   name: string;
   slug: string;
   description?: string;
@@ -46,6 +47,8 @@ export interface Product {
   id: string;
   category_id?: string;
   category?: Category;
+  sub_category_id?: string | null;
+  sub_category?: Category;
   name: string;
   slug: string;
   sku?: string;

@@ -345,6 +345,7 @@ export async function createProduct(
       .from('products')
       .insert({
         category_id: validCategoryId,
+        sub_category_id: productData.sub_category_id || null,
         name: productData.name,
         slug: productData.slug,
         sku: productData.sku,
@@ -415,6 +416,7 @@ export async function updateProduct(
     const updatePayload: Record<string, any> = {
       ...(updates.name !== undefined && { name: updates.name }),
       ...(validCategoryId !== undefined && { category_id: validCategoryId }),
+      ...(updates.sub_category_id !== undefined && { sub_category_id: updates.sub_category_id || null }),
       ...(updates.price !== undefined && { price: updates.price }),
       ...(updates.stock_status !== undefined && { stock_status: updates.stock_status }),
       ...(updates.is_featured !== undefined && { is_featured: updates.is_featured }),
