@@ -118,6 +118,17 @@ export default function CatalogPage() {
       });
   }, [allProducts, filters]);
 
+  // Category Details Resolution
+  const selectedCategoryObj = useMemo(() => {
+    if (filters.categorySlug === 'all') return null;
+    return categories.find((c) => c.slug === filters.categorySlug) || null;
+  }, [categories, filters.categorySlug]);
+
+  const subCategories = useMemo(() => {
+    if (!selectedCategoryObj) return [];
+    return categories.filter((c) => c.parent_id === selectedCategoryObj.id);
+  }, [categories, selectedCategoryObj]);
+
   return (
     <div className="bg-kith-bg pb-24 transition-colors">
       {/* Header Banner */}
@@ -148,26 +159,75 @@ export default function CatalogPage() {
             totalResults={filteredProducts.length}
           />
 
-          <div className="flex-1 space-y-6">
-            {/* FR-2 Solar Calculator Callout Banner */}
-            <div className="p-6 tech-panel rounded-sm border border-sara-red/30 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-              <div className="space-y-2">
-                <div className="text-xs font-mono text-amber-500 uppercase tracking-widest font-bold flex items-center gap-1.5">
-                  <Zap className="w-4 h-4 animate-pulse" />
-                  Unsure about solar system sizing?
+          <div className="flex-1 space-y-8">
+            
+            {/* Conditional Category Header or Global Banner */}
+            {selectedCategoryObj ? (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Category Header Block */}
+                <div className="bg-kith-card border border-sara-red/20 p-8 sm:p-12 flex flex-col items-center text-center space-y-4 shadow-[0_0_20px_rgba(111,15,16,0.05)] relative overflow-hidden rounded-sm">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-sara-red/5 rounded-full blur-3xl pointer-events-none" />
+                  <div className="w-12 h-12 bg-sara-red/10 border border-sara-red/30 flex items-center justify-center rounded-sm z-10">
+                    <Zap className="w-5 h-5 text-sara-red dark:text-red-400" />
+                  </div>
+                  <h2 className="text-2xl sm:text-4xl font-black font-mono tracking-widest text-kith-bone uppercase z-10">
+                    {selectedCategoryObj.name}
+                  </h2>
+                  {selectedCategoryObj.description && (
+                    <p className="text-sm font-mono text-kith-muted max-w-2xl leading-relaxed z-10">
+                      {selectedCategoryObj.description}
+                    </p>
+                  )}
                 </div>
-                <p className="text-xs font-mono text-kith-muted max-w-xl">
-                  Use our interactive Solar Calculator to input your appliances and calculate your exact inverter and battery requirements.
-                </p>
+
+                {/* Sub-Category Pills */}
+                {subCategories.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      <div className="h-px bg-kith-border flex-1" />
+                      <h3 className="text-[10px] font-mono tracking-superwide text-sara-red dark:text-red-400 uppercase font-bold">
+                        Filter By System Type
+                      </h3>
+                      <div className="h-px bg-kith-border flex-1" />
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-3">
+                      {subCategories.map((sub) => (
+                        <button
+                          key={sub.id}
+                          onClick={() => handleFilterChange({ categorySlug: sub.slug })}
+                          className="px-6 py-3 bg-kith-subBg border border-kith-border hover:border-sara-red/50 hover:bg-sara-red/5 text-xs font-mono font-bold tracking-widest text-kith-bone uppercase transition-all shadow-md group flex items-center gap-2"
+                        >
+                          <span>{sub.name}</span>
+                          <span className="opacity-0 w-0 overflow-hidden group-hover:w-auto group-hover:opacity-100 group-hover:ml-1 transition-all text-sara-red dark:text-red-400">
+                            →
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <a
-                href="/calculator"
-                className="px-6 py-2.5 bg-sara-red hover:bg-sara-redLight text-white text-xs font-mono font-bold tracking-widest uppercase rounded-sm flex items-center justify-center gap-2 flex-shrink-0 transition-all shadow-[0_0_15px_rgba(111,15,16,0.3)]"
-              >
-                <span>Launch Sizer</span>
-                <span>→</span>
-              </a>
-            </div>
+            ) : (
+              /* FR-2 Solar Calculator Callout Banner (Only shows when "All Items" is selected) */
+              <div className="p-6 tech-panel rounded-sm border border-sara-red/30 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div className="space-y-2">
+                  <div className="text-xs font-mono text-amber-500 uppercase tracking-widest font-bold flex items-center gap-1.5">
+                    <Zap className="w-4 h-4 animate-pulse" />
+                    Unsure about solar system sizing?
+                  </div>
+                  <p className="text-xs font-mono text-kith-muted max-w-xl">
+                    Use our interactive Solar Calculator to input your appliances and calculate your exact inverter and battery requirements.
+                  </p>
+                </div>
+                <a
+                  href="/calculator"
+                  className="px-6 py-2.5 bg-sara-red hover:bg-sara-redLight text-white text-xs font-mono font-bold tracking-widest uppercase rounded-sm flex items-center justify-center gap-2 flex-shrink-0 transition-all shadow-[0_0_15px_rgba(111,15,16,0.3)]"
+                >
+                  <span>Launch Sizer</span>
+                  <span>→</span>
+                </a>
+              </div>
+            )}
 
             <ProductGrid
               products={filteredProducts}
