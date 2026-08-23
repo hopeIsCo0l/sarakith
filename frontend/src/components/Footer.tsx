@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Phone, Mail, MapPin, ShieldCheck, Zap, ArrowUpRight, Cpu, Send, Instagram, Linkedin, Video } from 'lucide-react';
+import { Phone, Mail, MapPin, ShieldCheck, Zap, ArrowUpRight, Cpu } from 'lucide-react';
 import {
   COMPANY_NAME,
   COMPANY_SHORT_NAME,
@@ -57,7 +57,7 @@ export const Footer: React.FC = () => {
                   Sara
                 </span>
               </div>
-              <span className="text-[10px] sm:text-xs font-mono tracking-widest text-sara-red dark:text-red-400 uppercase font-bold mt-1 text-center w-full">
+              <span className="text-[10px] sm:text-xs font-mono tracking-widest text-sara-red dark:text-red-400 uppercase font-bold mt-1 text-left w-full">
                 Power Solutions PLC
               </span>
             </div>
@@ -86,7 +86,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <Send className="w-3.5 h-3.5 text-sky-400" />
+                    <img src="/icons/telegram_logo_icon_147228.svg" alt="Telegram" className="w-4 h-4 object-contain" />
                     <span>TELEGRAM</span>
                   </a>
                 )}
@@ -97,7 +97,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                    <img src="/icons/instagram.png" alt="Instagram" className="w-4 h-4 object-contain" />
                     <span>INSTAGRAM</span>
                   </a>
                 )}
@@ -108,7 +108,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <Video className="w-3.5 h-3.5 text-teal-400" />
+                    <img src="/icons/tik-tok.png" alt="TikTok" className="w-4 h-4 object-contain" />
                     <span>TIKTOK</span>
                   </a>
                 )}
@@ -119,7 +119,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <Linkedin className="w-3.5 h-3.5 text-blue-500" />
+                    <img src="/icons/linkedin.png" alt="LinkedIn" className="w-4 h-4 object-contain" />
                     <span>LINKEDIN</span>
                   </a>
                 )}
@@ -225,7 +225,7 @@ export const Footer: React.FC = () => {
                 <span>{physicalAddress}</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0" />
+                <img src="/icons/whatsapp.png" alt="WhatsApp" className="w-4 h-4 object-contain shrink-0" />
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-sara-red dark:hover:text-red-400 transition-colors">
                   {primaryPhone} {secondaryPhone ? `/ ${secondaryPhone}` : ''}
                 </a>
