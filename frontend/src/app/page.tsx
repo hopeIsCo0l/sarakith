@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle, Building2, Award, Users } from 'lucide-react';
+import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle, Building2, Award, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getProducts, supabase } from '@/lib/supabase';
 import { Product } from '@/lib/types';
 import { ProductGrid } from '@/components/ProductGrid';
@@ -16,6 +16,36 @@ export default function HomePage() {
   const { getSettingUrl } = useSiteSettings();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [selectedQuickView, setSelectedQuickView] = useState<Product | null>(null);
+
+  // Carousel State
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [lastInteraction, setLastInteraction] = useState(Date.now());
+
+  // Gather valid banner URLs
+  const bannerUrls = [
+    getSettingUrl('hero_banner', '/cinematic_hero.png'),
+    getSettingUrl('hero_banner_2', ''),
+    getSettingUrl('hero_banner_3', ''),
+    getSettingUrl('hero_banner_4', ''),
+  ].filter(url => url && url.trim() !== '');
+
+  useEffect(() => {
+    if (bannerUrls.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentBannerIndex((prev) => (prev + 1) % bannerUrls.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [bannerUrls.length, lastInteraction]);
+
+  const handleNextBanner = () => {
+    setCurrentBannerIndex((prev) => (prev + 1) % bannerUrls.length);
+    setLastInteraction(Date.now());
+  };
+
+  const handlePrevBanner = () => {
+    setCurrentBannerIndex((prev) => (prev - 1 + bannerUrls.length) % bannerUrls.length);
+    setLastInteraction(Date.now());
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -58,18 +88,66 @@ export default function HomePage() {
     <div className="-mt-20 sm:-mt-24 space-y-20 pb-24 transition-colors">
       {/* Hero Section */}
       <section className="relative w-full h-[85vh] sm:h-screen flex flex-col justify-end overflow-hidden border-b border-sara-red/25">
-        {/* Full Bleed Background */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={getSettingUrl('hero_banner', '/cinematic_hero.png')}
-            alt="Sara Power Solution Systems"
-            fill
-            priority
-            className="object-cover object-center scale-105 animate-in fade-in duration-1000"
-          />
+        {/* Full Bleed Background Carousel */}
+        <div className="absolute inset-0 z-0 bg-black">
+          {bannerUrls.map((url, idx) => (
+            <div
+              key={idx}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                idx === currentBannerIndex ? 'opacity-100 z-0' : 'opacity-0 -z-10 pointer-events-none'
+              }`}
+            >
+              <Image
+                src={url}
+                alt={`Sara Power Solution Systems - Slide ${idx + 1}`}
+                fill
+                priority={idx === 0}
+                className="object-cover object-center scale-105"
+              />
+            </div>
+          ))}
           {/* Subtle gradient overlay to make text pop */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 pointer-events-none z-10" />
         </div>
+
+        {/* Navigation Arrows & Counter (only show if > 1 banner) */}
+        {bannerUrls.length > 1 && (
+          <>
+            <button
+              onClick={handlePrevBanner}
+              className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:block shadow-xl"
+            >
+              <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 group-hover:-translate-x-1 transition-transform" />
+            </button>
+            <button
+              onClick={handleNextBanner}
+              className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:block shadow-xl"
+            >
+              <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 group-hover:translate-x-1 transition-transform" />
+            </button>
+            
+            {/* Slide Counter / Indicators */}
+            <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 border border-white/20 rounded-sm shadow-xl">
+              <span className="text-[10px] font-mono font-bold tracking-widest text-white uppercase">
+                {String(currentBannerIndex + 1).padStart(2, '0')} <span className="text-white/50">/ {String(bannerUrls.length).padStart(2, '0')}</span>
+              </span>
+              <div className="flex items-center gap-1.5 ml-2 border-l border-white/20 pl-4">
+                {bannerUrls.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setCurrentBannerIndex(idx);
+                      setLastInteraction(Date.now());
+                    }}
+                    className={`h-1.5 transition-all duration-300 rounded-sm ${
+                      idx === currentBannerIndex ? 'w-6 bg-white' : 'w-2 bg-white/30 hover:bg-white/60'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Hero Content Overlaid */}
         <div className="relative z-10 max-w-[1700px] mx-auto px-4 sm:px-8 pb-20 sm:pb-32 w-full flex flex-col items-center text-center">

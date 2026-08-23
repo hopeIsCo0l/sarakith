@@ -1364,18 +1364,35 @@ export default function AdminPage() {
 
                         <div className="space-y-1">
                           <label className="text-[10px] font-mono text-kith-muted uppercase block font-bold">
-                            UPLOAD NEW IMAGE FILE
+                            ASSET ACTIONS
                           </label>
-                          <label className="w-full py-2 px-3 bg-kith-subBg border border-kith-border hover:border-sara-red text-kith-bone text-xs font-mono uppercase flex items-center justify-center gap-2 cursor-pointer transition-colors">
-                            <Upload className="w-3.5 h-3.5 text-sara-red dark:text-red-400" />
-                            <span>SELECT FILE FROM COMPUTER</span>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleAssetFileUpload(key, e)}
-                              className="hidden"
-                            />
-                          </label>
+                          <div className="flex flex-col sm:flex-row items-center gap-2">
+                            <label className="w-full sm:flex-1 py-2 px-3 bg-kith-subBg border border-kith-border hover:border-sara-red text-kith-bone text-xs font-mono uppercase flex items-center justify-center gap-2 cursor-pointer transition-colors text-center">
+                              <Upload className="w-3.5 h-3.5 text-sara-red dark:text-red-400" />
+                              <span>UPLOAD NEW</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleAssetFileUpload(key, e)}
+                                className="hidden"
+                              />
+                            </label>
+                            {setting.url && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSiteSettingsMap((prev) => ({
+                                    ...prev,
+                                    [key]: { ...prev[key], url: '' },
+                                  }));
+                                }}
+                                className="w-full sm:flex-1 py-2 px-3 bg-kith-subBg border border-kith-border hover:border-rose-500 text-rose-500 text-xs font-mono uppercase flex items-center justify-center gap-2 transition-colors"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>REMOVE</span>
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
 
