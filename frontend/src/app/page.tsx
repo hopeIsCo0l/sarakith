@@ -55,124 +55,57 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="space-y-20 pb-24 transition-colors">
+    <div className="-mt-20 sm:-mt-24 space-y-20 pb-24 transition-colors">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[85vh] flex items-center overflow-hidden bg-kith-bg border-b border-sara-red/25">
-        {/* Tech Grid Background */}
+      <section className="relative w-full h-[85vh] sm:h-screen flex flex-col justify-end overflow-hidden border-b border-sara-red/25">
+        {/* Full Bleed Background */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(111,15,16,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(111,15,16,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-          <div className="absolute right-0 top-1/4 w-[500px] h-[500px] bg-sara-red/10 rounded-full blur-[120px] pointer-events-none"></div>
-          <div className="absolute left-0 bottom-1/4 w-96 h-96 bg-sara-red/8 rounded-full blur-[100px] pointer-events-none"></div>
+          <Image
+            src={getSettingUrl('hero_banner', '/cinematic_hero.png')}
+            alt="Sara Power Solution Systems"
+            fill
+            priority
+            className="object-cover object-center scale-105 animate-in fade-in duration-1000"
+          />
+          {/* Subtle gradient overlay to make text pop */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 pointer-events-none" />
         </div>
 
-        {/* Hero Content Grid */}
-        <div className="relative z-10 max-w-[1700px] mx-auto px-4 sm:px-8 py-16 lg:py-24 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
-            {/* Left Column: Headlines & CTAs */}
-            <div className="lg:col-span-7 space-y-8">
-              {/* Tag */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-sara-red/50 bg-sara-red/10 text-[10px] sm:text-xs font-mono font-bold tracking-superwide uppercase text-sara-red dark:text-red-400 shadow-[0_0_15px_rgba(111,15,16,0.2)] rounded-sm">
-                <Terminal className="w-3.5 h-3.5" />
-                SARA POWER SOLUTION PLC // TIER-1 SYSTEMS
-              </div>
+        {/* Hero Content Overlaid */}
+        <div className="relative z-10 max-w-[1700px] mx-auto px-4 sm:px-8 pb-20 sm:pb-32 w-full flex flex-col items-center text-center">
+          
+          {/* Tag */}
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 border border-white/20 bg-black/40 backdrop-blur-md text-[10px] sm:text-xs font-mono font-bold tracking-superwide uppercase text-white shadow-xl rounded-sm">
+            <Terminal className="w-3.5 h-3.5 text-white" />
+            SARA POWER SOLUTION PLC // TIER-1 SYSTEMS
+          </div>
 
-              {/* Title */}
-              <h1 className="text-4xl sm:text-6xl xl:text-7xl font-black tracking-tight text-kith-bone uppercase leading-[1.08] font-mono">
-                {HERO_HEADER}
-              </h1>
+          {/* Title */}
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white uppercase leading-[0.95] font-mono drop-shadow-2xl">
+            {HERO_HEADER}
+          </h1>
 
-              {/* Description */}
-              <p className="text-xs sm:text-sm font-mono text-kith-muted leading-relaxed max-w-2xl border-l-2 border-sara-red/60 pl-4">
-                {BRAND_TAGLINE}. Discover high-efficiency monocrystalline solar panels, hybrid pure sine wave inverters, and LiFePO4 lithium batteries engineered for lasting performance across Ethiopia.
-              </p>
+          {/* Description */}
+          <p className="mt-6 text-xs sm:text-sm font-mono text-gray-200 leading-relaxed max-w-3xl drop-shadow-lg">
+            {BRAND_TAGLINE}. Discover high-efficiency monocrystalline solar panels, hybrid pure sine wave inverters, and LiFePO4 lithium batteries engineered for lasting performance across Ethiopia.
+          </p>
 
-              {/* CTA Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/catalog"
-                  className="px-8 py-4 bg-sara-red text-white hover:bg-sara-redLight border border-sara-red/60 text-xs font-mono font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(111,15,16,0.35)] hover:shadow-[0_0_30px_rgba(111,15,16,0.55)] transition-all flex items-center gap-2 rounded-sm"
-                >
-                  EXPLORE EQUIPMENT
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/calculator"
-                  className="px-8 py-4 bg-sara-red/10 text-sara-red dark:text-red-400 border border-sara-red/40 hover:bg-sara-red/20 hover:border-sara-red/70 text-xs font-mono font-bold uppercase tracking-widest transition-all flex items-center gap-2 rounded-sm"
-                >
-                  <Zap className="w-3.5 h-3.5 animate-pulse text-amber-500" />
-                  LOAD CALCULATOR
-                </Link>
-              </div>
-
-              {/* Telemetry Feature Badges */}
-              <div className="pt-4 grid grid-cols-3 gap-4 border-t border-sara-red/20 max-w-lg">
-                <div className="space-y-1">
-                  <div className="text-[10px] font-mono text-sara-red dark:text-red-400 font-bold uppercase">550W+ TOPCon</div>
-                  <div className="text-[11px] font-mono text-kith-muted">Tier-1 Monocrystalline</div>
-                </div>
-                <div className="space-y-1 border-l border-sara-red/20 pl-4">
-                  <div className="text-[10px] font-mono text-sara-red dark:text-red-400 font-bold uppercase">48V / 5.5kW - 11kW</div>
-                  <div className="text-[11px] font-mono text-kith-muted">Pure Sine Inverters</div>
-                </div>
-                <div className="space-y-1 border-l border-sara-red/20 pl-4">
-                  <div className="text-[10px] font-mono text-sara-red dark:text-red-400 font-bold uppercase">6,000+ Cycles</div>
-                  <div className="text-[11px] font-mono text-kith-muted">LiFePO4 Storage</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Hero Banner Image Presentation */}
-            <div className="lg:col-span-5 relative flex justify-center items-center">
-              {/* Glowing Background aura */}
-              <div className="absolute inset-0 -m-4 bg-sara-red/15 blur-2xl rounded-2xl pointer-events-none -z-10" />
-
-              {/* Hero Image Card */}
-              <div className="relative w-full rounded-sm overflow-hidden border border-sara-red/40 bg-kith-card shadow-[0_15px_40px_rgba(111,15,16,0.18)] group transition-all">
-                {/* Tech Corner Brackets */}
-                <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-sara-red z-20 pointer-events-none"></div>
-                <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-sara-red z-20 pointer-events-none"></div>
-                <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-sara-red z-20 pointer-events-none"></div>
-                <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-sara-red z-20 pointer-events-none"></div>
-
-                {/* Status Indicator Tag */}
-                <div className="absolute top-4 left-4 z-20 bg-kith-bg/90 backdrop-blur-md px-3 py-1 border border-sara-red/40 flex items-center gap-2 rounded-sm shadow-md">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span className="text-[9px] font-mono font-bold tracking-widest text-kith-bone uppercase">
-                    OFFICIAL HARDWARE SHOWCASE
-                  </span>
-                </div>
-
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
-                  <img
-                    src={getSettingUrl('hero_banner', heroBannerImg.src)}
-                    alt="Sara Power Solution Systems Hardware Banner"
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                  {/* Subtle Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-kith-bg/90 via-transparent to-transparent pointer-events-none" />
-                </div>
-
-                {/* Bottom Banner Meta Bar */}
-                <div className="p-4 bg-kith-subBg/90 border-t border-sara-red/25 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-xs font-mono font-bold text-kith-bone uppercase tracking-wider">
-                      Sara Power Energy Systems
-                    </span>
-                    <span className="text-[10px] font-mono text-sara-red dark:text-red-400">
-                      Tier-1 Inverters, Lithium Storage & Arrays
-                    </span>
-                  </div>
-                  <Link
-                    href="/catalog"
-                    className="px-3 py-1.5 bg-sara-red/15 hover:bg-sara-red text-sara-red dark:text-red-300 hover:text-white border border-sara-red/40 text-[10px] font-mono font-bold tracking-widest uppercase transition-all rounded-sm"
-                  >
-                    VIEW SPECS →
-                  </Link>
-                </div>
-              </div>
-            </div>
-
+          {/* CTA Buttons */}
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+            <Link
+              href="/catalog"
+              className="w-full sm:w-auto px-10 py-4 bg-white text-black hover:bg-gray-200 text-xs font-mono font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 rounded-sm"
+            >
+              EXPLORE EQUIPMENT
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/calculator"
+              className="w-full sm:w-auto px-10 py-4 bg-black/40 backdrop-blur-md text-white border border-white/30 hover:bg-black/60 hover:border-white text-xs font-mono font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 rounded-sm"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-500" />
+              LOAD CALCULATOR
+            </Link>
           </div>
         </div>
       </section>

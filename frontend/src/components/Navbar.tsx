@@ -35,9 +35,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const activeLogoUrl = theme === 'light'
-    ? getSettingUrl('logo_light', '/logo.png')
-    : getSettingUrl('logo_dark', '/logo.png');
+  const isHomeAtTop = pathname === '/' && !isScrolled;
+
+  const activeLogoUrl = isHomeAtTop
+    ? getSettingUrl('logo_dark', '/logo.png')
+    : theme === 'light'
+      ? getSettingUrl('logo_light', '/logo.png')
+      : getSettingUrl('logo_dark', '/logo.png');
 
   interface NavLinkItem {
     label: string;
@@ -63,7 +67,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 print:hidden ${isScrolled
         ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-md border-b border-slate-200/80 dark:border-sara-red/30'
-        : 'bg-kith-bg/85 dark:bg-black/80 backdrop-blur-sm border-b border-sara-red/20'
+        : isHomeAtTop
+          ? 'bg-transparent border-b border-white/10'
+          : 'bg-kith-bg/85 dark:bg-black/80 backdrop-blur-sm border-b border-sara-red/20'
         }`}
     >
 
@@ -94,9 +100,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
                   ? 'text-sara-red dark:text-red-400 bg-sara-red/10 border-sara-red/40 shadow-sm'
                   : link.highlight
                     ? 'text-amber-600 dark:text-amber-400 hover:text-amber-500 hover:bg-amber-500/10 border-transparent hover:border-amber-500/30'
-                    : isScrolled
-                      ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 border-transparent dark:text-slate-300 dark:hover:text-red-400 dark:hover:bg-sara-red/10'
-                      : 'text-slate-800 dark:text-kith-bone hover:text-sara-red dark:hover:text-red-400 hover:bg-sara-red/5 border-transparent'
+                    : isHomeAtTop
+                      ? 'text-white/90 hover:text-white hover:bg-white/10 border-transparent'
+                      : isScrolled
+                        ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 border-transparent dark:text-slate-300 dark:hover:text-red-400 dark:hover:bg-sara-red/10'
+                        : 'text-slate-800 dark:text-kith-bone hover:text-sara-red dark:hover:text-red-400 hover:bg-sara-red/5 border-transparent'
                   }`}
               >
                 {link.highlight && <Zap className="w-3.5 h-3.5 animate-pulse text-amber-500" />}
@@ -114,14 +122,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
               <div className="relative w-9 h-9 sm:w-10 sm:h-10 border border-sara-red/40 bg-transparent p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-105">
                 <img src={activeLogoUrl} alt={companyName} className="h-full w-full object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
               </div>
-              <span className={`text-[32px] sm:text-[42px] font-black leading-none tracking-widest transition-colors font-mono uppercase ${isScrolled
-                ? 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
-                : 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
+              <span className={`text-[32px] sm:text-[42px] font-black leading-none tracking-widest transition-colors font-mono uppercase ${isHomeAtTop
+                ? 'text-white group-hover:text-white/80'
+                : isScrolled
+                  ? 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
+                  : 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
                 }`}>
                 Sara
               </span>
             </div>
-            <span className="text-[10px] sm:text-xs font-mono tracking-widest text-sara-red dark:text-red-400 uppercase font-bold mt-1 text-center w-full">
+            <span className={`text-[10px] sm:text-xs font-mono tracking-widest uppercase font-bold mt-1 text-center w-full ${isHomeAtTop ? 'text-white/80' : 'text-sara-red dark:text-red-400'}`}>
               Power Solutions PLC
             </span>
           </Link>
@@ -152,9 +162,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
           {onSearchToggle && (
             <button
               onClick={onSearchToggle}
-              className={`p-2 rounded-sm transition-colors ${isScrolled
-                ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 dark:text-red-400 dark:hover:bg-sara-red/10'
-                : 'text-sara-red dark:text-red-400 hover:bg-sara-red/10'
+              className={`p-2 rounded-sm transition-colors ${isHomeAtTop
+                ? 'text-white/90 hover:text-white hover:bg-white/10'
+                : isScrolled
+                  ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 dark:text-red-400 dark:hover:bg-sara-red/10'
+                  : 'text-sara-red dark:text-red-400 hover:bg-sara-red/10'
                 }`}
               title="Search Database"
             >
