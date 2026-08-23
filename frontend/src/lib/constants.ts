@@ -7,8 +7,8 @@ export const SHORT_ABOUT_US = 'Sara Power Solution plc is a premier supplier bas
 export const PRIMARY_EMAIL = 'mube@gmail.com';
 export const SECONDARY_EMAIL = 'mube123@gmail.com';
 export const OFFICIAL_EMAIL = PRIMARY_EMAIL;
-export const PRIMARY_PHONE = '+251 95 483 4159';
-export const SECONDARY_PHONE = '+251 91 123 4567';
+export const PRIMARY_PHONE = '+251 91 080 9090';
+export const SECONDARY_PHONE = '+251 95 483 4159';
 export const WHATSAPP_NUMBER = '251910809090';
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
 

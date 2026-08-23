@@ -49,11 +49,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
     { label: 'Equipment Catalog', href: '/catalog' },
     { label: 'Solar Calculator', href: '/calculator', highlight: true },
     { label: 'Solar Services', href: '/services' },
+    { label: 'Featured Products', href: '/#featured' },
+    { label: 'About Us', href: '/about' },
   ];
 
   const rightNavLinks: NavLinkItem[] = [
-    { label: 'Featured Products', href: '/#featured' },
-    { label: 'About Us', href: '/about' },
+
   ];
 
   const allMobileNavLinks: NavLinkItem[] = [...leftNavLinks, ...rightNavLinks];
@@ -61,8 +62,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 print:hidden ${isScrolled
-          ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-md border-b border-slate-200/80 dark:border-sara-red/30'
-          : 'bg-kith-bg/85 dark:bg-black/80 backdrop-blur-sm border-b border-sara-red/20'
+        ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-md border-b border-slate-200/80 dark:border-sara-red/30'
+        : 'bg-kith-bg/85 dark:bg-black/80 backdrop-blur-sm border-b border-sara-red/20'
         }`}
     >
 
@@ -90,12 +91,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
                 key={link.href}
                 href={link.href}
                 className={`px-3 lg:px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase transition-all rounded-sm border flex items-center gap-1.5 ${isActive
-                    ? 'text-sara-red dark:text-red-400 bg-sara-red/10 border-sara-red/40 shadow-sm'
-                    : link.highlight
-                      ? 'text-amber-600 dark:text-amber-400 hover:text-amber-500 hover:bg-amber-500/10 border-transparent hover:border-amber-500/30'
-                      : isScrolled
-                        ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 border-transparent dark:text-slate-300 dark:hover:text-red-400 dark:hover:bg-sara-red/10'
-                        : 'text-slate-800 dark:text-kith-bone hover:text-sara-red dark:hover:text-red-400 hover:bg-sara-red/5 border-transparent'
+                  ? 'text-sara-red dark:text-red-400 bg-sara-red/10 border-sara-red/40 shadow-sm'
+                  : link.highlight
+                    ? 'text-amber-600 dark:text-amber-400 hover:text-amber-500 hover:bg-amber-500/10 border-transparent hover:border-amber-500/30'
+                    : isScrolled
+                      ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 border-transparent dark:text-slate-300 dark:hover:text-red-400 dark:hover:bg-sara-red/10'
+                      : 'text-slate-800 dark:text-kith-bone hover:text-sara-red dark:hover:text-red-400 hover:bg-sara-red/5 border-transparent'
                   }`}
               >
                 {link.highlight && <Zap className="w-3.5 h-3.5 animate-pulse text-amber-500" />}
@@ -114,8 +115,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
                 <img src={activeLogoUrl} alt={companyName} className="h-full w-full object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
               </div>
               <span className={`text-[32px] sm:text-[42px] font-black leading-none tracking-widest transition-colors font-mono uppercase ${isScrolled
-                  ? 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
-                  : 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
+                ? 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
+                : 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
                 }`}>
                 Sara
               </span>
@@ -136,10 +137,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
                   key={link.href}
                   href={link.href}
                   className={`px-3.5 py-2 text-xs font-mono font-bold tracking-widest uppercase transition-all rounded-sm border flex items-center gap-1.5 ${isActive
-                      ? 'text-sara-red dark:text-red-400 bg-sara-red/10 border-sara-red/40 shadow-sm'
-                      : isScrolled
-                        ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 border-transparent dark:text-slate-300 dark:hover:text-red-400 dark:hover:bg-sara-red/10'
-                        : 'text-slate-800 dark:text-kith-bone hover:text-sara-red dark:hover:text-red-400 hover:bg-sara-red/5 border-transparent'
+                    ? 'text-sara-red dark:text-red-400 bg-sara-red/10 border-sara-red/40 shadow-sm'
+                    : isScrolled
+                      ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 border-transparent dark:text-slate-300 dark:hover:text-red-400 dark:hover:bg-sara-red/10'
+                      : 'text-slate-800 dark:text-kith-bone hover:text-sara-red dark:hover:text-red-400 hover:bg-sara-red/5 border-transparent'
                     }`}
                 >
                   <span>{link.label}</span>
@@ -152,8 +153,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
             <button
               onClick={onSearchToggle}
               className={`p-2 rounded-sm transition-colors ${isScrolled
-                  ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 dark:text-red-400 dark:hover:bg-sara-red/10'
-                  : 'text-sara-red dark:text-red-400 hover:bg-sara-red/10'
+                ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 dark:text-red-400 dark:hover:bg-sara-red/10'
+                : 'text-sara-red dark:text-red-400 hover:bg-sara-red/10'
                 }`}
               title="Search Database"
             >
@@ -172,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
             className="hidden sm:flex items-center gap-2 px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase text-white bg-sara-red hover:bg-sara-redLight border border-sara-red/60 shadow-[0_0_15px_rgba(111,15,16,0.25)] hover:shadow-[0_0_20px_rgba(111,15,16,0.45)] transition-all duration-200 group rounded-sm"
           >
             <Phone className="w-3.5 h-3.5 text-white" />
-            <span className="hidden xl:inline">{PRIMARY_PHONE}</span>
+            <span className="hidden md:inline">{PRIMARY_PHONE}</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
