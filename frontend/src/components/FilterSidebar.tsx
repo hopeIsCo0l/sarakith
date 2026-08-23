@@ -65,13 +65,18 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <button
                 key={cat.id}
                 onClick={() => onFilterChange({ categorySlug: cat.slug })}
-                className={`w-full text-left px-3 py-2 text-xs font-mono uppercase tracking-wider transition-colors flex items-center justify-between border ${
+                className={`w-full text-left py-2 pr-3 text-xs font-mono uppercase tracking-wider transition-colors flex items-center justify-between border ${
+                  cat.parent_id ? 'pl-7' : 'pl-3'
+                } ${
                   isSelected
                     ? 'bg-kith-btnPrimaryBg text-kith-btnPrimaryText font-bold border-kith-btnPrimaryBg shadow-sm'
                     : 'bg-kith-subBg text-kith-muted border-kith-border hover:text-kith-bone hover:border-kith-borderLight'
                 }`}
               >
-                <span>{cat.name}</span>
+                <span className="flex items-center gap-2">
+                  {cat.parent_id && <span className="text-kith-darkMuted opacity-50 text-[10px]">↳</span>}
+                  {cat.name}
+                </span>
                 {isSelected && <span className="text-[10px]">●</span>}
               </button>
             );
