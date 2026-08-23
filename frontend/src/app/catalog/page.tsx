@@ -78,8 +78,13 @@ export default function CatalogPage() {
     return allProducts
       .filter((p) => {
         // Category filter
-        if (filters.categorySlug !== 'all' && p.category?.slug !== filters.categorySlug) {
-          return false;
+        if (filters.categorySlug !== 'all') {
+          const matchCategory = p.category?.slug === filters.categorySlug;
+          const matchSubCategory = p.sub_category?.slug === filters.categorySlug;
+          
+          if (!matchCategory && !matchSubCategory) {
+            return false;
+          }
         }
 
         // Search query filter (matches name, description, SKU, details)
