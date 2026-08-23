@@ -35,7 +35,7 @@ export default function SolarCalculatorPage() {
   return (
     <div className="max-w-[1700px] mx-auto px-4 sm:px-8 py-10 space-y-12">
       {/* Top Breadcrumb & Page Banner */}
-      <div className="border-b border-kith-border pb-6 space-y-2">
+      <div className="border-b border-kith-border pb-6 space-y-2 print:hidden">
         <div className="flex items-center gap-2 text-[10px] font-mono tracking-superwide text-kith-muted uppercase">
           <Link href="/" className="hover:text-kith-bone transition-colors">
             HOME
@@ -55,7 +55,7 @@ export default function SolarCalculatorPage() {
       <SolarCalculator initialMode="appliance" />
 
       {/* Matching Catalog Hardware Section */}
-      <section className="space-y-6 pt-8 border-t border-kith-border">
+      <section className="space-y-6 pt-8 border-t border-kith-border print:hidden">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div className="text-[10px] font-mono tracking-superwide text-kith-muted uppercase">
@@ -82,7 +82,7 @@ export default function SolarCalculatorPage() {
       </section>
 
       {/* Turnkey Engineering Callout */}
-      <section className="p-8 bg-kith-subBg border border-kith-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <section className="p-8 bg-kith-subBg border border-kith-border flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden">
         <div className="space-y-2 max-w-2xl">
           <div className="inline-flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 uppercase tracking-widest">
             <ShieldCheck className="w-3.5 h-3.5" />

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, Phone, ShieldCheck, Tag } from 'lucide-react';
+import { X, Phone, ShieldCheck, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { PRIMARY_PHONE, WHATSAPP_LINK } from '@/lib/constants';
 
@@ -35,15 +35,31 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
 
         {/* Left Column: Image Gallery */}
         <div className="w-full md:w-1/2 bg-kith-subBg border-b md:border-b-0 md:border-r border-kith-border flex flex-col">
-          <div className="relative aspect-[3/4] w-full">
+          <div className="relative aspect-square w-full max-w-[500px] mx-auto flex items-center justify-center group">
             <Image
               src={activeImage}
               alt={product.name}
               fill
-              className="object-cover"
+              className="object-contain p-4"
             />
+            {product.images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setSelectedImgIndex((prev) => (prev > 0 ? prev - 1 : product.images.length - 1))}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setSelectedImgIndex((prev) => (prev < product.images.length - 1 ? prev + 1 : 0))}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
             <div className="absolute bottom-3 left-3 px-2 py-0.5 bg-kith-card/90 text-kith-bone text-[10px] font-mono tracking-widest uppercase border border-kith-border">
-              HIGH RES IMAGE {selectedImgIndex + 1} OF {product.images.length || 1}
+              IMAGE {selectedImgIndex + 1} OF {product.images.length || 1}
             </div>
           </div>
 

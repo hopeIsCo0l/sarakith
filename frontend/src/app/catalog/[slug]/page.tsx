@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Phone, ArrowLeft, ShieldCheck, Truck } from 'lucide-react';
+import { Phone, ArrowLeft, ShieldCheck, Truck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getProductBySlug, getProducts } from '@/lib/supabase';
 import { Product } from '@/lib/types';
 import { ProductCard } from '@/components/ProductCard';
@@ -65,14 +65,33 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left Column: Image Gallery (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="relative aspect-[3/4] w-full bg-kith-subBg border border-kith-border overflow-hidden">
+          <div className="relative aspect-square w-full max-w-[600px] mx-auto bg-kith-subBg border border-kith-border overflow-hidden group">
             <Image
               src={activeImage}
               alt={product.name}
               fill
               priority
-              className="object-cover object-center"
+              className="object-contain object-center p-4"
             />
+            {product.images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setSelectedImgIndex((prev) => (prev > 0 ? prev - 1 : product.images.length - 1))}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setSelectedImgIndex((prev) => (prev < product.images.length - 1 ? prev + 1 : 0))}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+            <div className="absolute bottom-4 left-4 px-2.5 py-1 bg-kith-card/90 text-kith-bone text-[10px] font-mono tracking-widest uppercase border border-kith-border shadow-sm">
+              IMAGE {selectedImgIndex + 1} OF {product.images.length || 1}
+            </div>
           </div>
 
           {/* Thumbnails */}

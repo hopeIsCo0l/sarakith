@@ -60,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 print:hidden ${isScrolled
           ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-md border-b border-slate-200/80 dark:border-sara-red/30'
           : 'bg-kith-bg/85 dark:bg-black/80 backdrop-blur-sm border-b border-sara-red/20'
         }`}

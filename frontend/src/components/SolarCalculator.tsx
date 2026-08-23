@@ -241,9 +241,15 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
   };
 
   return (
-    <div className="w-full space-y-10">
+    <div className="w-full space-y-10 print:space-y-6">
+      {/* Print-only Professional Header */}
+      <div className="hidden print:flex flex-col items-center justify-center border-b-2 border-sara-red/30 pb-4 mb-4 space-y-1 text-center">
+        <h1 className="text-2xl font-bold font-mono tracking-widest uppercase text-slate-900">SARA POWER SOLUTIONS PLC</h1>
+        <h2 className="text-sm font-mono tracking-wider text-slate-600">OFFICIAL SOLAR SIZING REPORT</h2>
+      </div>
+
       {/* Header & Mode Switcher Bar */}
-      <div className="bg-kith-subBg border border-kith-border p-6 rounded-none flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-kith-subBg border border-kith-border p-6 rounded-none flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden">
         <div className="space-y-1.5">
           <div className="inline-flex items-center gap-2 text-[10px] font-mono tracking-superwide uppercase text-amber-500">
             <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
@@ -288,7 +294,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
       {/* Main Interactive Grid: Left Controls (Appliances / Sliders) + Right Live Telemetry & Results */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Inputs (7 Cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-6 print:hidden">
           {mode === 'appliance' ? (
             /* Mode 1: Appliance Checklist */
             <div className="space-y-4">
@@ -646,7 +652,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
         </div>
 
         {/* Right Column: Live Technical Telemetry & Recommendations (5 Cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-6 print:col-span-12">
           {/* Live System Sizing Telemetry Box */}
           <div className="bg-kith-subBg border border-kith-border p-6 space-y-6">
             <div className="flex items-center justify-between border-b border-kith-border pb-3">
@@ -748,7 +754,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
             </div>
 
             {/* Quick Action Toolbar */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3 pt-2 print:hidden">
               <a
                 href={whatsAppUrl}
                 target="_blank"
