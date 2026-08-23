@@ -139,7 +139,7 @@ export const Footer: React.FC = () => {
               <Zap className="w-3.5 h-3.5" />
               <span>Solar Inventory</span>
             </div>
-            <ul className="space-y-2.5 text-xs font-mono text-kith-muted">
+            <ul className="space-y-2.5 text-xs font-mono text-kith-muted uppercase">
               <li>
                 <Link href="/catalog" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
                   <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
@@ -179,7 +179,7 @@ export const Footer: React.FC = () => {
               <Cpu className="w-3.5 h-3.5" />
               <span>Engineering Services</span>
             </div>
-            <ul className="space-y-2.5 text-xs font-mono text-kith-muted">
+            <ul className="space-y-2.5 text-xs font-mono text-kith-muted uppercase">
               <li>
                 <Link href="/services" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
                   <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
