@@ -122,6 +122,7 @@ export default function AdminPage() {
   const [catName, setCatName] = useState('');
   const [catSlug, setCatSlug] = useState('');
   const [catDescription, setCatDescription] = useState('');
+  const [catImageUrl, setCatImageUrl] = useState('');
   const [catParentId, setCatParentId] = useState('');
   const [catDisplayOrder, setCatDisplayOrder] = useState<number>(1);
 
@@ -530,6 +531,7 @@ export default function AdminPage() {
     setCatName('');
     setCatSlug('');
     setCatDescription('');
+    setCatImageUrl('');
     setCatParentId('');
     setCatDisplayOrder(categories.length + 1);
     setIsCategoryModalOpen(true);
@@ -540,6 +542,7 @@ export default function AdminPage() {
     setCatName(cat.name);
     setCatSlug(cat.slug);
     setCatDescription(cat.description || '');
+    setCatImageUrl(cat.image_url || '');
     setCatParentId(cat.parent_id || '');
     setCatDisplayOrder(cat.display_order);
     setIsCategoryModalOpen(true);
@@ -558,6 +561,7 @@ export default function AdminPage() {
         name: catName,
         slug,
         description: catDescription,
+        image_url: catImageUrl || null,
         parent_id: catParentId || null,
         display_order: Number(catDisplayOrder),
       });
@@ -571,7 +575,7 @@ export default function AdminPage() {
       setCategories((prev) =>
         prev.map((c) =>
           c.id === editingCategoryId
-            ? { ...c, name: catName, slug, description: catDescription, display_order: Number(catDisplayOrder) }
+            ? { ...c, name: catName, slug, description: catDescription, image_url: catImageUrl || null, display_order: Number(catDisplayOrder) }
             : c
         )
       );
@@ -581,6 +585,7 @@ export default function AdminPage() {
         name: catName,
         slug,
         description: catDescription,
+        image_url: catImageUrl || null,
         parent_id: catParentId || null,
         display_order: Number(catDisplayOrder),
       });
@@ -596,6 +601,7 @@ export default function AdminPage() {
         name: catName,
         slug,
         description: catDescription,
+        image_url: catImageUrl || null,
         display_order: Number(catDisplayOrder),
         created_at: new Date().toISOString(),
       };
@@ -2081,6 +2087,47 @@ export default function AdminPage() {
                   placeholder="Brief description of items in this category..."
                   className="w-full bg-kith-subBg border border-kith-border p-3 text-kith-bone focus:outline-none"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase text-kith-muted block">CATEGORY COVER IMAGE (OPTIONAL)</label>
+                <div className="flex items-center gap-4">
+                  {catImageUrl && (
+                    <div className="relative w-24 h-24 border border-kith-border">
+                      <img src={catImageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setCatImageUrl('')}
+                        className="absolute -top-2 -right-2 bg-sara-red text-white p-1 rounded-full hover:bg-red-700"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                  <label className="flex flex-col items-center justify-center w-24 h-24 border border-dashed border-kith-muted hover:border-kith-bone cursor-pointer transition-colors">
+                    <Upload className="w-6 h-6 text-kith-muted mb-1" />
+                    <span className="text-[8px] text-kith-muted uppercase text-center">Upload<br/>Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setSubmitting(true);
+                          try {
+                            const url = await uploadImageToSupabase(file, `category-${Date.now()}`);
+                            if (url) setCatImageUrl(url);
+                          } catch (err) {
+                            showErrorToast('Failed to upload category image.');
+                          } finally {
+                            setSubmitting(false);
+                          }
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-kith-border">

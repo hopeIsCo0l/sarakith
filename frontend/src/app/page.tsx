@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle, Building2, Award, Users, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getProducts, supabase } from '@/lib/supabase';
-import { Product } from '@/lib/types';
+import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle, Building2, Award, Users, ChevronLeft, ChevronRight, Layers } from 'lucide-react';
+import { getProducts, getCategories, supabase } from '@/lib/supabase';
+import { Product, Category } from '@/lib/types';
 import { ProductGrid } from '@/components/ProductGrid';
 import { QuickViewModal } from '@/components/QuickViewModal';
 import { HERO_HEADER, BRAND_TAGLINE } from '@/lib/constants';
@@ -16,6 +16,7 @@ import { useTheme } from '@/context/ThemeContext';
 export default function HomePage() {
   const { getSettingUrl } = useSiteSettings();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [parentCategories, setParentCategories] = useState<Category[]>([]);
   const [selectedQuickView, setSelectedQuickView] = useState<Product | null>(null);
 
   // Carousel State
@@ -59,8 +60,12 @@ export default function HomePage() {
 
   useEffect(() => {
     async function loadData() {
-      const data = await getProducts({ isFeatured: true });
+      const [data, cats] = await Promise.all([
+        getProducts({ isFeatured: true }),
+        getCategories()
+      ]);
       setFeaturedProducts(data);
+      setParentCategories(cats.filter((c) => !c.parent_id));
     }
     loadData();
 
@@ -193,6 +198,49 @@ export default function HomePage() {
               LOAD CALCULATOR
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Parent Categories Section */}
+      <section className="max-w-[1700px] mx-auto px-4 sm:px-8 space-y-6 relative z-10 pt-10">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-sara-red/30 pb-4 gap-4">
+          <div>
+            <span className="text-[10px] font-mono font-bold tracking-superwide text-sara-red dark:text-red-400 uppercase block mb-1 flex items-center gap-2">
+              <Layers className="w-3 h-3" /> CATEGORY_INDEX
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black font-mono tracking-widest text-kith-bone uppercase">
+              Explore Our Catalogs
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {parentCategories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/catalog?category=${cat.slug}`}
+              className="group tech-panel rounded-sm border border-sara-red/30 overflow-hidden flex flex-col h-40 sm:h-48 relative transition-all hover:border-sara-red hover:shadow-lg"
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10"></div>
+              {cat.image_url ? (
+                <img
+                  src={cat.image_url}
+                  alt={cat.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-kith-subBg flex items-center justify-center">
+                  <span className="text-xs font-mono text-kith-muted uppercase">No Image</span>
+                </div>
+              )}
+              <div className="relative z-20 mt-auto p-4 flex items-center justify-between">
+                <span className="text-sm sm:text-base font-bold font-mono text-white uppercase tracking-wider group-hover:text-sara-red transition-colors">
+                  {cat.name}
+                </span>
+                <ArrowRight className="w-4 h-4 text-white opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
