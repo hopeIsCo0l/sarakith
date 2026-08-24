@@ -126,7 +126,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
             
             {/* Text Stack */}
             <div className="relative z-10 flex flex-col justify-between py-0.5">
-              <span className={`text-[24px] sm:text-[32px] font-black leading-[0.8] tracking-wide transition-colors font-sans uppercase ${isHomeAtTop
+              <span className={`text-[24px] sm:text-[32px] font-black leading-[0.8] tracking-wide transition-colors font-sans uppercase translate-y-[2px] sm:translate-y-[4px] ${isHomeAtTop
                 ? 'text-white group-hover:text-white/80'
                 : isScrolled
                   ? 'text-[#1a1f2e] dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
