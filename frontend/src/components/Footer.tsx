@@ -16,7 +16,7 @@ import {
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/context/ThemeContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
-import { getServices } from '@/lib/supabase';
+import { getServices, supabase } from '@/lib/supabase';
 import { Service } from '@/lib/types';
 
 export const Footer: React.FC = () => {
@@ -33,7 +33,37 @@ export const Footer: React.FC = () => {
         console.error('Failed to fetch services for footer', e);
       }
     }
+    
     fetchServices();
+
+    // 1. Instant re-fetch on window focus
+    const handleFocus = () => fetchServices();
+    window.addEventListener('focus', handleFocus);
+
+    // 2. Cross-tab & intra-window broadcast sync
+    const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('sara_power_sync') : null;
+    if (broadcast) {
+      broadcast.onmessage = () => fetchServices();
+    }
+    window.addEventListener('sara_data_updated', fetchServices);
+
+    // 3. Live Supabase Realtime Postgres Changes Subscription
+    let channel: any;
+    if (supabase) {
+      channel = supabase
+        .channel('realtime_footer_services')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'services' }, () => {
+          fetchServices();
+        })
+        .subscribe();
+    }
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('sara_data_updated', fetchServices);
+      if (broadcast) broadcast.close();
+      if (channel && supabase) supabase.removeChannel(channel);
+    };
   }, []);
 
   const activeLogoUrl = theme === 'light'
@@ -185,10 +215,10 @@ export const Footer: React.FC = () => {
                 <span>{physicalAddress}</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <img src="/icons/whatsapp.png" alt="WhatsApp" className="w-4 h-4 object-contain shrink-0" />
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-sara-red dark:hover:text-red-400 transition-colors">
+                <Phone className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0" />
+                <span>
                   {primaryPhone} {secondaryPhone ? `/ ${secondaryPhone}` : ''}
-                </a>
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0" />
