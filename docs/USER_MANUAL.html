@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sara Power Solution - User Manual</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+        
+        :root {
+            --sara-red: #6F0F10;
+            --sara-red-light: #8A1516;
+            --bg-color: #F8F6F0;
+            --text-main: #111111;
+            --text-muted: #555555;
+            --border-color: rgba(111, 15, 16, 0.2);
+        }
+
+        @page {
+            margin: 1in;
+            @bottom-right {
+                content: counter(page);
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 10px;
+                color: var(--sara-red);
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cover-page {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            border-bottom: 4px solid var(--sara-red);
+            margin-bottom: 60px;
+            page-break-after: always;
+        }
+
+        .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            color: var(--sara-red);
+            text-transform: uppercase;
+            padding: 6px 12px;
+            border: 1px solid var(--sara-red);
+            background: rgba(111, 15, 16, 0.05);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            margin: 0 0 10px 0;
+            line-height: 1.1;
+        }
+
+        h2.subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin: 0 0 40px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--sara-red);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 50px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 30px;
+            color: var(--text-main);
+            page-break-after: avoid;
+        }
+
+        p, ul, li {
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            font-weight: 600;
+            color: var(--sara-red);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: rgba(111, 15, 16, 0.08);
+            padding: 2px 6px;
+            color: var(--sara-red);
+            border-radius: 2px;
+        }
+
+        .highlight-box {
+            background: #ffffff;
+            border-left: 4px solid var(--sara-red);
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            page-break-inside: avoid;
+        }
+        
+        .highlight-box p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cover-page">
+        <div class="tag">System Documentation</div>
+        <h1>Sara Power<br>Solution PLC</h1>
+        <h2 class="subtitle">Official Administrator & User Manual v1.5</h2>
+        <p style="max-width: 500px; color: var(--text-muted);">
+            Comprehensive guide for operating the digital showcase, administrative portal, dynamic branding manager, and FR-2 solar engineering engine.
+        </p>
+    </div>
+
+    <h2>1. System Overview & Access</h2>
+    
+    <h3>1.1 The Public Showcase</h3>
+    <p>The public URL is your luxury digital storefront. It is optimized for performance, mobile responsiveness, and high-end visual aesthetics.</p>
+    <ul>
+        <li><strong>Homepage:</strong> Features the cinematic auto-advancing hero carousel, mission statement, featured products, and quick-access categories.</li>
+        <li><strong>Equipment Catalog:</strong> A structured hierarchical inventory system where users can filter by category, sub-category, stock status, and price.</li>
+        <li><strong>Solar Sizing Engine:</strong> An interactive engineering tool that calculates required inverter and battery sizes.</li>
+    </ul>
+
+    <h3>1.2 The Administrator Dashboard</h3>
+    <p>To manage the platform, navigate to the <code>/admin</code> route.</p>
+    
+    <div class="highlight-box">
+        <p><strong>Authentication:</strong> The admin portal is protected by a session-based secure passcode.<br>
+        <strong>Current Passcode:</strong> <code>Sara Power2026</code><br>
+        <em>Note: Entering this successfully grants full database access. Do not share outside of authorized personnel.</em></p>
+    </div>
+
+    <h2>2. Dynamic Branding & Settings</h2>
+    <p>The <strong>Settings Tab</strong> in the Admin Dashboard is the central nervous system for your brand's digital presence. Changes made here reflect instantly across the entire platform.</p>
+
+    <h3>2.1 Logos & Hero Banners</h3>
+    <ul>
+        <li><strong>Cinematic Hero Carousel:</strong> The homepage features a massive auto-advancing carousel with 4 image slots (<code>Slide 1</code> - <code>Slide 4</code>).</li>
+        <li><strong>Adding/Removing:</strong> Click <strong>UPLOAD NEW</strong> to select an image, or <strong>REMOVE</strong> to clear a slot. The carousel automatically skips empty slots seamlessly.</li>
+        <li><strong>Saving:</strong> You MUST click the large <strong>SAVE ASSET</strong> button to lock your changes into the database.</li>
+    </ul>
+
+    <h3>2.2 Company Info & Social Telemetry</h3>
+    <ul>
+        <li>Update your Mission Statement, Company Title, Physical Address, and Phone Numbers directly from the dashboard.</li>
+        <li><strong>Social Media Links:</strong> Manage links to Telegram, Instagram, TikTok, and LinkedIn. Leaving a URL blank will automatically hide that specific social icon from the website footer.</li>
+    </ul>
+
+    <h2>3. Inventory Control</h2>
+
+    <h3>3.1 Managing Categories</h3>
+    <p>The system uses a hierarchical structure to keep the catalog luxurious and organized.</p>
+    <ul>
+        <li><strong>Parent Categories:</strong> Top-level classifications (e.g., "Solar Panels") that appear in the left sidebar.</li>
+        <li><strong>Sub-Categories:</strong> Appear as sleek, clickable pill-buttons at the top of the catalog when a user selects a Parent Category. Create these by assigning a "Parent Category" during creation.</li>
+    </ul>
+
+    <h3>3.2 Managing Products</h3>
+    <ul>
+        <li><strong>Technical Specifications:</strong> Specify exact engineering details like Voltage, Capacity, Weight, and Power Output.</li>
+        <li><strong>Stock Status:</strong> Flag items as <code>In Stock</code>, <code>Low Stock</code>, <code>Preorder</code>, or <code>Sold Out</code>. Sold Out items will be visibly greyed out on the public showcase.</li>
+        <li><strong>Featured Showcase:</strong> Enabling the "Featured" star pushes a product to the rotating "Featured Drops" display on the homepage.</li>
+    </ul>
+
+    <h2>4. The FR-2 Solar Sizing Engine</h2>
+
+    <h3>4.1 Client Operations</h3>
+    <ul>
+        <li><strong>Mode 1 (Appliance Checklist):</strong> Clients select standard household appliances, adjust quantities, and set their estimated daily runtime hours.</li>
+        <li><strong>Mode 2 (Direct kW Input):</strong> Advanced clients can directly drag sliders for Peak Load (kW) and Daily Energy Demand (kWh).</li>
+    </ul>
+
+    <h3>4.2 Intelligent Output & Lead Generation</h3>
+    <p>The engine mathematically calculates the required Inverter size and Battery capacity, applying standard efficiency losses.</p>
+    <ul>
+        <li><strong>System Tiers:</strong> It recommends 3 matched system packages (Essential Backup, Hybrid Kit, Master Kit).</li>
+        <li><strong>One-Click Inquiry:</strong> Clients can click <strong>"Send Inquiry"</strong> to automatically format their exact load profile into a message routed directly to your WhatsApp or Telegram.</li>
+    </ul>
+
+    <div class="highlight-box">
+        <p><strong>Professional PDF Reporting:</strong> The calculator is highly optimized for offline engineering reports. If a client prints the page (Ctrl+P / Cmd+P), the system aggressively hides website navigation and branding clutter, generating a clean, professional, white-label PDF engineering report.</p>
+    </div>
+
+</body>
+</html>

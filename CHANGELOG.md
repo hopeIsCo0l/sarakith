@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.5.0] - 2026-08-23
+
+### Added
+- **Dynamic Branding Manager (`/admin`)**:
+  - Real-time management of up to 4 homepage hero banners directly from the Settings tab.
+  - Ability to seamlessly update company logos, mission statements, social media links (Telegram, Instagram, TikTok, LinkedIn), and contact telemetry without redeploying.
+- **Cinematic Hero Carousel**:
+  - Upgraded the homepage hero section to a 4-slide, edge-to-edge auto-advancing carousel with CSS cross-fading.
+  - Included sleek frosted-glass manual navigation controls and slide counters.
+- **Luxury Category Drill-down (`/catalog`)**:
+  - Introduced a dynamic Category Header Block that displays category descriptions and titles.
+  - Added interactive sub-category filter pill-buttons for a premium e-commerce browsing experience.
+
+### Changed
+- **"Kith-style" UI Redesign**: Transitioned the entire frontend to a premium, minimalist aesthetic featuring high-contrast typography, edge-to-edge layouts, and "liquid glass" navigation bars.
+- **Print Optimization**: Implemented aggressive CSS print rules (`print:hidden`) on the Solar Calculator page to ensure clean, professional, and branded PDF report generation.
+
+---
+
 ## [1.4.0] - 2026-08-07
 
 ### Added

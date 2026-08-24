@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, ShieldCheck, Zap, ArrowUpRight, Cpu } from 'lucide-react';
 import {
@@ -16,10 +16,25 @@ import {
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/context/ThemeContext';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getServices } from '@/lib/supabase';
+import { Service } from '@/lib/types';
 
 export const Footer: React.FC = () => {
   const { theme } = useTheme();
   const { getSettingUrl, getSettingValue } = useSiteSettings();
+  const [services, setServices] = useState<Service[]>([]);
+
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const fetchedServices = await getServices();
+        setServices(fetchedServices.filter(s => s.is_active).slice(0, 4));
+      } catch (e) {
+        console.error('Failed to fetch services for footer', e);
+      }
+    }
+    fetchServices();
+  }, []);
 
   const activeLogoUrl = theme === 'light'
     ? getSettingUrl('logo_light', '/logo.png')
@@ -45,7 +60,7 @@ export const Footer: React.FC = () => {
 
       {/* Main Grid */}
       <div className="max-w-[1700px] mx-auto px-4 sm:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Column 1: Brand & Bio */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex flex-col items-start">
@@ -133,45 +148,6 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Column 2: Equipment Categories */}
-          <div className="space-y-4">
-            <div className="text-xs font-mono font-bold tracking-superwide text-sara-red dark:text-red-400 uppercase flex items-center gap-2 border-b border-sara-red/20 pb-2">
-              <Zap className="w-3.5 h-3.5" />
-              <span>Solar Inventory</span>
-            </div>
-            <ul className="space-y-2.5 text-xs font-mono text-kith-muted uppercase">
-              <li>
-                <Link href="/catalog" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  Hybrid Inverters (3kW - 11kW)
-                </Link>
-              </li>
-              <li>
-                <Link href="/catalog" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  LiFePO4 Lithium Storage
-                </Link>
-              </li>
-              <li>
-                <Link href="/catalog" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  Monocrystalline Solar Panels
-                </Link>
-              </li>
-              <li>
-                <Link href="/catalog" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  MPPT Charge Controllers
-                </Link>
-              </li>
-              <li>
-                <Link href="/calculator" className="text-sara-red dark:text-red-400 font-bold hover:underline flex items-center gap-1">
-                  <Zap className="w-3 h-3 animate-pulse" />
-                  Load Calculator Sizer
-                </Link>
-              </li>
-            </ul>
-          </div>
 
           {/* Column 3: Engineering Services */}
           <div className="space-y-4">
@@ -180,30 +156,14 @@ export const Footer: React.FC = () => {
               <span>Engineering Services</span>
             </div>
             <ul className="space-y-2.5 text-xs font-mono text-kith-muted uppercase">
-              <li>
-                <Link href="/services" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  Turnkey Solar Sizing & Setup
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  Solar Water Pumping & Irrigation
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  Battery Bank Health & Upgrades
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
-                  <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  C&I Solar Micro-Grids
-                </Link>
-              </li>
+              {services.map((service) => (
+                <li key={service.id}>
+                  <Link href="/services" className="hover:text-sara-red dark:hover:text-red-400 transition-colors flex items-center gap-1 group">
+                    <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    {service.title}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <Link href="/about" className="text-sara-red dark:text-red-400 font-bold hover:underline flex items-center gap-1">
                   <ArrowUpRight className="w-3 h-3" />

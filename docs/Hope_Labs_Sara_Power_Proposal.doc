@@ -1,0 +1,83 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><title>Hope Labs Proposal</title>
+<style>
+body { font-family: 'Calibri', sans-serif; font-size: 11pt; }
+h1 { font-size: 16pt; font-weight: bold; text-align: center; }
+h2 { font-size: 14pt; font-weight: bold; margin-top: 20pt; border-bottom: 1px solid #000; padding-bottom: 2pt;}
+p { margin: 0 0 10pt 0; line-height: 1.5; }
+.header-table { width: 100%; margin-bottom: 20pt; border-collapse: collapse; }
+.header-table td { padding: 4pt; border: 1px solid #ddd; }
+ul { margin-top: 0; margin-bottom: 10pt; }
+li { margin-bottom: 5pt; }
+</style>
+</head>
+<body>
+
+<h1>HOPE LABS<br>Web Platform Proposal & Solar Power Calculator Project</h1>
+
+<table class="header-table">
+  <tr>
+    <td><strong>Prepared By:</strong> Hope Labs</td>
+    <td><strong>Client:</strong> Sara Power Solutions</td>
+  </tr>
+  <tr>
+    <td><strong>Project:</strong> Solar Catalog & Sizing Engine</td>
+    <td><strong>Domain:</strong> sarapowersolutions.com</td>
+  </tr>
+  <tr>
+    <td><strong>Base Investment:</strong> 45,000 ETB</td>
+    <td><strong>Payment Terms:</strong> 2-Phase Split (50% / 50%)</td>
+  </tr>
+</table>
+
+<h2>1. Executive Summary</h2>
+<p>Hope Labs is pleased to present this technical proposal for the design, development, and deployment of the Sara Power Solutions web platform. The platform integrates a modern luxury product showcase with an advanced interactive Solar Power Engineering Calculator to deliver a high-converting digital experience for your customers.</p>
+<ul>
+  <li><strong>Luxury Kith-Style Showcase:</strong> A mobile-first, edge-to-edge cinematic product catalog featuring a category drill-down system, dark/light mode, and instant WhatsApp/Telegram lead generation.</li>
+  <li><strong>FR-2 Solar Sizing Engine:</strong> An interactive dual-mode tool allowing customers to enter their household appliance loads (or direct kW limits) and receive mathematically matched inverter, battery, and panel recommendations. It includes one-click PDF engineering report generation.</li>
+  <li><strong>Dynamic Admin Portal:</strong> A highly secure dashboard allowing admins to control the entire platform without a developer. This includes uploading hero carousel banners, managing the product inventory with strict technical attributes, and modifying branding and social media telemetry.</li>
+  <li><strong>Cloud Hosting Infrastructure:</strong> Next.js 14 full-stack framework deployed on Vercel's Global Edge Network, backed by a Supabase PostgreSQL cloud database featuring Realtime data synchronization.</li>
+</ul>
+
+<h2>2. Household Solar Power Calculator Specification</h2>
+<p>The calculator acts as an automated digital engineer, simplifying decision-making for customers seeking solar solutions:</p>
+<ul>
+  <li><strong>Interactive Data Input:</strong> Customers either select their household appliances and runtimes (Checklist Mode) or input their precise peak kW demand and daily kWh energy requirements (Direct Mode).</li>
+  <li><strong>Algorithmic Matching:</strong> The engine calculates systemic efficiency losses and queries the live Supabase inventory to find exact matches for Inverter capacity (kVA), Battery storage (kWh), and Panel wattage (Wp).</li>
+  <li><strong>Intelligent Packaging:</strong> It generates 3 distinct tiered packages (Essential Backup, Hybrid Kit, Master Kit) allowing clients to choose their level of investment, and provides a direct 'Send Inquiry' bridge to WhatsApp.</li>
+</ul>
+
+<h2>3. Investment & Payment Milestones</h2>
+<p>The total base investment for the complete platform is 45,000 ETB, structured in 2 equal milestones:</p>
+<ul>
+  <li><strong>Phase 1: Kickoff Deposit (50%) - 22,500 ETB</strong><br>Paid prior to development start. Covers database schema, product attribute setup, UI/UX design wireframing, and core catalog engineering.</li>
+  <li><strong>Phase 2: Final Go-Live (50%) - 22,500 ETB</strong><br>Paid upon reviewing and approving the live staging demo prior to pointing the primary domain live.</li>
+</ul>
+
+<h2>4. Scope Revisions & Additional Features Policy</h2>
+<ul>
+  <li><strong>Included in Base Price:</strong> Standard review feedback, minor design adjustments, text edits, and layout refinements during the Phase 2 demo.</li>
+  <li><strong>Major Scope Additions:</strong> If future feedback introduces completely new modules outside the agreed scope (e.g., payment gateway integration, custom mobile apps, multi-vendor logistics), these will be quoted transparently as add-ons prior to implementation.</li>
+</ul>
+
+<h2>5. System Maintenance & Management Options</h2>
+<p>Sara Power Solutions can select one of the following two ongoing management models after launch:</p>
+<ul>
+  <li><strong>Option A: Managed Service & Maintenance (Recommended)</strong><br>Hope Labs retains administrative management on Vercel & Supabase. Hope Labs provides uptime monitoring, database backups, content updates, and technical support under a monthly/quarterly retainer.</li>
+  <li><strong>Option B: Client Ownership with Admin Access (Hybrid)</strong><br>Sara Power Solutions registers its own Vercel & Supabase accounts for 100% legal ownership and hosting billing. Hope Labs is invited as an Admin/Developer to perform regular updates and maintenance.</li>
+</ul>
+
+<br><br><br>
+<table style="width: 100%; border: none;">
+  <tr>
+    <td style="width: 50%; padding-right: 20px;">
+      <p style="border-top: 1px solid #000; padding-top: 5px;">Prepared By: Hope Labs<br>(Signature & Date)</p>
+    </td>
+    <td style="width: 50%; padding-left: 20px;">
+      <p style="border-top: 1px solid #000; padding-top: 5px;">Accepted By: Sara Power Solutions<br>(Signature & Date)</p>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
