@@ -116,24 +116,28 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
 
         {/* Center: Brand Logo & Title */}
         <div className="flex items-center justify-center flex-shrink-0 mx-auto md:mx-0 md:absolute md:left-1/2 md:-translate-x-1/2">
-          <Link href="/" className="flex flex-col items-center group relative py-1">
-            <div className="flex items-center gap-3">
-              <div className="absolute inset-0 -m-1 rounded-full bg-sara-red/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative w-9 h-9 sm:w-10 sm:h-10 border border-sara-red/40 bg-transparent p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden transition-transform duration-300 group-hover:scale-105">
-                <img src={activeLogoUrl} alt={companyName} className="h-full w-full object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
-              </div>
-              <span className={`text-[32px] sm:text-[42px] font-black leading-none tracking-widest transition-colors font-mono uppercase ${isHomeAtTop
+          <Link href="/" className="flex items-stretch gap-2.5 sm:gap-3 group relative py-1">
+            <div className="absolute inset-0 -m-2 rounded-full bg-sara-red/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
+            
+            {/* Logo Graphic */}
+            <div className="relative z-10 transition-transform duration-300 group-hover:scale-105 py-0.5">
+              <img src={activeLogoUrl} alt={companyName} className="h-full w-auto max-h-[38px] sm:max-h-[46px] object-contain mix-blend-multiply dark:invert dark:mix-blend-screen object-left" />
+            </div>
+            
+            {/* Text Stack */}
+            <div className="relative z-10 flex flex-col justify-between py-0.5">
+              <span className={`text-[24px] sm:text-[32px] font-black leading-[0.8] tracking-wide transition-colors font-sans uppercase ${isHomeAtTop
                 ? 'text-white group-hover:text-white/80'
                 : isScrolled
-                  ? 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
-                  : 'text-slate-900 dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
+                  ? 'text-[#1a1f2e] dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
+                  : 'text-[#1a1f2e] dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
                 }`}>
-                Sara
+                SARA
+              </span>
+              <span className={`text-[9px] sm:text-[11px] tracking-widest uppercase font-bold leading-none ${isHomeAtTop ? 'text-white/80' : 'text-[#6a1f20] dark:text-red-400'}`}>
+                POWER SOLUTIONS PLC
               </span>
             </div>
-            <span className={`text-[10px] sm:text-xs font-mono tracking-widest uppercase font-bold mt-1 text-center w-full ${isHomeAtTop ? 'text-white/80' : 'text-sara-red dark:text-red-400'}`}>
-              Power Solutions PLC
-            </span>
           </Link>
         </div>
 
