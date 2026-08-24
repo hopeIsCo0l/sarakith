@@ -27,23 +27,23 @@ export default function HomePage() {
   // Gather valid banner URLs based on theme
   const bannerUrls = theme === 'light'
     ? [
-        getSettingUrl('hero_banner_light_1', '/cinematic_hero.png'),
-        getSettingUrl('hero_banner_light_2', ''),
-        getSettingUrl('hero_banner_light_3', ''),
-        getSettingUrl('hero_banner_light_4', ''),
-      ].filter(url => url && url.trim() !== '')
+      getSettingUrl('hero_banner_light_1', '/cinematic_hero.png'),
+      getSettingUrl('hero_banner_light_2', ''),
+      getSettingUrl('hero_banner_light_3', ''),
+      getSettingUrl('hero_banner_light_4', ''),
+    ].filter(url => url && url.trim() !== '')
     : [
-        getSettingUrl('hero_banner_dark_1', '/cinematic_hero.png'),
-        getSettingUrl('hero_banner_dark_2', ''),
-        getSettingUrl('hero_banner_dark_3', ''),
-        getSettingUrl('hero_banner_dark_4', ''),
-      ].filter(url => url && url.trim() !== '');
+      getSettingUrl('hero_banner_dark_1', '/cinematic_hero.png'),
+      getSettingUrl('hero_banner_dark_2', ''),
+      getSettingUrl('hero_banner_dark_3', ''),
+      getSettingUrl('hero_banner_dark_4', ''),
+    ].filter(url => url && url.trim() !== '');
 
   useEffect(() => {
     if (bannerUrls.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentBannerIndex((prev) => (prev + 1) % bannerUrls.length);
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [bannerUrls.length, lastInteraction]);
 
@@ -103,9 +103,8 @@ export default function HomePage() {
           {bannerUrls.map((url, idx) => (
             <div
               key={idx}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                idx === currentBannerIndex ? 'opacity-100 z-0' : 'opacity-0 -z-10 pointer-events-none'
-              }`}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentBannerIndex ? 'opacity-100 z-0' : 'opacity-0 -z-10 pointer-events-none'
+                }`}
             >
               <Image
                 src={url}
@@ -135,7 +134,7 @@ export default function HomePage() {
             >
               <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 group-hover:translate-x-1 transition-transform" />
             </button>
-            
+
             {/* Slide Counter / Indicators */}
             <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 border border-white/20 rounded-sm shadow-xl">
               <span className="text-[10px] font-mono font-bold tracking-widest text-white uppercase">
@@ -149,9 +148,8 @@ export default function HomePage() {
                       setCurrentBannerIndex(idx);
                       setLastInteraction(Date.now());
                     }}
-                    className={`h-1.5 transition-all duration-300 rounded-sm ${
-                      idx === currentBannerIndex ? 'w-6 bg-white' : 'w-2 bg-white/30 hover:bg-white/60'
-                    }`}
+                    className={`h-1.5 transition-all duration-300 rounded-sm ${idx === currentBannerIndex ? 'w-6 bg-white' : 'w-2 bg-white/30 hover:bg-white/60'
+                      }`}
                   />
                 ))}
               </div>
@@ -161,7 +159,7 @@ export default function HomePage() {
 
         {/* Hero Content Overlaid */}
         <div className="relative z-10 max-w-[1700px] mx-auto px-4 sm:px-8 pb-20 sm:pb-32 w-full flex flex-col items-center text-center">
-          
+
           {/* Tag */}
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 border border-white/20 bg-black/40 backdrop-blur-md text-[10px] sm:text-xs font-mono font-bold tracking-superwide uppercase text-white shadow-xl rounded-sm">
             <Terminal className="w-3.5 h-3.5 text-white" />
@@ -256,7 +254,7 @@ export default function HomePage() {
       {/* FR-2 Solar Sizing Calculator Feature Section */}
       <section className="max-w-[1700px] mx-auto px-4 sm:px-8 relative z-10">
         <div className="p-8 sm:p-14 tech-panel flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative overflow-hidden rounded-sm border border-sara-red/30">
-          
+
           {/* Decorative background element */}
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-sara-red/10 rounded-full blur-[80px] pointer-events-none"></div>
 
