@@ -42,6 +42,7 @@ import {
   getSiteSettings,
   updateSiteSetting,
   supabase,
+  DEFAULT_SITE_SETTINGS,
 } from '@/lib/supabase';
 import { Category, Product, Service, StockStatus, SiteSetting } from '@/lib/types';
 import { COMPANY_NAME } from '@/lib/constants';
@@ -1239,7 +1240,7 @@ export default function AdminPage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {Object.entries(siteSettingsMap)
-                .filter(([_, s]) => s.category === 'logo' || s.category === 'banner' || s.category === 'branding')
+                .filter(([key, s]) => DEFAULT_SITE_SETTINGS[key as keyof typeof DEFAULT_SITE_SETTINGS] && (s.category === 'logo' || s.category === 'banner' || s.category === 'branding'))
                 .map(([key, setting]) => {
                   const currentBgMode = previewBgMode[key] || 'default';
                   const isSaving = savingSettingKey === key;

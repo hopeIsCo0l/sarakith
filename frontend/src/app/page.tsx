@@ -11,6 +11,7 @@ import { QuickViewModal } from '@/components/QuickViewModal';
 import { HERO_HEADER, BRAND_TAGLINE } from '@/lib/constants';
 import heroBannerImg from '@/ass/HeroBanner.png';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function HomePage() {
   const { getSettingUrl } = useSiteSettings();
@@ -21,13 +22,22 @@ export default function HomePage() {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [lastInteraction, setLastInteraction] = useState(Date.now());
 
-  // Gather valid banner URLs
-  const bannerUrls = [
-    getSettingUrl('hero_banner', '/cinematic_hero.png'),
-    getSettingUrl('hero_banner_2', ''),
-    getSettingUrl('hero_banner_3', ''),
-    getSettingUrl('hero_banner_4', ''),
-  ].filter(url => url && url.trim() !== '');
+  const { theme } = useTheme();
+
+  // Gather valid banner URLs based on theme
+  const bannerUrls = theme === 'light'
+    ? [
+        getSettingUrl('hero_banner_light_1', '/cinematic_hero.png'),
+        getSettingUrl('hero_banner_light_2', ''),
+        getSettingUrl('hero_banner_light_3', ''),
+        getSettingUrl('hero_banner_light_4', ''),
+      ].filter(url => url && url.trim() !== '')
+    : [
+        getSettingUrl('hero_banner_dark_1', '/cinematic_hero.png'),
+        getSettingUrl('hero_banner_dark_2', ''),
+        getSettingUrl('hero_banner_dark_3', ''),
+        getSettingUrl('hero_banner_dark_4', ''),
+      ].filter(url => url && url.trim() !== '');
 
   useEffect(() => {
     if (bannerUrls.length <= 1) return;
