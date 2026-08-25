@@ -21,10 +21,12 @@ The system is a full-stack, highly dynamic solar product catalog showcase and au
 
 - **FR-1 Advanced Product Showcase [EXPANDED]:** High-res imagery display with Quick-View modals. Complex client-side filtering engine supporting price range sliders, sub-category routing, and real-time stock status.
 - **FR-2 Solar Calculator (kW Input):** Customer inputs household power load in Kilowatts (kW). System matches Supabase attributes (Inverter kVA, Battery storage kWh, Panel Wp) and displays recommended items/kits.
-- **FR-3 Dynamic Admin Control Panel [NEW]:** Comprehensive authenticated dashboard. Admins can perform full CRUD (Create, Read, Update, Delete) operations on Products, Categories, Sub-Categories, and global Site Settings (Hero Carousel URLs, Social Media endpoints).
+- **FR-3 Dynamic Admin Control Panel [NEW]:** Comprehensive authenticated dashboard. Admins can perform full CRUD (Create, Read, Update, Delete) operations on Products, Categories, Sub-Categories, and global Site Settings.
 - **FR-4 Hierarchical Categories [NEW]:** Database and UI support for parent-child category relationships, allowing for complex inventory routing.
 - **FR-5 Inquiry Routing:** Direct click-to-contact buttons (WhatsApp, Telegram, Phone) pre-populated with specific item details and technical specifications.
 - **FR-6 Real-time UI Synchronization [NEW]:** Implementation of Supabase Realtime WebSockets. When admins update inventory or site settings, active customer browsers update instantly without reloading.
+- **FR-7 Dynamic Specifications Matrix [NEW]:** Allows admins to build fully custom, arbitrary technical attribute matrices (e.g., cell efficiency, inverter voltage) for each equipment item, which seamlessly hydrate into the frontend UI.
+- **FR-8 Integrated About Us / Mission CMS [NEW]:** Centralized management of the Corporate Overview and Mission Statement text blocks directly from the Admin Dashboard, which instantly pushes updates to the `/about` public routing.
 
 ### 3. Non-Functional Requirements (NFR)
 - **NFR-1 Performance:** Edge-cached Server-Side Rendering (SSR) via Next.js for sub-second page loads.

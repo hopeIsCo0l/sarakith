@@ -22,11 +22,12 @@ During the development lifecycle, extensive client feedback introduced several m
 - Cloud Hosting Infrastructure (Next.js + Supabase).
 
 **Added via Scope Expansion (New Features Implemented):**
-1. **Dynamic Content Management System (CMS):** Full admin control over homepage hero banners, categories, and social media links, removing the need for developer intervention for content updates.
+1. **Dynamic Content Management System (CMS):** Full admin control over homepage hero banners, Corporate Overview text, Company Mission Statements, and social media links, removing the need for developer intervention for content updates.
 2. **Hierarchical Catalog System:** Complex sub-category routing and database restructuring to support deep inventory organization (e.g., Solar Panels -> Monocrystalline).
-3. **Advanced Filtering Engine:** Multi-faceted sidebar filtering allowing customers to narrow down products by precise price ranges, sub-categories, and real-time stock availability.
-4. **Premium "Cinematic" UI/UX Engineering:** High-end, Kith-inspired design language featuring a custom dark/light theme engine, Quick-View product modals, and fluid micro-animations designed for maximum conversion.
-5. **Real-time Synchronization:** Implementation of Supabase WebSockets, ensuring that inventory updates made by the admin are instantly pushed to all active customer screens without page reloads.
+3. **Dynamic Specifications Matrix:** Re-architected product forms allowing admins to define an unlimited, arbitrary set of technical specifications (e.g., Battery Cycle Life, Inverter Output) tailored exactly to the specific equipment being uploaded.
+4. **Advanced Filtering Engine:** Multi-faceted sidebar filtering allowing customers to narrow down products by precise price ranges, sub-categories, and real-time stock availability.
+5. **Premium "Cinematic" UI/UX Engineering:** High-end, Kith-inspired design language featuring a custom dark/light theme engine, Quick-View product modals, glassmorphism UI overlays, left-aligned dynamic Hero typography, and fluid micro-animations designed for maximum conversion.
+6. **Real-time Synchronization:** Implementation of Supabase WebSockets, ensuring that inventory updates made by the admin are instantly pushed to all active customer screens without page reloads.
 
 ### 3. Revised Investment & Payment Milestones
 Due to the implementation of the major scope additions detailed above, the project investment has been revised in accordance with the *Major Scope Additions Policy*.
