@@ -166,34 +166,36 @@ export default function CatalogPage() {
             {selectedCategoryObj ? (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {/* Category Header Block */}
-                <div className="bg-kith-card border border-sara-red/20 p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-4 shadow-[0_0_20px_rgba(111,15,16,0.05)] relative overflow-hidden rounded-sm min-h-[250px]">
+                <div className={`relative overflow-hidden rounded-sm min-h-[320px] flex items-end shadow-2xl ${selectedCategoryObj.image_url ? 'bg-[#0a0a0a]' : 'bg-kith-card border border-sara-red/20'}`}>
                   {selectedCategoryObj.image_url ? (
                     <>
+                      {/* Cinematic Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent z-10 opacity-90 pointer-events-none"></div>
                       <Image 
                         src={selectedCategoryObj.image_url} 
                         alt={selectedCategoryObj.name}
                         fill
-                        className="absolute inset-0 object-cover z-0"
+                        className="absolute inset-0 object-cover z-0 opacity-80"
                       />
-                      <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px] z-0"></div>
                     </>
                   ) : (
                     <div className="absolute top-0 right-0 w-64 h-64 bg-sara-red/5 rounded-full blur-3xl pointer-events-none z-0" />
                   )}
                   
-                  <div className={`relative z-10 w-12 h-12 flex items-center justify-center rounded-sm ${selectedCategoryObj.image_url ? 'bg-black/50 border border-white/20 backdrop-blur-md' : 'bg-sara-red/10 border border-sara-red/30'}`}>
-                    <Zap className={`w-5 h-5 ${selectedCategoryObj.image_url ? 'text-white' : 'text-sara-red dark:text-red-400'}`} />
+                  <div className="relative z-20 w-full p-8 sm:p-12">
+                    <div className="w-12 h-[2px] bg-sara-red mb-6"></div>
+                    <div className="flex flex-col max-w-4xl">
+                      <h2 className={`text-4xl sm:text-6xl font-black font-sans uppercase leading-[0.9] tracking-widest mb-4 ${selectedCategoryObj.image_url ? 'text-white drop-shadow-2xl' : 'text-kith-bone'}`}>
+                        {selectedCategoryObj.name}
+                      </h2>
+                      
+                      {selectedCategoryObj.description && (
+                        <p className={`text-xs sm:text-sm font-mono max-w-2xl leading-relaxed ${selectedCategoryObj.image_url ? 'text-gray-300 drop-shadow-lg' : 'text-kith-muted'}`}>
+                          {selectedCategoryObj.description}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  
-                  <h2 className={`relative z-10 text-2xl sm:text-4xl font-black font-mono tracking-widest uppercase ${selectedCategoryObj.image_url ? 'text-white drop-shadow-lg' : 'text-kith-bone'}`}>
-                    {selectedCategoryObj.name}
-                  </h2>
-                  
-                  {selectedCategoryObj.description && (
-                    <p className={`relative z-10 text-sm font-mono max-w-2xl leading-relaxed ${selectedCategoryObj.image_url ? 'text-gray-300 drop-shadow-md' : 'text-kith-muted'}`}>
-                      {selectedCategoryObj.description}
-                    </p>
-                  )}
                 </div>
 
                 {/* Sub-Category Pills */}

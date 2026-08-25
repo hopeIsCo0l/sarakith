@@ -215,18 +215,18 @@ export default function HomePage() {
             <Link
               key={cat.id}
               href={`/catalog?category=${cat.slug}`}
-              className={`group relative overflow-hidden bg-[#0a0a0a] rounded-sm border border-white/5 transition-all duration-700 hover:border-sara-red/40 hover:shadow-2xl flex flex-col ${index === 0 ? 'lg:col-span-2 lg:row-span-2 h-[400px] lg:h-[632px]' : 'h-[350px]'}`}
+              className={`group relative overflow-hidden bg-transparent rounded-sm border border-white/5 transition-all duration-700 hover:border-sara-red/40 hover:shadow-2xl flex flex-col ${index === 0 ? 'lg:col-span-2 lg:row-span-2 h-[400px] lg:h-[632px]' : 'h-[350px]'}`}
             >
-              {/* Cinematic Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/10 opacity-90 transition-opacity duration-700 z-10 group-hover:opacity-70 pointer-events-none"></div>
+              {/* Cinematic Gradient Overlay (Only at the very bottom for text readability) */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
               
-              {/* Image with Brightness Hover */}
+              {/* Image */}
               {cat.image_url ? (
                 <Image
                   src={cat.image_url}
                   alt={cat.name}
                   fill
-                  className="absolute inset-0 object-cover transition-transform duration-1000 group-hover:scale-[1.03] opacity-70 group-hover:opacity-100 z-0"
+                  className="absolute inset-0 object-cover transition-transform duration-1000 group-hover:scale-[1.03] z-0 opacity-100"
                 />
               ) : (
                 <div className="absolute inset-0 bg-kith-subBg flex items-center justify-center z-0">
