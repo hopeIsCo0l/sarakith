@@ -109,11 +109,13 @@ export default function AdminPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // Tech Specs Matrix & Delivery Fields
-  const [specBrand, setSpecBrand] = useState('Sara Power Certified');
-  const [specCapacity, setSpecCapacity] = useState('');
-  const [specVoltage, setSpecVoltage] = useState('');
-  const [specWeight, setSpecWeight] = useState('');
-  const [specWarranty, setSpecWarranty] = useState('5-Year Manufacturer Warranty / 6,000+ Cycles');
+  const [specifications, setSpecifications] = useState<{ key: string; value: string }[]>([
+    { key: 'Brand', value: 'Sara Power Certified' },
+    { key: 'Capacity / Power', value: '' },
+    { key: 'Voltage', value: '' },
+    { key: 'Weight', value: '' },
+    { key: 'Warranty', value: '5-Year Manufacturer Warranty / 6,000+ Cycles' }
+  ]);
   const [deliveryAvailable, setDeliveryAvailable] = useState('Addis Ababa Delivery Available');
 
   // -------------------------------------------------------------
@@ -308,11 +310,23 @@ export default function AdminPage() {
     const existingImages = product.images?.map((img) => img.url) || [];
     setProdImageUrls(existingImages);
     setManualUrlInput('');
-    setSpecBrand(product.details?.brand || 'Sara Power Certified');
-    setSpecCapacity(product.details?.capacity || product.details?.power_output || '');
-    setSpecVoltage(product.details?.voltage || '');
-    setSpecWeight(product.details?.weight || '');
-    setSpecWarranty(product.details?.warranty || '5-Year Manufacturer Warranty / 6,000+ Cycles');
+    
+    const existingSpecs = product.details
+      ? Object.entries(product.details)
+          .filter(([key]) => key !== 'delivery_available')
+          .map(([key, value]) => ({
+            key: key.charAt(0).toUpperCase() + key.slice(1),
+            value: value || ''
+          }))
+      : [];
+    
+    setSpecifications(existingSpecs.length > 0 ? existingSpecs : [
+      { key: 'Brand', value: 'Sara Power Certified' },
+      { key: 'Capacity / Power', value: '' },
+      { key: 'Voltage', value: '' },
+      { key: 'Weight', value: '' },
+      { key: 'Warranty', value: '5-Year Manufacturer Warranty / 6,000+ Cycles' }
+    ]);
     setDeliveryAvailable(
       typeof product.delivery_available === 'string'
         ? product.delivery_available
@@ -338,11 +352,13 @@ export default function AdminPage() {
         : ['https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1000&auto=format&fit=crop'];
 
     const detailsObj: Record<string, string> = {};
-    if (specBrand) detailsObj.brand = specBrand.trim();
-    if (specCapacity) detailsObj.capacity = specCapacity.trim();
-    if (specVoltage) detailsObj.voltage = specVoltage.trim();
-    if (specWeight) detailsObj.weight = specWeight.trim();
-    if (specWarranty) detailsObj.warranty = specWarranty.trim();
+    specifications.forEach(spec => {
+      if (spec.key.trim() && spec.value.trim()) {
+        const normalizedKey = spec.key.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        detailsObj[normalizedKey] = spec.value.trim();
+      }
+    });
+    
     if (deliveryAvailable) detailsObj.delivery_available = deliveryAvailable.trim();
 
     if (editingProductId) {
@@ -1819,57 +1835,59 @@ export default function AdminPage() {
                 <label className="text-[10px] uppercase text-sara-red dark:text-red-400 font-bold tracking-widest block">
                   EQUIPMENT TECHNICAL SPECIFICATIONS MATRIX
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase text-kith-muted">1. Brand</label>
-                    <input
-                      type="text"
-                      value={specBrand}
-                      onChange={(e) => setSpecBrand(e.target.value)}
-                      placeholder="e.g. Felicity Solar / Jinko / Must"
-                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase text-kith-muted">2. Capacity / Power</label>
-                    <input
-                      type="text"
-                      value={specCapacity}
-                      onChange={(e) => setSpecCapacity(e.target.value)}
-                      placeholder="e.g. 100Ah / 5.12 kWh or 550W TOPCon"
-                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase text-kith-muted">3. Voltage</label>
-                    <input
-                      type="text"
-                      value={specVoltage}
-                      onChange={(e) => setSpecVoltage(e.target.value)}
-                      placeholder="e.g. 51.2V Nominal / 48VDC / 230VAC"
-                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] uppercase text-kith-muted">4. Weight</label>
-                    <input
-                      type="text"
-                      value={specWeight}
-                      onChange={(e) => setSpecWeight(e.target.value)}
-                      placeholder="e.g. 48 kg / 28 kg"
-                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                    />
-                  </div>
-                  <div className="space-y-1 sm:col-span-2">
-                    <label className="text-[9px] uppercase text-kith-muted">5. Warranty</label>
-                    <input
-                      type="text"
-                      value={specWarranty}
-                      onChange={(e) => setSpecWarranty(e.target.value)}
-                      placeholder="e.g. 5-Year Manufacturer Warranty / 6000+ Cycles"
-                      className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
-                    />
-                  </div>
+                <div className="space-y-3">
+                  {specifications.map((spec, idx) => (
+                    <div key={idx} className="flex flex-col sm:flex-row items-end gap-3 bg-kith-subBg/50 p-3 border border-kith-border">
+                      <div className="flex-1 space-y-1 w-full">
+                        <label className="text-[9px] uppercase text-kith-muted">{idx + 1}. ATTRIBUTE NAME</label>
+                        <input
+                          type="text"
+                          value={spec.key}
+                          onChange={(e) => {
+                            const newSpecs = [...specifications];
+                            newSpecs[idx].key = e.target.value;
+                            setSpecifications(newSpecs);
+                          }}
+                          placeholder="e.g. Brand, Voltage, Cell Type..."
+                          className="w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                        />
+                      </div>
+                      <div className="flex-[2] space-y-1 w-full">
+                        <label className="text-[9px] uppercase text-kith-muted">ATTRIBUTE VALUE</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={spec.value}
+                            onChange={(e) => {
+                              const newSpecs = [...specifications];
+                              newSpecs[idx].value = e.target.value;
+                              setSpecifications(newSpecs);
+                            }}
+                            placeholder="e.g. Sara Power Certified, 48VDC, Monocrystalline..."
+                            className="flex-1 w-full bg-kith-subBg border border-kith-border px-3 py-2 text-kith-bone"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newSpecs = specifications.filter((_, i) => i !== idx);
+                              setSpecifications(newSpecs);
+                            }}
+                            className="p-2 border border-kith-border text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/30 transition-colors"
+                            title="Remove Specification"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setSpecifications([...specifications, { key: '', value: '' }])}
+                    className="w-full py-2 border border-dashed border-kith-border text-kith-muted hover:text-kith-bone hover:border-kith-bone transition-colors uppercase text-[10px] tracking-widest font-bold flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> ADD NEW SPECIFICATION
+                  </button>
                 </div>
               </div>
 
