@@ -288,11 +288,13 @@ export default function AdminPage() {
     setProdIsFeatured(true);
     setProdImageUrls([]);
     setManualUrlInput('');
-    setSpecBrand('Sara Power Certified');
-    setSpecCapacity('');
-    setSpecVoltage('');
-    setSpecWeight('');
-    setSpecWarranty('5-Year Manufacturer Warranty / 6,000+ Cycles');
+    setSpecifications([
+      { key: 'Brand', value: 'Sara Power Certified' },
+      { key: 'Capacity / Power', value: '' },
+      { key: 'Voltage', value: '' },
+      { key: 'Weight', value: '' },
+      { key: 'Warranty', value: '5-Year Manufacturer Warranty / 6,000+ Cycles' }
+    ]);
     setDeliveryAvailable('Addis Ababa Delivery Available');
     setIsProductModalOpen(true);
   };
