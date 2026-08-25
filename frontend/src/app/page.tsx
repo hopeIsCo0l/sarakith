@@ -174,7 +174,7 @@ export default function HomePage() {
 
           {/* Description */}
           <div className="mt-6 px-4 py-3 sm:px-6 sm:py-4 border border-white/20 bg-black/40 backdrop-blur-md shadow-xl rounded-sm inline-flex items-center justify-center max-w-3xl">
-            <p className="text-xs sm:text-sm md:text-base font-mono text-gray-200 leading-relaxed drop-shadow-lg uppercase tracking-wide">
+            <p className="text-left text-xs sm:text-sm md:text-base font-mono text-gray-200 leading-relaxed drop-shadow-lg uppercase tracking-wide">
               {BRAND_TAGLINE}. Discover high-efficiency monocrystalline solar panels, hybrid pure sine wave inverters, and LiFePO4 lithium batteries engineered for lasting performance across Ethiopia.
             </p>
           </div>

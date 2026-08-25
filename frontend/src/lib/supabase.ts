@@ -731,6 +731,13 @@ export const DEFAULT_SITE_SETTINGS: Record<string, { key: string; name: string; 
     category: 'about',
     alt_text: 'Full company mission statement',
   },
+  about_overview: {
+    key: 'about_overview',
+    name: 'Corporate Overview Text',
+    url: 'SARA POWER SOLUTION PLC IS AN ETHIOPIAN RENEWABLE-ENERGY AND POWER-SOLUTIONS COMPANY ESTABLISHED WITH THE OBJECTIVE OF CONTRIBUTING TO THE EXPANSION OF RELIABLE, AFFORDABLE, AND SUSTAINABLE ENERGY ACCESS IN ETHIOPIA...',
+    category: 'about',
+    alt_text: 'Corporate Overview paragraph',
+  },
   about_vision: {
     key: 'about_vision',
     name: 'Company Vision Statement',

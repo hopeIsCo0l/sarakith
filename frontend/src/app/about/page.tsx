@@ -22,6 +22,10 @@ export default function AboutPage() {
   const { getSettingValue } = useSiteSettings();
 
   const companyName = getSettingValue('company_name', 'Sara Power Solution PLC');
+  const aboutOverview = getSettingValue(
+    'about_overview',
+    'SARA POWER SOLUTION PLC IS AN ETHIOPIAN RENEWABLE-ENERGY AND POWER-SOLUTIONS COMPANY ESTABLISHED WITH THE OBJECTIVE OF CONTRIBUTING TO THE EXPANSION OF RELIABLE, AFFORDABLE, AND SUSTAINABLE ENERGY ACCESS IN ETHIOPIA...'
+  );
   const aboutMission = getSettingValue(
     'about_mission',
     "Sara Power Solution PLC is Ethiopia's premier distributor and systems engineering contractor for high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery energy storage."
@@ -80,8 +84,8 @@ export default function AboutPage() {
           <h1 className="text-3xl sm:text-6xl font-black font-mono tracking-widest text-kith-bone uppercase leading-tight">
             ABOUT {companyName}
           </h1>
-          <p className="text-sm font-mono text-kith-muted max-w-3xl leading-relaxed border-l-2 border-sara-red/50 pl-4">
-            {aboutMission}
+          <p className="text-sm font-mono text-kith-muted max-w-3xl leading-relaxed border-l-2 border-sara-red/50 pl-4 uppercase">
+            {aboutOverview}
           </p>
         </div>
       </div>
@@ -99,7 +103,7 @@ export default function AboutPage() {
             <h2 className="text-2xl sm:text-4xl font-extrabold font-mono text-kith-bone uppercase tracking-tight leading-snug">
               POWERING ETHIOPIA WITH RELIABLE TIER-1 SOLAR ENERGY
             </h2>
-            <p className="text-xs sm:text-sm font-mono text-kith-muted leading-relaxed border-l-2 border-sara-red/40 pl-4">
+            <p className="text-xs sm:text-sm font-mono text-kith-muted leading-relaxed border-l-2 border-sara-red/40 pl-4 uppercase">
               {aboutMission}
             </p>
             <div className="pt-4 flex flex-wrap gap-4">
