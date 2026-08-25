@@ -168,14 +168,16 @@ export default function HomePage() {
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white uppercase leading-[0.95] font-mono drop-shadow-2xl">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white uppercase leading-[0.95] font-mono drop-shadow-2xl">
             {HERO_HEADER}
           </h1>
 
           {/* Description */}
-          <p className="mt-6 text-xs sm:text-sm font-mono text-gray-200 leading-relaxed max-w-3xl drop-shadow-lg">
-            {BRAND_TAGLINE}. Discover high-efficiency monocrystalline solar panels, hybrid pure sine wave inverters, and LiFePO4 lithium batteries engineered for lasting performance across Ethiopia.
-          </p>
+          <div className="mt-6 px-4 py-3 sm:px-6 sm:py-4 border border-white/20 bg-black/40 backdrop-blur-md shadow-xl rounded-sm inline-flex items-center justify-center max-w-3xl">
+            <p className="text-xs sm:text-sm md:text-base font-mono text-gray-200 leading-relaxed drop-shadow-lg uppercase tracking-wide">
+              {BRAND_TAGLINE}. Discover high-efficiency monocrystalline solar panels, hybrid pure sine wave inverters, and LiFePO4 lithium batteries engineered for lasting performance across Ethiopia.
+            </p>
+          </div>
 
           {/* CTA Buttons */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
