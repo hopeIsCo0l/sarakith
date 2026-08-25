@@ -44,7 +44,7 @@ export default function HomePage() {
     if (bannerUrls.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentBannerIndex((prev) => (prev + 1) % bannerUrls.length);
-    }, 10000);
+    }, 15000);
     return () => clearInterval(interval);
   }, [bannerUrls.length, lastInteraction]);
 
