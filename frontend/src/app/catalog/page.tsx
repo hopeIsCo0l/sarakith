@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { getCategories, getProducts, supabase } from '@/lib/supabase';
 import { Category, FilterState, Product } from '@/lib/types';
 import { FilterSidebar } from '@/components/FilterSidebar';
@@ -168,10 +169,11 @@ export default function CatalogPage() {
                 <div className="bg-kith-card border border-sara-red/20 p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-4 shadow-[0_0_20px_rgba(111,15,16,0.05)] relative overflow-hidden rounded-sm min-h-[250px]">
                   {selectedCategoryObj.image_url ? (
                     <>
-                      <img 
+                      <Image 
                         src={selectedCategoryObj.image_url} 
                         alt={selectedCategoryObj.name}
-                        className="absolute inset-0 w-full h-full object-cover z-0"
+                        fill
+                        className="absolute inset-0 object-cover z-0"
                       />
                       <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px] z-0"></div>
                     </>

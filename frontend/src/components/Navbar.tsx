@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Search, Phone, Menu, X, ArrowRight, Sun, Zap } from 'lucide-react';
 import { PRIMARY_PHONE, WHATSAPP_LINK } from '@/lib/constants';
@@ -120,13 +121,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
             <div className="absolute inset-0 -m-2 rounded-full bg-sara-red/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity z-0 pointer-events-none"></div>
             
             {/* Logo Graphic */}
-            <div className="relative z-10 transition-transform duration-300 group-hover:scale-105 py-0.5">
-              <img src={activeLogoUrl} alt={companyName} className="h-full w-auto max-h-[38px] sm:max-h-[46px] object-contain mix-blend-multiply dark:invert dark:mix-blend-screen object-left" />
+            <div className="relative z-10 transition-transform duration-300 group-hover:scale-105 py-0.5 flex items-center">
+              <Image src={activeLogoUrl} alt={companyName} width={46} height={46} className="h-full w-auto max-h-[38px] sm:max-h-[46px] object-contain mix-blend-multiply dark:invert dark:mix-blend-screen object-left" />
             </div>
             
             {/* Text Stack */}
             <div className="relative z-10 flex flex-col justify-between py-0.5">
-              <span className={`text-[24px] sm:text-[32px] font-black leading-[0.8] tracking-wide transition-colors font-sans uppercase translate-y-[2px] sm:translate-y-[4px] ${isHomeAtTop
+              <span className={`text-[24px] sm:text-[32px] font-black leading-[0.8] tracking-wide transition-colors font-sans uppercase translate-y-[4px] sm:translate-y-[6px] ${isHomeAtTop
                 ? 'text-white group-hover:text-white/80'
                 : isScrolled
                   ? 'text-[#1a1f2e] dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'

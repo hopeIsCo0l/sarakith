@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Phone, Mail, MapPin, ShieldCheck, Zap, ArrowUpRight, Cpu } from 'lucide-react';
 import {
   COMPANY_NAME,
@@ -95,8 +96,8 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-2 space-y-6">
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 border border-sara-red/40 bg-transparent p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
-                  <img src={activeLogoUrl} alt={companyName} className="h-full w-full object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
+                <div className="relative w-10 h-10 border border-sara-red/40 bg-transparent p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
+                  <Image src={activeLogoUrl} alt={companyName} fill className="object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
                 </div>
                 <span className="text-[32px] sm:text-[42px] font-black leading-none tracking-widest text-kith-bone font-mono uppercase">
                   Sara
@@ -131,7 +132,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <img src="/icons/telegram_logo_icon_147228.svg" alt="Telegram" className="w-4 h-4 object-contain" />
+                    <Image src="/icons/telegram_logo_icon_147228.svg" alt="Telegram" width={16} height={16} className="w-4 h-4 object-contain" />
                     <span>TELEGRAM</span>
                   </a>
                 )}
@@ -142,7 +143,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <img src="/icons/instagram.png" alt="Instagram" className="w-4 h-4 object-contain" />
+                    <Image src="/icons/instagram.png" alt="Instagram" width={16} height={16} className="w-4 h-4 object-contain" />
                     <span>INSTAGRAM</span>
                   </a>
                 )}
@@ -153,7 +154,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <img src="/icons/tik-tok.png" alt="TikTok" className="w-4 h-4 object-contain" />
+                    <Image src="/icons/tik-tok.png" alt="TikTok" width={16} height={16} className="w-4 h-4 object-contain" />
                     <span>TIKTOK</span>
                   </a>
                 )}
@@ -164,7 +165,7 @@ export const Footer: React.FC = () => {
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 bg-sara-red/10 hover:bg-sara-red/20 border border-sara-red/30 hover:border-sara-red text-xs font-mono text-kith-bone hover:text-sara-red dark:hover:text-red-400 transition-all rounded-sm flex items-center gap-1.5"
                   >
-                    <img src="/icons/linkedin.png" alt="LinkedIn" className="w-4 h-4 object-contain" />
+                    <Image src="/icons/linkedin.png" alt="LinkedIn" width={16} height={16} className="w-4 h-4 object-contain" />
                     <span>LINKEDIN</span>
                   </a>
                 )}

@@ -60,11 +60,7 @@ export default function HomePage() {
 
   useEffect(() => {
     async function loadData() {
-      const [data, cats] = await Promise.all([
-        getProducts({ isFeatured: true }),
-        getCategories()
-      ]);
-      setFeaturedProducts(data);
+      const cats = await getCategories();
       setParentCategories(cats.filter((c) => !c.parent_id));
     }
     loadData();
@@ -214,61 +210,53 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {parentCategories.map((cat) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-10">
+          {parentCategories.map((cat, index) => (
             <Link
               key={cat.id}
               href={`/catalog?category=${cat.slug}`}
-              className="group tech-panel rounded-sm border border-sara-red/30 overflow-hidden flex flex-col h-40 sm:h-48 relative transition-all hover:border-sara-red hover:shadow-lg"
+              className={`group relative overflow-hidden bg-[#0a0a0a] rounded-sm border border-white/5 transition-all duration-700 hover:border-sara-red/40 hover:shadow-2xl flex flex-col ${index === 0 ? 'lg:col-span-2 lg:row-span-2 h-[400px] lg:h-[632px]' : 'h-[350px]'}`}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10"></div>
+              {/* Cinematic Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/10 opacity-90 transition-opacity duration-700 z-10 group-hover:opacity-70 pointer-events-none"></div>
+              
+              {/* Image with Brightness Hover */}
               {cat.image_url ? (
-                <img
+                <Image
                   src={cat.image_url}
                   alt={cat.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  fill
+                  className="absolute inset-0 object-cover transition-transform duration-1000 group-hover:scale-[1.03] opacity-70 group-hover:opacity-100 z-0"
                 />
               ) : (
-                <div className="absolute inset-0 bg-kith-subBg flex items-center justify-center">
+                <div className="absolute inset-0 bg-kith-subBg flex items-center justify-center z-0">
                   <span className="text-xs font-mono text-kith-muted uppercase">No Image</span>
                 </div>
               )}
-              <div className="relative z-20 mt-auto p-4 flex items-center justify-between">
-                <span className="text-sm sm:text-base font-bold font-mono text-white uppercase tracking-wider group-hover:text-sara-red transition-colors">
+              
+              {/* Content Panel */}
+              <div className="relative z-20 flex flex-col justify-end h-full p-6 sm:p-10">
+                {/* Animated Accent Line */}
+                <div className="w-10 h-[2px] bg-sara-red mb-4 sm:mb-6 transform origin-left transition-transform duration-500 scale-x-50 group-hover:scale-x-100"></div>
+                
+                <h3 className={`font-black font-sans uppercase text-white tracking-widest drop-shadow-2xl leading-[0.9] ${index === 0 ? 'text-4xl sm:text-6xl mb-4' : 'text-2xl sm:text-3xl mb-3'}`}>
                   {cat.name}
-                </span>
-                <ArrowRight className="w-4 h-4 text-white opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </h3>
+                
+                {/* CTA sliding in */}
+                <div className="flex items-center gap-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-superwide text-gray-300 group-hover:text-white transition-colors">
+                    Explore Collection
+                  </span>
+                  <div className="w-6 h-[1px] bg-sara-red"></div>
+                  <ArrowRight className="w-4 h-4 text-sara-red" />
+                </div>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Featured Equipment Grid Section */}
-      <section id="featured" className="max-w-[1700px] mx-auto px-4 sm:px-8 space-y-10 relative z-10">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-sara-red/30 pb-6 gap-4">
-          <div>
-            <span className="text-[10px] font-mono font-bold tracking-superwide text-sara-red dark:text-red-400 uppercase block mb-2 flex items-center gap-2">
-              <Terminal className="w-3 h-3" /> HARDWARE_INVENTORY
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black font-mono tracking-widest text-kith-bone uppercase">
-              Premium Solar Equipment
-            </h2>
-          </div>
-
-          <Link
-            href="/catalog"
-            className="text-[10px] font-mono font-bold tracking-superwide text-sara-red dark:text-red-400 hover:text-white flex items-center gap-1 transition-colors bg-sara-red/10 hover:bg-sara-red px-4 py-2 border border-sara-red/40 rounded-sm uppercase"
-          >
-            EXECUTE_FULL_CATALOG_QUERY →
-          </Link>
-        </div>
-
-        <ProductGrid
-          products={featuredProducts}
-          onQuickView={(p) => setSelectedQuickView(p)}
-        />
-      </section>
 
       {/* Capabilities Showcase */}
       <section className="max-w-[1700px] mx-auto px-4 sm:px-8 relative z-10">
