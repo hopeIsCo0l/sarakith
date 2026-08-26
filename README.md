@@ -1,6 +1,6 @@
 # Sara Power Solution plc — Solar Energy Showcase
 
-> **High-Performance Equipment Showcase & Telegram Bot Admin Panel**  
+> **High-Performance Equipment Showcase, Solar Calculator & Admin Panel**  
 > *Addis Ababa, Ethiopia*
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
@@ -13,17 +13,20 @@
 
 ## Overview
 
-**Sara Power Solution plc Showcase** is a modern, high-density showcase platform and admin management ecosystem engineered for **Sara Power Solution plc** based in **Addis Ababa, Ethiopia**. The platform displays commercial solar power systems, hybrid inverters, and deep cycle energy storage with full technical specifications and direct WhatsApp inquiry integration.
+**Sara Power Solution plc Showcase** is a modern, high-density showcase platform and admin management ecosystem engineered for **Sara Power Solution plc** based in **Addis Ababa, Ethiopia**. The platform displays commercial solar power systems, hybrid inverters, and deep cycle energy storage with full technical specifications, an advanced solar sizing calculator, and direct WhatsApp inquiry integration. It features a premium "Kith-style" cinematic UI redesign.
 
 ---
 
 ## Key Features
 
-- **Solar Energy Inventory**: Tier-1 Monocrystalline Solar Panels, 5.5kW Hybrid Pure Sine Wave Inverters, LiFePO4 Lithium Battery Storage Packs, Gel Deep Cycle Batteries, and 60A MPPT Controllers.
+- **Advanced Product Showcase**: Tier-1 Monocrystalline Solar Panels, Hybrid Pure Sine Wave Inverters, LiFePO4 Lithium Battery Storage Packs, Gel Deep Cycle Batteries, and MPPT Controllers. High-res imagery with Quick-View modals and hierarchical category routing.
+- **Dynamic Admin Control Panel**: Comprehensive authenticated dashboard for full CRUD operations on Products, Categories, Sub-Categories, and global Site Settings (Hero banners, social links, About Us text).
+- **Automated Solar Power Sizing Calculator**: Interactive appliance modeling and direct kW power input with real-time telemetry dials. Matches household power load to recommended items and matched system packages.
+- **Dynamic Specifications Matrix**: Admins can build fully custom, arbitrary technical attribute matrices for each equipment item.
 - **Adaptive System Theme**: Supports System Mode, Dark Mode (Obsidian), and Light Mode (Alabaster) with zero flash of unstyled content (FOUC).
 - **1-Click WhatsApp Direct Inquiries**: Instant pre-filled spec inquiry links directly to Sara Power Solution's sales desk (+251 95 483 4159).
 - **Telegram Admin Bot Panel**: Async Python Telegram Bot ([@sebrtradebot](https://t.me/sebrtradebot)) powered by aiogram 3 and FastAPI for updating stock levels, uploading photos to Supabase Storage, and managing catalog items.
-- **Dynamic Filter & Sort Matrix**: Category selection, search query matching, stock availability filters, and range sliders in Ethiopian Birr (ETB).
+- **Real-time UI Synchronization**: Built with Supabase Realtime WebSockets to update inventory and site settings on active customer browsers instantly.
 
 ---
 
@@ -43,11 +46,11 @@
 
 ## Repository Structure
 
-```
+```text
 .
 ├── frontend/                     # Next.js 14 App Router Frontend
 │   ├── src/
-│   │   ├── app/                  # Page routes (HomePage, Catalog, Services, Detail Page)
+│   │   ├── app/                  # Page routes (HomePage, Catalog, Calculator, Admin, About, Services)
 │   │   ├── components/           # UI Components (Navbar, Footer, ProductCard, QuickViewModal, FilterSidebar)
 │   │   ├── context/              # ThemeContext (System, Dark, Light mode provider)
 │   │   ├── lib/                  # Constants, Types, Mock Data, Supabase Client
@@ -61,8 +64,9 @@
 │   ├── main.py                   # FastAPI server entry point with bot polling task
 │   └── seed_db.py                # Database population script
 │
-├── supabase/
-│   └── schema.sql                # PostgreSQL schema & Row Level Security (RLS) policies
+├── supabase-schema.sql           # PostgreSQL schema & Row Level Security (RLS) policies
+├── docs/                         # Project Specifications (SRS, Proposals)
+├── CHANGELOG.md                  # Project versions and new features
 └── README.md
 ```
 
@@ -122,6 +126,3 @@ Distributed under the MIT License. Copyright © 2026 **Sara Power Solution plc**
 ---
 
 **Developed by [HopeLabs](https://www.linkedin.com/in/abdellah-fita)**
-
-
-
