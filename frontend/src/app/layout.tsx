@@ -16,28 +16,8 @@ import {
 const fontMostin = localFont({
   src: [
     {
-      path: '../../public/MostinThin-z8p0w.otf',
-      weight: '100',
-      style: 'normal',
-    },
-    {
-      path: '../../public/MostinExtralight-ALA4D.otf',
-      weight: '200',
-      style: 'normal',
-    },
-    {
-      path: '../../public/MostinLight-jEJWO.otf',
-      weight: '300',
-      style: 'normal',
-    },
-    {
       path: '../../public/MostinRegular-516lZ.otf',
       weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../public/MostinMedium-GOAvP.otf',
-      weight: '500',
       style: 'normal',
     },
     {
