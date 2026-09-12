@@ -97,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 lg:px-4 py-2 text-xs font-mono font-bold tracking-widest uppercase transition-all rounded-sm border flex items-center gap-1.5 ${isActive
+                className={`px-2 lg:px-2.5 py-2 text-xs font-mono font-bold tracking-wider uppercase transition-all rounded-sm border flex items-center gap-1.5 ${isActive
                   ? 'text-sara-red dark:text-red-400 bg-sara-red/10 border-sara-red/40 shadow-sm'
                   : link.highlight
                     ? 'text-amber-600 dark:text-amber-400 hover:text-amber-500 hover:bg-amber-500/10 border-transparent hover:border-amber-500/30'
