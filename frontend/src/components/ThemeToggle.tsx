@@ -39,7 +39,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ variant = 'dropdown', 
             <button
               key={opt.value}
               onClick={() => setTheme(opt.value)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-mono uppercase tracking-widest transition-all rounded-sm ${
+              aria-label={`Switch to ${opt.label} theme`}
+              className={`flex items-center justify-center gap-1.5 px-3 py-2 text-[10px] font-mono uppercase tracking-widest transition-all rounded-sm min-h-[36px] ${
                 isActive
                   ? 'bg-sara-red text-white font-bold shadow-sm'
                   : 'text-kith-muted hover:text-sara-red dark:hover:text-red-400'
@@ -59,7 +60,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ variant = 'dropdown', 
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 text-xs font-mono font-bold tracking-widest uppercase bg-kith-subBg text-sara-red dark:text-red-400 border border-sara-red/30 hover:border-sara-red/60 hover:bg-sara-red/10 transition-all rounded-sm shadow-sm"
+        aria-label={`Current theme: ${theme === 'system' ? 'System' : theme === 'dark' ? 'Dark' : 'Light'}. Click to toggle theme.`}
+        className="flex items-center gap-2 px-3 py-2 min-h-[38px] text-xs font-mono font-bold tracking-widest uppercase bg-kith-subBg text-sara-red dark:text-red-400 border border-sara-red/30 hover:border-sara-red/60 hover:bg-sara-red/10 transition-all rounded-sm shadow-sm"
         title="Toggle Theme"
       >
         {resolvedTheme === 'dark' ? (
@@ -87,7 +89,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ variant = 'dropdown', 
                   setTheme(opt.value);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2 text-xs font-mono tracking-wider uppercase text-left transition-colors ${
+                aria-label={`Select ${opt.label} theme`}
+                className={`w-full flex items-center justify-between px-3 py-2.5 min-h-[40px] text-xs font-mono tracking-wider uppercase text-left transition-colors ${
                   isSelected
                     ? 'bg-sara-red/15 text-sara-red dark:text-red-400 font-bold'
                     : 'text-kith-muted hover:bg-sara-red/10 hover:text-sara-red dark:hover:text-red-400'

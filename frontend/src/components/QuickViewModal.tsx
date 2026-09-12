@@ -28,7 +28,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2 bg-kith-card text-kith-bone border border-kith-border hover:bg-kith-btnPrimaryBg hover:text-kith-btnPrimaryText transition-all"
+          aria-label="Close modal"
+          className="absolute top-4 right-4 z-20 p-2 min-w-[40px] min-h-[40px] flex items-center justify-center bg-kith-card text-kith-bone border border-kith-border hover:bg-kith-btnPrimaryBg hover:text-kith-btnPrimaryText transition-all"
         >
           <X className="w-5 h-5" />
         </button>
@@ -46,13 +47,15 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               <>
                 <button
                   onClick={() => setSelectedImgIndex((prev) => (prev > 0 ? prev - 1 : product.images.length - 1))}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
+                  aria-label="Previous image"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 min-w-[36px] min-h-[36px] flex items-center justify-center bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setSelectedImgIndex((prev) => (prev < product.images.length - 1 ? prev + 1 : 0))}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
+                  aria-label="Next image"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 min-w-[36px] min-h-[36px] flex items-center justify-center bg-kith-card/80 border border-kith-border hover:bg-kith-card text-kith-bone transition-colors opacity-0 group-hover:opacity-100"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -70,6 +73,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                 <button
                   key={img.id || idx}
                   onClick={() => setSelectedImgIndex(idx)}
+                  aria-label={`View image thumbnail ${idx + 1}`}
                   className={`relative w-16 h-20 border transition-all overflow-hidden flex-shrink-0 ${
                     selectedImgIndex === idx ? 'border-kith-bone scale-105' : 'border-kith-border opacity-60 hover:opacity-100'
                   }`}
