@@ -97,7 +97,7 @@ export const Footer: React.FC = () => {
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-3">
                 <div className="relative w-10 h-10 border border-sara-red/40 bg-transparent p-1 flex items-center justify-center rounded-sm shadow-sm overflow-hidden">
-                  <Image src={activeLogoUrl} alt={companyName} fill className="object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
+                  <Image src={activeLogoUrl} alt={companyName} fill sizes="40px" className="object-contain mix-blend-multiply dark:invert dark:mix-blend-screen" />
                 </div>
                 <span className="text-[32px] sm:text-[42px] font-black leading-none tracking-widest text-kith-bone font-mono uppercase">
                   Sara

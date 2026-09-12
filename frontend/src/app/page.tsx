@@ -4,12 +4,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle, Building2, Award, Users, ChevronLeft, ChevronRight, Layers } from 'lucide-react';
-import { getProducts, getCategories, supabase } from '@/lib/supabase';
+import { getCategories, supabase } from '@/lib/supabase';
 import { Product, Category } from '@/lib/types';
 import { ProductGrid } from '@/components/ProductGrid';
 import { QuickViewModal } from '@/components/QuickViewModal';
 import { HERO_HEADER, BRAND_TAGLINE } from '@/lib/constants';
-import heroBannerImg from '@/ass/HeroBanner.png';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useTheme } from '@/context/ThemeContext';
 
@@ -28,13 +27,13 @@ export default function HomePage() {
   // Gather valid banner URLs based on theme
   const bannerUrls = theme === 'light'
     ? [
-      getSettingUrl('hero_banner_light_1', '/cinematic_hero.png'),
+      getSettingUrl('hero_banner_light_1', '/cinematic_hero.webp'),
       getSettingUrl('hero_banner_light_2', ''),
       getSettingUrl('hero_banner_light_3', ''),
       getSettingUrl('hero_banner_light_4', ''),
     ].filter(url => url && url.trim() !== '')
     : [
-      getSettingUrl('hero_banner_dark_1', '/cinematic_hero.png'),
+      getSettingUrl('hero_banner_dark_1', '/cinematic_hero.webp'),
       getSettingUrl('hero_banner_dark_2', ''),
       getSettingUrl('hero_banner_dark_3', ''),
       getSettingUrl('hero_banner_dark_4', ''),
@@ -112,6 +111,7 @@ export default function HomePage() {
                 alt={`Sara Power Solution Systems - Slide ${idx + 1}`}
                 fill
                 priority={idx === 0}
+                sizes="100vw"
                 className="object-cover object-center scale-105"
               />
             </div>
@@ -228,6 +228,7 @@ export default function HomePage() {
                   src={cat.image_url}
                   alt={cat.name}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="absolute inset-0 object-cover transition-transform duration-1000 group-hover:scale-[1.03] z-0 opacity-100"
                 />
               ) : (
