@@ -64,8 +64,8 @@
     
     --kith-bone: #0f0505; /* High-contrast obsidian dark text */
     --kith-offwhite: #1a0a0b;
-    --kith-muted: #64748b; /* Slate 500 */
-    --kith-dark-muted: #94a3b8; /* Slate 400 */
+    --kith-muted: #334155; /* Slate 700 - WCAG AAA compliant */
+    --kith-dark-muted: #475569; /* Slate 600 - WCAG AAA compliant */
     
     --kith-accent: #6f0f10; /* Sara Red #6f0f10 */
     

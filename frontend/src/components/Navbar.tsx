@@ -82,7 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
         <div className="flex md:hidden items-center">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-slate-800 dark:text-red-400 hover:text-sara-red transition-colors"
+            className="p-3 min-w-[48px] min-h-[48px] flex items-center justify-center text-slate-800 dark:text-red-400 hover:text-sara-red transition-colors"
             aria-label="Toggle Navigation Menu"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -167,7 +167,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
           {onSearchToggle && (
             <button
               onClick={onSearchToggle}
-              className={`p-2 rounded-sm transition-colors ${isHomeAtTop
+              aria-label="Search Database"
+              className={`p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-sm transition-colors ${isHomeAtTop
                 ? 'text-white/90 hover:text-white hover:bg-white/10'
                 : isScrolled
                   ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 dark:text-red-400 dark:hover:bg-sara-red/10'

@@ -125,13 +125,15 @@ export default function HomePage() {
           <>
             <button
               onClick={handlePrevBanner}
-              className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:block shadow-xl"
+              aria-label="Previous slide"
+              className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 min-w-[48px] min-h-[48px] p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:flex items-center justify-center shadow-xl"
             >
               <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 group-hover:-translate-x-1 transition-transform" />
             </button>
             <button
               onClick={handleNextBanner}
-              className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:block shadow-xl"
+              aria-label="Next slide"
+              className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 min-w-[48px] min-h-[48px] p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:flex items-center justify-center shadow-xl"
             >
               <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -139,7 +141,7 @@ export default function HomePage() {
             {/* Slide Counter / Indicators */}
             <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 border border-white/20 rounded-sm shadow-xl">
               <span className="text-[10px] font-mono font-bold tracking-widest text-white uppercase">
-                {String(currentBannerIndex + 1).padStart(2, '0')} <span className="text-white/50">/ {String(bannerUrls.length).padStart(2, '0')}</span>
+                {String(currentBannerIndex + 1).padStart(2, '0')} <span className="text-white/80">/ {String(bannerUrls.length).padStart(2, '0')}</span>
               </span>
               <div className="flex items-center gap-1.5 ml-2 border-l border-white/20 pl-4">
                 {bannerUrls.map((_, idx) => (
@@ -149,9 +151,14 @@ export default function HomePage() {
                       setCurrentBannerIndex(idx);
                       setLastInteraction(Date.now());
                     }}
-                    className={`h-1.5 transition-all duration-300 rounded-sm ${idx === currentBannerIndex ? 'w-6 bg-white' : 'w-2 bg-white/30 hover:bg-white/60'
-                      }`}
-                  />
+                    aria-label={`Go to slide ${idx + 1}`}
+                    className="p-2 -my-2 flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-white rounded-sm"
+                  >
+                    <span
+                      className={`h-1.5 transition-all duration-300 rounded-sm block ${idx === currentBannerIndex ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/80'
+                        }`}
+                    />
+                  </button>
                 ))}
               </div>
             </div>

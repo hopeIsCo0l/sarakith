@@ -84,8 +84,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
             href={`${WHATSAPP_LINK}?text=${encodeURIComponent(`[SECURE_COMMS] Requesting specs for HW_UNIT: ${product.name} (SKU: ${product.sku || 'N/A'})`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 bg-sara-red/20 text-sara-red dark:text-red-400 border border-sara-red/50 hover:bg-sara-red hover:text-white transition-colors shadow-[0_0_15px_rgba(111,15,16,0.3)]"
-            title="Contact via COMMS"
+            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center bg-sara-red/20 text-sara-red dark:text-red-400 border border-sara-red/50 hover:bg-sara-red hover:text-white transition-colors shadow-[0_0_15px_rgba(111,15,16,0.3)] rounded-sm"
+            title={`Inquire via WhatsApp for ${product.name}`}
+            aria-label={`Inquire via WhatsApp for ${product.name}`}
           >
             <Phone className="w-4 h-4" />
           </a>
