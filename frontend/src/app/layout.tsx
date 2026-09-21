@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
+import { Analytics } from '@vercel/analytics/next';
 import {
   COMPANY_NAME,
   BRAND_TAGLINE,
@@ -87,6 +88,7 @@ export default function RootLayout({
             </div>
           </SiteSettingsProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
