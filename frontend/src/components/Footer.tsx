@@ -84,7 +84,7 @@ export const Footer: React.FC = () => {
   const linkedinUrl = getSettingValue('social_linkedin', 'https://linkedin.com/company/sarapower');
 
   return (
-    <footer className="border-t border-sara-red/30 bg-kith-subBg text-kith-bone relative overflow-hidden transition-colors">
+    <footer className="border-t border-sara-red/30 bg-kith-subBg text-kith-bone relative overflow-hidden transition-colors print:hidden">
       {/* Background Red Glow Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sara-red/5 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sara-red/5 rounded-full blur-3xl pointer-events-none -z-10" />

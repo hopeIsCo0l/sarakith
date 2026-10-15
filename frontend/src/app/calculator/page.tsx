@@ -33,7 +33,7 @@ export default function SolarCalculatorPage() {
   }, []);
 
   return (
-    <div className="max-w-[1700px] mx-auto px-4 sm:px-8 py-10 space-y-12">
+    <div className="max-w-[1700px] mx-auto px-4 sm:px-8 py-10 space-y-12 print:p-0 print:m-0 print:max-w-none print:space-y-0">
       {/* Top Breadcrumb & Page Banner */}
       <div className="border-b border-kith-border pb-6 space-y-2 print:hidden">
         <div className="flex items-center gap-2 text-[10px] font-mono tracking-superwide text-kith-muted uppercase">

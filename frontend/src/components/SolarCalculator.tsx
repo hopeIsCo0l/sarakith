@@ -31,6 +31,10 @@ import {
   Refrigerator,
   Flame,
   Send,
+  FileText,
+  Calendar,
+  MapPin,
+  X,
 } from 'lucide-react';
 import {
   PRESET_APPLIANCES,
@@ -39,7 +43,15 @@ import {
   calculateSolarSizing,
   buildWhatsAppSizingMessage,
 } from '@/lib/solarCalculator';
-import { WHATSAPP_NUMBER, PRIMARY_PHONE, TELEGRAM_LINK } from '@/lib/constants';
+import {
+  WHATSAPP_NUMBER,
+  PRIMARY_PHONE,
+  SECONDARY_PHONE,
+  OFFICIAL_EMAIL,
+  PHYSICAL_ADDRESS,
+  COMPANY_NAME,
+  TELEGRAM_LINK,
+} from '@/lib/constants';
 import { getDynamicSolarPackages } from '@/lib/supabase';
 import { Product } from '@/lib/types';
 
@@ -87,6 +99,27 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
   // Selected package for detailed highlight
   const [selectedPackageId, setSelectedPackageId] = useState<string>('pkg-recommended');
   const [copied, setCopied] = useState(false);
+
+  // Professional Print Report Customization State
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [clientName, setClientName] = useState('Valued Customer');
+  const [clientLocation, setClientLocation] = useState('Addis Ababa, Ethiopia');
+  const [clientPhone, setClientPhone] = useState('');
+  const [reportNotes, setReportNotes] = useState('Household Solar Backup & Energy Independence');
+  const [reportRefId, setReportRefId] = useState('2026-8492');
+  const [reportFormattedDate, setReportFormattedDate] = useState('October 15, 2026');
+
+  useEffect(() => {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    setReportFormattedDate(dateStr);
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    setReportRefId(`${now.getFullYear()}-${randomSuffix}`);
+  }, []);
 
   // Update quantity handler
   const handleQuantityChange = (id: string, delta: number) => {
@@ -170,6 +203,49 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
     }
   }, [mode, quantities, hours, customAppliances, directPeakKW, directDailyKWh, autonomyHours]);
 
+  // Active Appliances list for reporting
+  const activeAppliances = useMemo(() => {
+    const list: {
+      name: string;
+      wattage: number;
+      quantity: number;
+      totalWatts: number;
+      hours: number;
+      dailyKWh: number;
+      category: string;
+    }[] = [];
+
+    PRESET_APPLIANCES.forEach((app) => {
+      const q = quantities[app.id] || 0;
+      const h = hours[app.id] || app.defaultHours;
+      if (q > 0) {
+        list.push({
+          name: app.name,
+          wattage: app.wattage,
+          quantity: q,
+          totalWatts: app.wattage * q,
+          hours: h,
+          dailyKWh: Number(((app.wattage * q * h) / 1000).toFixed(2)),
+          category: app.category,
+        });
+      }
+    });
+
+    customAppliances.forEach((app) => {
+      list.push({
+        name: app.name,
+        wattage: app.wattage,
+        quantity: app.quantity,
+        totalWatts: app.wattage * app.quantity,
+        hours: app.hours,
+        dailyKWh: Number(((app.wattage * app.quantity * app.hours) / 1000).toFixed(2)),
+        category: 'Custom Load',
+      });
+    });
+
+    return list;
+  }, [quantities, hours, customAppliances]);
+
   // Packages list
   const [matchedPackages, setMatchedPackages] = useState<Product[]>([]);
 
@@ -241,12 +317,443 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
   };
 
   return (
-    <div className="w-full space-y-10 print:space-y-6">
-      {/* Print-only Professional Header */}
-      <div className="hidden print:flex flex-col items-center justify-center border-b-2 border-sara-red/30 pb-4 mb-4 space-y-1 text-center">
-        <h1 className="text-2xl font-bold font-mono tracking-widest uppercase text-slate-900">SARA POWER SOLUTIONS PLC</h1>
-        <h2 className="text-sm font-mono tracking-wider text-slate-600">OFFICIAL SOLAR SIZING REPORT</h2>
+    <div className="w-full">
+      {/* ============================================================ */}
+      {/* DEDICATED OFFICIAL PRINT REPORT (Visible ONLY in print) */}
+      {/* ============================================================ */}
+      <div className="hidden print:block font-sans text-slate-900 bg-white w-full max-w-full p-0 m-0">
+        {/* Top Crimson Accent Stripe */}
+        <div className="h-1.5 w-full bg-[#6f0f10] mb-3"></div>
+
+        {/* Corporate Letterhead */}
+        <div className="border-b-2 border-[#6f0f10]/80 pb-3 mb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo.png"
+                alt="Sara Power Solution plc"
+                className="h-12 w-auto object-contain"
+              />
+              <div>
+                <h1 className="text-lg font-black tracking-wider uppercase text-slate-900 leading-none">
+                  {COMPANY_NAME}
+                </h1>
+                <p className="text-[10px] font-bold text-[#6f0f10] uppercase tracking-wider mt-0.5">
+                  Engineering & Renewable Energy Solutions Division
+                </p>
+                <p className="text-[9px] text-slate-600 mt-0.5">
+                  {PHYSICAL_ADDRESS} • Addis Ababa, Ethiopia
+                </p>
+                <p className="text-[9px] text-slate-600">
+                  Tel: {PRIMARY_PHONE} / {SECONDARY_PHONE} • Email: {OFFICIAL_EMAIL}
+                </p>
+              </div>
+            </div>
+
+            <div className="text-right flex flex-col items-end">
+              <div className="bg-[#6f0f10] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-sm shadow-sm mb-1">
+                OFFICIAL SIZING REPORT
+              </div>
+              <div className="text-[9px] text-slate-700 font-mono">
+                <span className="font-bold text-slate-900">REF:</span> SPS-SIZ-{reportRefId}
+              </div>
+              <div className="text-[9px] text-slate-700 font-mono">
+                <span className="font-bold text-slate-900">DATE:</span> {reportFormattedDate}
+              </div>
+              <div className="text-[8px] text-slate-500 font-mono mt-0.5">
+                VALIDITY: 30 DAYS • IEEE 1547 / IEC 62109 COMPLIANT
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Client & Project Information Strip */}
+        <div className="bg-slate-100 border border-slate-300 rounded-sm p-2.5 mb-3 grid grid-cols-4 gap-2 text-xs">
+          <div>
+            <div className="text-[8px] uppercase tracking-wider font-bold text-slate-500">CLIENT / SITE:</div>
+            <div className="font-bold text-slate-900 truncate text-[10px]">{clientName || 'Valued Customer'}</div>
+          </div>
+          <div>
+            <div className="text-[8px] uppercase tracking-wider font-bold text-slate-500">SITE LOCATION:</div>
+            <div className="font-bold text-slate-900 truncate text-[10px]">{clientLocation || 'Addis Ababa, Ethiopia'}</div>
+          </div>
+          <div>
+            <div className="text-[8px] uppercase tracking-wider font-bold text-slate-500">SIZING METHODOLOGY:</div>
+            <div className="font-bold text-slate-900 truncate text-[10px]">
+              {mode === 'appliance' ? 'Appliance Load Audit' : 'Direct kW Power Sizing'}
+            </div>
+          </div>
+          <div>
+            <div className="text-[8px] uppercase tracking-wider font-bold text-slate-500">SOLAR RESOURCE:</div>
+            <div className="font-bold text-slate-900 text-[10px]">5.2 Peak Sun Hours (PSH/d)</div>
+          </div>
+        </div>
+
+        {/* Executive Sizing Matrix (6 High-Contrast KPI Cards) */}
+        <div className="grid grid-cols-6 gap-1.5 mb-3">
+          <div className="border border-slate-300 bg-white p-2 rounded-sm">
+            <div className="text-[7.5px] font-bold uppercase tracking-wider text-slate-500">CONTINUOUS LOAD</div>
+            <div className="text-base font-black text-slate-900 leading-tight">
+              {calculation.totalPeakKW} <span className="text-[10px] font-bold text-[#6f0f10]">kW</span>
+            </div>
+            <div className="text-[7.5px] text-slate-600 mt-0.5">
+              {calculation.totalPeakWatts}W Peak Surge
+            </div>
+          </div>
+
+          <div className="border border-slate-300 bg-white p-2 rounded-sm">
+            <div className="text-[7.5px] font-bold uppercase tracking-wider text-slate-500">DAILY ENERGY</div>
+            <div className="text-base font-black text-slate-900 leading-tight">
+              {calculation.dailyEnergyKWh} <span className="text-[10px] font-bold text-amber-600">kWh/d</span>
+            </div>
+            <div className="text-[7.5px] text-slate-600 mt-0.5">
+              {(calculation.dailyEnergyWattHours / 1000).toFixed(1)} Units / Day
+            </div>
+          </div>
+
+          <div className="border border-slate-300 bg-white p-2 rounded-sm">
+            <div className="text-[7.5px] font-bold uppercase tracking-wider text-slate-500">HYBRID INVERTER</div>
+            <div className="text-base font-black text-slate-900 leading-tight">
+              {calculation.recommendedInverterKW} <span className="text-[10px] font-bold text-sky-700">kW</span>
+            </div>
+            <div className="text-[7.5px] text-slate-600 mt-0.5">
+              {calculation.recommendedInverterKVA} kVA Pure Sine
+            </div>
+          </div>
+
+          <div className="border border-slate-300 bg-white p-2 rounded-sm">
+            <div className="text-[7.5px] font-bold uppercase tracking-wider text-slate-500">LiFePO4 STORAGE</div>
+            <div className="text-base font-black text-slate-900 leading-tight">
+              {calculation.recommendedBatteryKWh} <span className="text-[10px] font-bold text-emerald-700">kWh</span>
+            </div>
+            <div className="text-[7.5px] text-slate-600 mt-0.5">
+              ~{calculation.recommendedBatteryAh48V} Ah @ 48V Bank
+            </div>
+          </div>
+
+          <div className="border border-slate-300 bg-white p-2 rounded-sm">
+            <div className="text-[7.5px] font-bold uppercase tracking-wider text-slate-500">SOLAR PV ARRAY</div>
+            <div className="text-base font-black text-slate-900 leading-tight">
+              {calculation.recommendedSolarArrayWp} <span className="text-[10px] font-bold text-amber-600">Wp</span>
+            </div>
+            <div className="text-[7.5px] text-slate-600 mt-0.5">
+              {calculation.recommendedPanelCount550W}x 550W Tier-1 Panels
+            </div>
+          </div>
+
+          <div className="border border-slate-300 bg-white p-2 rounded-sm">
+            <div className="text-[7.5px] font-bold uppercase tracking-wider text-slate-500">BACKUP AUTONOMY</div>
+            <div className="text-base font-black text-slate-900 leading-tight">
+              {autonomyHours} <span className="text-[10px] font-bold text-purple-700">Hours</span>
+            </div>
+            <div className="text-[7.5px] text-slate-600 mt-0.5">
+              Off-Sun Coverage
+            </div>
+          </div>
+        </div>
+
+        {/* Section 1: Electrical Load Schedule & Energy Audit */}
+        <div className="mb-3 print-avoid-break">
+          <div className="flex items-center justify-between border-b border-slate-300 pb-1 mb-1.5">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-900">
+              1. ELECTRICAL LOAD AUDIT & CONSUMPTION SCHEDULE
+            </h3>
+            <span className="text-[8px] text-slate-500 font-mono">
+              {mode === 'appliance'
+                ? `${activeAppliances.length} Active Connected Appliances`
+                : 'Direct Engineering Kilowatt Input'}
+            </span>
+          </div>
+
+          {mode === 'appliance' ? (
+            <table className="w-full text-[9px] text-left border-collapse border border-slate-300">
+              <thead>
+                <tr className="bg-slate-100 border-b border-slate-300 text-slate-700 font-bold uppercase tracking-wider text-[8px]">
+                  <th className="py-1 px-2 border-r border-slate-300 w-6 text-center">#</th>
+                  <th className="py-1 px-2 border-r border-slate-300">Appliance / Equipment Description</th>
+                  <th className="py-1 px-2 border-r border-slate-300 text-center w-14">Unit (W)</th>
+                  <th className="py-1 px-2 border-r border-slate-300 text-center w-10">Qty</th>
+                  <th className="py-1 px-2 border-r border-slate-300 text-center w-16">Total (W)</th>
+                  <th className="py-1 px-2 border-r border-slate-300 text-center w-14">Daily (Hrs)</th>
+                  <th className="py-1 px-2 border-r border-slate-300 text-right w-16">Daily (kWh)</th>
+                  <th className="py-1 px-2 text-right w-12">% Load</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeAppliances.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="py-2 text-center text-slate-400 italic">
+                      No specific appliances selected. Continuous base load applied.
+                    </td>
+                  </tr>
+                ) : (
+                  activeAppliances.map((item, idx) => {
+                    const share =
+                      calculation.dailyEnergyKWh > 0
+                        ? ((item.dailyKWh / calculation.dailyEnergyKWh) * 100).toFixed(1)
+                        : '0.0';
+                    return (
+                      <tr
+                        key={idx}
+                        className={`border-b border-slate-200 ${
+                          idx % 2 === 1 ? 'bg-slate-50/70' : 'bg-white'
+                        }`}
+                      >
+                        <td className="py-0.5 px-2 border-r border-slate-200 text-center font-mono text-slate-500">
+                          {idx + 1}
+                        </td>
+                        <td className="py-0.5 px-2 border-r border-slate-200 font-medium text-slate-900">
+                          {item.name}
+                        </td>
+                        <td className="py-0.5 px-2 border-r border-slate-200 text-center font-mono">
+                          {item.wattage} W
+                        </td>
+                        <td className="py-0.5 px-2 border-r border-slate-200 text-center font-mono font-bold">
+                          {item.quantity}
+                        </td>
+                        <td className="py-0.5 px-2 border-r border-slate-200 text-center font-mono font-bold text-slate-900">
+                          {item.totalWatts} W
+                        </td>
+                        <td className="py-0.5 px-2 border-r border-slate-200 text-center font-mono">
+                          {item.hours} h
+                        </td>
+                        <td className="py-0.5 px-2 border-r border-slate-200 text-right font-mono font-bold">
+                          {item.dailyKWh.toFixed(2)}
+                        </td>
+                        <td className="py-0.5 px-2 text-right font-mono text-slate-600">
+                          {share}%
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+              <tfoot>
+                <tr className="bg-slate-100 font-bold border-t-2 border-slate-400 text-slate-900 text-[8.5px]">
+                  <td colSpan={4} className="py-1 px-2 border-r border-slate-300 text-right uppercase">
+                    TOTAL CONNECTED LOAD & DAILY CONSUMPTION:
+                  </td>
+                  <td className="py-1 px-2 border-r border-slate-300 text-center font-mono text-slate-900">
+                    {calculation.totalPeakWatts} W
+                  </td>
+                  <td className="py-1 px-2 border-r border-slate-300 text-center font-mono text-slate-500">
+                    —
+                  </td>
+                  <td className="py-1 px-2 border-r border-slate-300 text-right font-mono text-[#6f0f10]">
+                    {calculation.dailyEnergyKWh} kWh/d
+                  </td>
+                  <td className="py-1 px-2 text-right font-mono text-slate-900">100%</td>
+                </tr>
+              </tfoot>
+            </table>
+          ) : (
+            <table className="w-full text-[9px] text-left border border-slate-300">
+              <thead className="bg-slate-100 border-b border-slate-300 text-[8px] uppercase tracking-wider font-bold text-slate-700">
+                <tr>
+                  <th className="py-1 px-2 border-r border-slate-300">Engineering Parameter</th>
+                  <th className="py-1 px-2 border-r border-slate-300">Specified Input Value</th>
+                  <th className="py-1 px-2 border-r border-slate-300">Engineering Headroom Buffer</th>
+                  <th className="py-1 px-2">Design Operating Level</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 text-slate-900">
+                <tr>
+                  <td className="py-1 px-2 font-medium border-r border-slate-200">Continuous Electrical Demand</td>
+                  <td className="py-1 px-2 font-mono font-bold border-r border-slate-200">{directPeakKW} kW</td>
+                  <td className="py-1 px-2 font-mono text-slate-600 border-r border-slate-200">1.25x Inrush Multiplier</td>
+                  <td className="py-1 px-2 font-mono font-bold text-[#6f0f10]">{(directPeakKW * 1.25).toFixed(2)} kW Surge Capacity</td>
+                </tr>
+                <tr className="bg-slate-50/70">
+                  <td className="py-1 px-2 font-medium border-r border-slate-200">Daily Operating Energy Budget</td>
+                  <td className="py-1 px-2 font-mono font-bold border-r border-slate-200">{directDailyKWh} kWh / Day</td>
+                  <td className="py-1 px-2 font-mono text-slate-600 border-r border-slate-200">20% System Thermal & Wiring Losses</td>
+                  <td className="py-1 px-2 font-mono font-bold text-amber-700">{(directDailyKWh * 1.2).toFixed(2)} kWh Gross Generation Required</td>
+                </tr>
+                <tr>
+                  <td className="py-1 px-2 font-medium border-r border-slate-200">Target Battery Autonomy Duration</td>
+                  <td className="py-1 px-2 font-mono font-bold border-r border-slate-200">{autonomyHours} Hours</td>
+                  <td className="py-1 px-2 font-mono text-slate-600 border-r border-slate-200">85% Usable DoD (LiFePO4)</td>
+                  <td className="py-1 px-2 font-mono font-bold text-emerald-700">{(directDailyKWh * (autonomyHours / 24) / 0.85).toFixed(2)} kWh Gross Storage</td>
+                </tr>
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Section 2: Recommended System Architecture & Bill of Materials */}
+        <div className="mb-3 print-avoid-break">
+          <div className="flex items-center justify-between border-b border-slate-300 pb-1 mb-1.5">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-900">
+              2. RECOMMENDED SYSTEM ARCHITECTURE & EQUIPMENT SPECIFICATION
+            </h3>
+            {activePackage && (
+              <span className="text-[8px] font-bold text-[#6f0f10] uppercase tracking-wider">
+                Matched Solution: {activePackage.name}
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-[8.5px]">
+            {/* Component 1: Hybrid Inverter */}
+            <div className="border border-slate-300 p-2 rounded-sm bg-white">
+              <div className="font-bold text-slate-900 uppercase flex items-center justify-between border-b border-slate-200 pb-0.5 mb-1">
+                <span>A. Power Conversion Unit (Hybrid Inverter)</span>
+                <span className="text-sky-700 font-mono font-bold">{calculation.recommendedInverterKW} kW</span>
+              </div>
+              <ul className="space-y-0.5 text-slate-600 leading-tight">
+                <li>• <b className="text-slate-800">Rating:</b> {calculation.recommendedInverterKW} kW Continuous / {calculation.recommendedInverterKVA} kVA Pure Sine Wave (230VAC / 50Hz)</li>
+                <li>• <b className="text-slate-800">Solar Controller:</b> Integrated High-Voltage MPPT (120V - 450VDC Operating Window)</li>
+                <li>• <b className="text-slate-800">Transfer Time:</b> &lt;10ms Seamless UPS Switching (No IT equipment reboot)</li>
+                <li>• <b className="text-slate-800">Grid/Gen:</b> Auto-generator dry contact start & dual-source AC charging support</li>
+              </ul>
+            </div>
+
+            {/* Component 2: Battery Storage */}
+            <div className="border border-slate-300 p-2 rounded-sm bg-white">
+              <div className="font-bold text-slate-900 uppercase flex items-center justify-between border-b border-slate-200 pb-0.5 mb-1">
+                <span>B. Energy Storage Bank (LiFePO4)</span>
+                <span className="text-emerald-700 font-mono font-bold">{calculation.recommendedBatteryKWh} kWh</span>
+              </div>
+              <ul className="space-y-0.5 text-slate-600 leading-tight">
+                <li>• <b className="text-slate-800">Chemistry:</b> Grade-A Lithium Iron Phosphate (LiFePO4) 48V Nominal</li>
+                <li>• <b className="text-slate-800">Capacity:</b> {calculation.recommendedBatteryKWh} kWh (~{calculation.recommendedBatteryAh48V} Ah Bank at 48V DC)</li>
+                <li>• <b className="text-slate-800">Durability:</b> 6,000+ Deep Cycles at 80% DoD (~10–15 Year Operating Lifespan)</li>
+                <li>• <b className="text-slate-800">Protection:</b> Active Smart BMS with cell-balancing, thermal, and short-circuit cutoff</li>
+              </ul>
+            </div>
+
+            {/* Component 3: Solar PV Array */}
+            <div className="border border-slate-300 p-2 rounded-sm bg-white">
+              <div className="font-bold text-slate-900 uppercase flex items-center justify-between border-b border-slate-200 pb-0.5 mb-1">
+                <span>C. Solar Generation Array (PV Modules)</span>
+                <span className="text-amber-700 font-mono font-bold">{calculation.recommendedSolarArrayWp} Wp</span>
+              </div>
+              <ul className="space-y-0.5 text-slate-600 leading-tight">
+                <li>• <b className="text-slate-800">Total Array:</b> {calculation.recommendedSolarArrayWp} Wp Peak DC Output</li>
+                <li>• <b className="text-slate-800">Module Quantity:</b> {calculation.recommendedPanelCount550W}x 550W Tier-1 N-Type Monocrystalline Modules</li>
+                <li>• <b className="text-slate-800">Efficiency:</b> &gt;21.5% Half-Cell Multi-Busbar (MBB) Technology</li>
+                <li>• <b className="text-slate-800">Warranty:</b> 25-Year Linear Power Warranty (&gt;84.8% at Year 25)</li>
+              </ul>
+            </div>
+
+            {/* Component 4: BOS & Electrical Protection */}
+            <div className="border border-slate-300 p-2 rounded-sm bg-white">
+              <div className="font-bold text-slate-900 uppercase flex items-center justify-between border-b border-slate-200 pb-0.5 mb-1">
+                <span>D. Balance of System (BOS) & Protection</span>
+                <span className="text-slate-700 font-mono font-bold">Included</span>
+              </div>
+              <ul className="space-y-0.5 text-slate-600 leading-tight">
+                <li>• <b className="text-slate-800">DC Combiner Box:</b> IP65 Enclosure with 1000V DC Isolator Switches & Fuses</li>
+                <li>• <b className="text-slate-800">Surge Protection:</b> Class II DC & AC Surge Protective Devices (SPD)</li>
+                <li>• <b className="text-slate-800">Conductors:</b> 4mm² / 6mm² Double-Insulated UV-Resistant Solar Cables + MC4</li>
+                <li>• <b className="text-slate-800">Battery Interconnect:</b> Heavy-Duty 35mm² / 50mm² Flexible Copper Cables</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Environmental Offset & Engineering Criteria */}
+        <div className="grid grid-cols-2 gap-2 mb-3 print-avoid-break">
+          {/* Left: Environmental & Savings */}
+          <div className="border border-slate-300 p-2 rounded-sm bg-slate-50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-1 mb-1">
+              3. ENVIRONMENTAL OFFSET & GENERATION YIELD
+            </div>
+            <div className="grid grid-cols-3 gap-1.5 text-center">
+              <div className="bg-white p-1 border border-slate-200 rounded-sm">
+                <div className="text-[7.5px] uppercase text-slate-500 font-bold">Annual Energy</div>
+                <div className="text-[11px] font-black text-slate-900 font-mono">
+                  {(calculation.dailyEnergyKWh * 365).toLocaleString()}
+                </div>
+                <div className="text-[7px] text-slate-500">kWh / Year</div>
+              </div>
+              <div className="bg-white p-1 border border-slate-200 rounded-sm">
+                <div className="text-[7.5px] uppercase text-slate-500 font-bold">CO₂ Reduced</div>
+                <div className="text-[11px] font-black text-emerald-700 font-mono">
+                  {calculation.annualCO2ReductionKg.toLocaleString()}
+                </div>
+                <div className="text-[7px] text-slate-500">kg / Year</div>
+              </div>
+              <div className="bg-white p-1 border border-slate-200 rounded-sm">
+                <div className="text-[7.5px] uppercase text-slate-500 font-bold">Diesel Saved</div>
+                <div className="text-[11px] font-black text-amber-700 font-mono">
+                  {Math.round(calculation.dailyEnergyKWh * 365 * 0.28).toLocaleString()}
+                </div>
+                <div className="text-[7px] text-slate-500">Liters / Year</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Technical Sizing Assumptions */}
+          <div className="border border-slate-300 p-2 rounded-sm bg-slate-50">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-1 mb-1">
+              4. ENGINEERING DESIGN CRITERIA
+            </div>
+            <ul className="text-[8px] text-slate-600 space-y-0.5 leading-tight">
+              <li>• <b className="text-slate-800">Solar Irradiance:</b> Calibrated at 5.2 Peak Sun Hours (Addis Ababa Regional Average).</li>
+              <li>• <b className="text-slate-800">Motor Surge Margin:</b> 1.25x Continuous headroom to absorb inductive starting spikes.</li>
+              <li>• <b className="text-slate-800">Battery DOD:</b> Sized at 85% maximum Depth of Discharge for 10+ year cell life.</li>
+              <li>• <b className="text-slate-800">System Losses:</b> 20% aggregate thermal, conductor, and inverter conversion allowance.</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Section 5: Official Sign-off, Stamp Box & Quality Certification */}
+        <div className="border border-slate-300 rounded-sm p-2.5 mb-2 bg-white print-avoid-break">
+          <div className="text-[9px] font-bold uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-0.5 mb-1.5">
+            5. FORMAL AUTHORIZATION & ENGINEERING SIGN-OFF
+          </div>
+          
+          <div className="grid grid-cols-2 gap-6 text-[8.5px]">
+            {/* Prepared by */}
+            <div className="space-y-2">
+              <div className="text-slate-700">
+                <div className="font-bold text-slate-900 uppercase">PREPARED & CERTIFIED BY:</div>
+                <div className="text-slate-600 font-medium">Sara Power Solution plc — Solar Engineering Division</div>
+                <div className="text-slate-500 text-[8px]">Bole Road, Dhabi Building 4th Floor, Addis Ababa, Ethiopia</div>
+              </div>
+              <div className="pt-4 border-b border-slate-400 flex items-center justify-between">
+                <span className="text-[7.5px] text-slate-500 uppercase">Authorized Engineering Signature</span>
+                <span className="text-[7.5px] font-mono text-slate-700">{reportFormattedDate}</span>
+              </div>
+              <div className="h-8 border border-dashed border-slate-300 flex items-center justify-center text-[7.5px] text-slate-400 uppercase tracking-widest font-mono">
+                [ OFFICIAL SARA POWER SOLUTION STAMP ]
+              </div>
+            </div>
+
+            {/* Client Acceptance */}
+            <div className="space-y-2">
+              <div className="text-slate-700">
+                <div className="font-bold text-slate-900 uppercase">CLIENT ACCEPTANCE & ACKNOWLEDGEMENT:</div>
+                <div className="text-slate-600">Site Representative: <b className="text-slate-900">{clientName || 'Valued Customer'}</b></div>
+                <div className="text-slate-500 text-[8px]">Installation Location: {clientLocation || 'Addis Ababa, Ethiopia'}</div>
+              </div>
+              <div className="pt-4 border-b border-slate-400 flex items-center justify-between">
+                <span className="text-[7.5px] text-slate-500 uppercase">Client Representative Signature</span>
+                <span className="text-[7.5px] font-mono text-slate-400">Date: ____/____/2026</span>
+              </div>
+              <div className="text-[7.5px] text-slate-500 italic leading-snug">
+                Disclaimer: This report provides theoretical equipment capacity sizing based on stated electrical load profiles. Final specifications may be refined upon on-site physical roof irradiance and electrical panel inspection.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Report Footer Strip */}
+        <div className="border-t border-slate-300 pt-1.5 flex items-center justify-between text-[7.5px] text-slate-500 font-mono">
+          <div>
+            Sara Power Solution plc • Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422 • Hotline: {PRIMARY_PHONE} / {SECONDARY_PHONE}
+          </div>
+          <div>
+            Report Ref: SPS-SIZ-{reportRefId} • Page 1 of 1
+          </div>
+        </div>
       </div>
+
+      {/* ============================================================ */}
+      {/* INTERACTIVE WEB CALCULATOR (Visible on screen, HIDDEN in print) */}
+      {/* ============================================================ */}
+      <div className="w-full space-y-10 print:hidden">
 
       {/* Header & Mode Switcher Bar */}
       <div className="bg-kith-subBg border border-kith-border p-6 rounded-none flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden">
@@ -785,7 +1292,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
                 </button>
 
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => setIsPrintModalOpen(true)}
                   className="flex-1 py-2 bg-kith-card border border-kith-border hover:border-kith-bone text-kith-bone text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <Printer className="w-3.5 h-3.5 text-kith-muted" />
@@ -936,6 +1443,143 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
           </div>
         </div>
       </div>
+    </div>
+
+      {/* ============================================================ */}
+      {/* EXECUTIVE PRINT REPORT CUSTOMIZATION MODAL */}
+      {/* ============================================================ */}
+      {isPrintModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm print:hidden">
+          <div className="bg-kith-subBg border border-sara-red/40 max-w-lg w-full p-6 shadow-2xl relative space-y-5">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-kith-border pb-4">
+              <div>
+                <div className="text-[10px] font-mono tracking-widest text-amber-500 uppercase flex items-center gap-1.5 font-bold">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>EXECUTIVE SIZING REPORT // PRINT & PDF EXPORT</span>
+                </div>
+                <h3 className="text-lg font-bold font-mono uppercase text-kith-bone mt-1 flex items-center gap-2">
+                  <Printer className="w-5 h-5 text-sara-red" />
+                  GENERATE OFFICIAL REPORT
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPrintModalOpen(false)}
+                className="text-kith-muted hover:text-kith-bone text-lg font-bold p-1 rounded transition-colors"
+                aria-label="Close dialog"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Customization Inputs */}
+            <div className="space-y-4 text-xs font-mono">
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-kith-muted mb-1 font-bold">
+                  Client / Customer / Site Name
+                </label>
+                <input
+                  type="text"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="e.g. Ato Daniel Tesfaye / Bole Villa"
+                  className="w-full bg-kith-card border border-kith-border text-kith-bone px-3 py-2 text-xs font-mono focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-kith-muted mb-1 font-bold">
+                    Installation Location
+                  </label>
+                  <input
+                    type="text"
+                    value={clientLocation}
+                    onChange={(e) => setClientLocation(e.target.value)}
+                    placeholder="e.g. Addis Ababa, Bole Bulbula"
+                    className="w-full bg-kith-card border border-kith-border text-kith-bone px-3 py-2 text-xs font-mono focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-kith-muted mb-1 font-bold">
+                    Contact Phone (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={clientPhone}
+                    onChange={(e) => setClientPhone(e.target.value)}
+                    placeholder="e.g. +251 91 123 4567"
+                    className="w-full bg-kith-card border border-kith-border text-kith-bone px-3 py-2 text-xs font-mono focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              {/* Sizing Summary Telemetry */}
+              <div className="p-3.5 bg-kith-card border border-kith-border space-y-2">
+                <div className="text-[10px] text-amber-500 uppercase font-bold tracking-wider flex items-center justify-between">
+                  <span>SYSTEM SPECIFICATIONS SUMMARY</span>
+                  <span className="text-emerald-400 font-mono">IEEE / IEC SIZED</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-kith-muted">
+                  <div>
+                    • Inverter:{' '}
+                    <b className="text-kith-bone">
+                      {calculation.recommendedInverterKW} kW
+                    </b>{' '}
+                    Pure Sine Wave
+                  </div>
+                  <div>
+                    • Storage:{' '}
+                    <b className="text-kith-bone">
+                      {calculation.recommendedBatteryKWh} kWh
+                    </b>{' '}
+                    LiFePO4 Bank
+                  </div>
+                  <div>
+                    • Solar PV:{' '}
+                    <b className="text-kith-bone">
+                      {calculation.recommendedSolarArrayWp} Wp
+                    </b>{' '}
+                    ({calculation.recommendedPanelCount550W}x 550W Panels)
+                  </div>
+                  <div>
+                    • Daily Energy:{' '}
+                    <b className="text-kith-bone">
+                      {calculation.dailyEnergyKWh} kWh/d
+                    </b>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-kith-muted italic">
+                Tip: The generated report formats cleanly to an A4 hardcopy or PDF document with letterhead, complete appliance schedule, and formal sign-off lines.
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center gap-3 pt-2 border-t border-kith-border">
+              <button
+                type="button"
+                onClick={() => setIsPrintModalOpen(false)}
+                className="flex-1 py-2.5 bg-kith-card border border-kith-border text-kith-bone text-xs font-mono uppercase tracking-wider hover:border-kith-bone transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  window.print();
+                }}
+                className="flex-1 py-2.5 bg-sara-red hover:bg-sara-redLight text-white text-xs font-mono uppercase tracking-widest font-bold flex items-center justify-center gap-2 transition-all shadow-md"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Print / Save as PDF</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
