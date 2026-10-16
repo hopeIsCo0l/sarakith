@@ -35,6 +35,7 @@ import {
   Calendar,
   MapPin,
   X,
+  Car,
 } from 'lucide-react';
 import {
   PRESET_APPLIANCES,
@@ -83,6 +84,18 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
     });
     return initial;
   });
+
+  const [appWattages, setAppWattages] = useState<Record<string, number>>(() => {
+    const initial: Record<string, number> = {};
+    PRESET_APPLIANCES.forEach((app) => {
+      initial[app.id] = app.wattage;
+    });
+    return initial;
+  });
+
+  const handleWattageChange = (id: string, newWattage: number) => {
+    setAppWattages((prev) => ({ ...prev, [id]: newWattage }));
+  };
 
   const [customAppliances, setCustomAppliances] = useState<CustomAppliance[]>([]);
   const [customName, setCustomName] = useState('');
@@ -163,12 +176,15 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
   const handleReset = () => {
     const initialQty: Record<string, number> = {};
     const initialHrs: Record<string, number> = {};
+    const initialWatts: Record<string, number> = {};
     PRESET_APPLIANCES.forEach((app) => {
       initialQty[app.id] = app.defaultQuantity;
       initialHrs[app.id] = app.defaultHours;
+      initialWatts[app.id] = app.wattage;
     });
     setQuantities(initialQty);
     setHours(initialHrs);
+    setAppWattages(initialWatts);
     setCustomAppliances([]);
     setDirectPeakKW(3.5);
     setDirectDailyKWh(12.0);
@@ -188,9 +204,10 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
       PRESET_APPLIANCES.forEach((app) => {
         const q = quantities[app.id] || 0;
         const h = hours[app.id] || app.defaultHours;
+        const w = appWattages[app.id] ?? app.wattage;
         if (q > 0) {
-          totalPeak += app.wattage * q;
-          totalDaily += app.wattage * q * h;
+          totalPeak += w * q;
+          totalDaily += w * q * h;
         }
       });
 
@@ -201,7 +218,7 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
 
       return calculateSolarSizing(totalPeak, totalDaily, autonomyHours);
     }
-  }, [mode, quantities, hours, customAppliances, directPeakKW, directDailyKWh, autonomyHours]);
+  }, [mode, quantities, hours, appWattages, customAppliances, directPeakKW, directDailyKWh, autonomyHours]);
 
   // Active Appliances list for reporting
   const activeAppliances = useMemo(() => {
@@ -218,14 +235,17 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
     PRESET_APPLIANCES.forEach((app) => {
       const q = quantities[app.id] || 0;
       const h = hours[app.id] || app.defaultHours;
+      const w = appWattages[app.id] ?? app.wattage;
       if (q > 0) {
         list.push({
-          name: app.name,
-          wattage: app.wattage,
+          name: app.id === 'ev_charger'
+            ? `Electric Vehicle (EV) Charger (${(w / 1000).toFixed(w % 1000 === 0 ? 0 : 1)} kW)`
+            : app.name,
+          wattage: w,
           quantity: q,
-          totalWatts: app.wattage * q,
+          totalWatts: w * q,
           hours: h,
-          dailyKWh: Number(((app.wattage * q * h) / 1000).toFixed(2)),
+          dailyKWh: Number(((w * q * h) / 1000).toFixed(2)),
           category: app.category,
         });
       }
@@ -244,7 +264,7 @@ export const SolarCalculator: React.FC<SolarCalculatorProps> = ({
     });
 
     return list;
-  }, [quantities, hours, customAppliances]);
+  }, [quantities, hours, appWattages, customAppliances]);
 
   // Packages list
   const [matchedPackages, setMatchedPackages] = useState<Product[]>([]);
@@ -311,6 +331,8 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
         return <Coffee {...props} />;
       case 'Wind':
         return <Wind {...props} />;
+      case 'Car':
+        return <Car {...props} />;
       default:
         return <Zap {...props} />;
     }
@@ -823,36 +845,85 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
                 {PRESET_APPLIANCES.map((app) => {
                   const qty = quantities[app.id] || 0;
                   const hrs = hours[app.id] || app.defaultHours;
+                  const w = appWattages[app.id] ?? app.wattage;
                   const isActive = qty > 0;
-                  const subtotalWatts = app.wattage * qty;
+                  const subtotalWatts = w * qty;
                   const subtotalDailyKWh = (subtotalWatts * hrs) / 1000;
 
                   return (
                     <div
                       key={app.id}
                       className={`p-4 border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                        isActive
+                        app.id === 'ev_charger'
+                          ? isActive
+                            ? 'bg-kith-card border-amber-500/80 shadow-md ring-1 ring-amber-500/30'
+                            : 'bg-kith-subBg border-amber-500/40 hover:border-amber-500/70'
+                          : isActive
                           ? 'bg-kith-card border-kith-bone/40 shadow-sm'
                           : 'bg-kith-subBg/40 border-kith-border hover:border-kith-border/80 opacity-75'
                       }`}
                     >
                       {/* Left: Icon & Info */}
                       <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className="p-2 bg-kith-subBg border border-kith-border rounded-none mt-0.5">
+                        <div
+                          className={`p-2 border rounded-none mt-0.5 ${
+                            app.id === 'ev_charger'
+                              ? 'bg-amber-500/10 border-amber-500/40 text-amber-500'
+                              : 'bg-kith-subBg border-kith-border'
+                          }`}
+                        >
                           {renderApplianceIcon(app.iconName)}
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs sm:text-sm font-mono font-bold text-kith-bone truncate">
+                            <span className="text-xs sm:text-sm font-mono font-bold text-kith-bone">
                               {app.name}
                             </span>
-                            <span className="px-1.5 py-0.5 text-[10px] font-mono bg-kith-subBg border border-kith-border text-amber-500">
-                              {app.wattage}W each
+                            <span className="px-1.5 py-0.5 text-[10px] font-mono bg-kith-subBg border border-kith-border text-amber-500 font-bold">
+                              {w >= 1000
+                                ? `${(w / 1000).toFixed(w % 1000 === 0 ? 0 : 1)}kW each`
+                                : `${w}W each`}
                             </span>
+                            {app.id === 'ev_charger' && (
+                              <span className="px-1.5 py-0.5 text-[9px] font-mono bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-widest font-bold">
+                                ★ HIGH DEMAND
+                              </span>
+                            )}
                           </div>
-                          <p className="text-[11px] font-mono text-kith-muted truncate">
+                          <p className="text-[11px] font-mono text-kith-muted mt-0.5">
                             {app.description}
                           </p>
+
+                          {/* Dedicated Power Tier Selector for EV Charger */}
+                          {app.id === 'ev_charger' && (
+                            <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
+                              <span className="text-[10px] font-mono text-kith-muted uppercase tracking-wider font-bold">
+                                Charger Power:
+                              </span>
+                              {[
+                                { label: '3.5 kW (16A)', watts: 3500 },
+                                { label: '7 kW (32A Default)', watts: 7000 },
+                                { label: '11 kW (3-Phase)', watts: 11000 },
+                                { label: '22 kW (Commercial)', watts: 22000 },
+                              ].map((tier) => {
+                                const isSelected = w === tier.watts;
+                                return (
+                                  <button
+                                    key={tier.watts}
+                                    type="button"
+                                    onClick={() => handleWattageChange('ev_charger', tier.watts)}
+                                    className={`px-2 py-0.5 text-[10px] font-mono border transition-all ${
+                                      isSelected
+                                        ? 'bg-amber-500 text-black border-amber-500 font-bold shadow-sm'
+                                        : 'bg-kith-card border-kith-border text-kith-muted hover:border-kith-bone hover:text-kith-bone'
+                                    }`}
+                                  >
+                                    {tier.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -901,7 +972,9 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
                         {isActive && (
                           <div className="hidden sm:block text-right min-w-[70px]">
                             <div className="text-xs font-mono font-bold text-kith-bone">
-                              {subtotalWatts} W
+                              {subtotalWatts >= 1000
+                                ? `${(subtotalWatts / 1000).toFixed(1)} kW`
+                                : `${subtotalWatts} W`}
                             </div>
                             <div className="text-[10px] font-mono text-kith-muted">
                               {subtotalDailyKWh.toFixed(1)} kWh/d

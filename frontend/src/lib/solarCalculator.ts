@@ -3,7 +3,7 @@ import { Product } from './types';
 export interface ApplianceItem {
   id: string;
   name: string;
-  category: 'cooling' | 'lighting' | 'entertainment' | 'heavy' | 'pumps' | 'office';
+  category: 'cooling' | 'lighting' | 'entertainment' | 'heavy' | 'pumps' | 'office' | 'ev';
   wattage: number; // Watts per unit
   defaultHours: number; // Hours run per day
   defaultQuantity: number;
@@ -46,6 +46,16 @@ export interface SolarSystemCalculation {
 
 
 export const PRESET_APPLIANCES: ApplianceItem[] = [
+  {
+    id: 'ev_charger',
+    name: 'Electric Vehicle (EV) Home Charger (Level 2 Wallbox)',
+    category: 'ev',
+    wattage: 7000,
+    defaultHours: 2,
+    defaultQuantity: 0,
+    iconName: 'Car',
+    description: 'Home EV Wallbox Fast Charger (Single-Phase 32A / 7 kW Default)',
+  },
   {
     id: 'fridge',
     name: 'Refrigerator / Freezer (Inverter/Standard)',
