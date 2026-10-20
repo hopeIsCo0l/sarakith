@@ -3,30 +3,45 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Phone, ArrowLeft, ShieldCheck, Truck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getProductBySlug, getProducts } from '@/lib/supabase';
 import { Product } from '@/lib/types';
 import { ProductCard } from '@/components/ProductCard';
 import { PRIMARY_PHONE, WHATSAPP_LINK } from '@/lib/constants';
 
-export default function ProductDetailPage({ params }: { params: { slug: string } }) {
+export default function ProductDetailPage() {
+  const routeParams = useParams<{ slug: string }>();
+  const slug = typeof routeParams?.slug === 'string' ? routeParams.slug : '';
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [selectedImgIndex, setSelectedImgIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!slug) return;
+
+    let cancelled = false;
+
     async function loadData() {
-      const prod = await getProductBySlug(params.slug);
+      const prod = await getProductBySlug(slug);
+      if (cancelled) return;
+
       if (prod) {
         setProduct(prod);
         const related = await getProducts({ categorySlug: prod.category?.slug });
-        setRelatedProducts(related.filter((p) => p.id !== prod.id).slice(0, 4));
+        if (!cancelled) {
+          setRelatedProducts(related.filter((p) => p.id !== prod.id).slice(0, 4));
+        }
       }
-      setLoading(false);
+      if (!cancelled) setLoading(false);
     }
     loadData();
-  }, [params.slug]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   if (loading) {
     return (

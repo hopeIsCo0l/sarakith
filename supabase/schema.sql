@@ -1,4 +1,9 @@
 -- ==============================================================================
+-- DEPRECATED — kept for reference only.
+-- For new databases use supabase-schema.sql, then apply the migrations in
+-- supabase/migrations/. For existing databases apply
+-- 20261019000000_security_hardening.sql.
+-- ==============================================================================
 -- Sara Power Solution plc — Complete PostgreSQL Database Schema
 -- Supabase Schema for Products, Categories, Services, Images & Solar Attributes
 -- ==============================================================================

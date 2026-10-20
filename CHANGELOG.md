@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.6.0] - 2026-10-19
+
+### Security
+- Replaced the hardcoded admin passcode with **Supabase Auth** email/password login.
+- Added an `admin_users` allowlist and `is_admin()` helper.
+- Replaced permissive `WITH CHECK (true)` write policies with admin-only RLS policies.
+- Restricted public product reads to `is_visible = true`.
+- Locked storage uploads/updates/deletes to authenticated admins.
+- Removed the base64 image-upload fallback; images now require Supabase Storage.
+- Restricted FastAPI CORS to configured frontend origins.
+- Made the Telegram bot fail closed when `ALLOWED_ADMIN_IDS` is empty.
+
+### Changed
+- Upgraded to **Next.js 16.4.2** and **React 19.3.1**.
+- Updated the product detail route for Next.js async route params.
+- Restricted `next/image` remote patterns to the configured Supabase project.
+- Added `frontend/.env.example`, Node 22 engine requirements, and `docs/SECURITY.md`.
+
+---
+
 ## [1.5.0] - 2026-08-23
 
 ### Added

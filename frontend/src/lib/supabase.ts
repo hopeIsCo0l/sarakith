@@ -17,6 +17,87 @@ export function isValidUUID(str?: string | null): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 }
 
+// ----------------------------------------------------------------------
+// ADMIN AUTHENTICATION HELPERS (Supabase Auth)
+// ----------------------------------------------------------------------
+
+/**
+ * Sign an administrator in with email + password.
+ */
+export async function signInAdmin(
+  email: string,
+  password: string
+): Promise<{ error: string | null }> {
+  if (!supabase) {
+    return {
+      error:
+        'Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to frontend/.env.local.',
+    };
+  }
+
+  try {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error ? error.message : null };
+  } catch (err) {
+    return {
+      error:
+        err instanceof Error
+          ? err.message
+          : 'Could not reach Supabase Auth. Check your network connection.',
+    };
+  }
+}
+
+/**
+ * Sign the current administrator out.
+ */
+export async function signOutAdmin(): Promise<void> {
+  if (!supabase) return;
+  try {
+    await supabase.auth.signOut();
+  } catch (err) {
+    console.warn('Supabase sign-out failed:', err);
+  }
+}
+
+/**
+ * Ask the database whether the current authenticated user is an admin.
+ * The check is enforced by the public.is_admin() SECURITY DEFINER function
+ * created in supabase/migrations/20261019000000_security_hardening.sql.
+ */
+export async function checkAdminAccess(): Promise<{
+  isAdmin: boolean;
+  error: string | null;
+}> {
+  if (!supabase) {
+    return {
+      isAdmin: false,
+      error:
+        'Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to frontend/.env.local.',
+    };
+  }
+
+  try {
+    const { data, error } = await supabase.rpc('is_admin');
+    if (error) {
+      return {
+        isAdmin: false,
+        error: `Could not verify admin access: ${error.message}. Make sure the Phase 1 security migration has been applied to Supabase.`,
+      };
+    }
+
+    return { isAdmin: data === true, error: null };
+  } catch (err) {
+    return {
+      isAdmin: false,
+      error:
+        err instanceof Error
+          ? `Could not verify admin access: ${err.message}`
+          : 'Could not verify admin access.',
+    };
+  }
+}
+
 /**
  * Diagnostic utility to test Supabase connection, schema, and record counts
  */
@@ -267,43 +348,70 @@ export async function getServices(): Promise<Service[]> {
 // ----------------------------------------------------------------------
 
 /**
- * Upload an image file with automatic Base64 Data URL fallback
+ * Image upload constraints for the product-media bucket.
  */
-export async function uploadImageToSupabase(file: File, folderPrefix?: string): Promise<string | null> {
-  return new Promise((resolve) => {
-    const convertToBase64 = () => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = () => resolve(null);
-      reader.readAsDataURL(file);
-    };
+const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/avif',
+]);
 
-    if (!supabase) {
-      return convertToBase64();
+export function validateImageFile(file: File): string | null {
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    return 'Unsupported image format. Use JPEG, PNG, WebP, or AVIF.';
+  }
+  if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+    return 'Image is larger than 5 MB.';
+  }
+  return null;
+}
+
+/**
+ * Upload an image file to Supabase Storage.
+ * Returns null when Storage is unavailable or the upload/validation fails.
+ * There is intentionally no base64 fallback: data URLs bloat the database.
+ */
+export async function uploadImageToSupabase(
+  file: File,
+  folderPrefix?: string
+): Promise<string | null> {
+  if (!supabase) {
+    console.warn('uploadImageToSupabase: Supabase is not configured.');
+    return null;
+  }
+
+  const validationError = validateImageFile(file);
+  if (validationError) {
+    console.warn(`uploadImageToSupabase: ${validationError}`);
+    return null;
+  }
+
+  const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '');
+  const filename = folderPrefix
+    ? `${folderPrefix}_${Date.now()}_${cleanName}`
+    : `${Date.now()}_${cleanName}`;
+
+  try {
+    const { data, error } = await supabase.storage
+      .from('product-media')
+      .upload(filename, file, { upsert: true });
+
+    if (error || !data) {
+      console.error('Upload to product-media failed:', error?.message);
+      return null;
     }
 
-    const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '');
-    const filename = folderPrefix ? `${folderPrefix}_${Date.now()}_${cleanName}` : `${Date.now()}_${cleanName}`;
-
-    supabase.storage
+    const { data: publicUrlData } = supabase.storage
       .from('product-media')
-      .upload(filename, file, { upsert: true })
-      .then(({ data, error }) => {
-        if (!error && data) {
-          const { data: publicUrlData } = supabase.storage
-            .from('product-media')
-            .getPublicUrl(filename);
+      .getPublicUrl(filename);
 
-          if (publicUrlData?.publicUrl) {
-            return resolve(publicUrlData.publicUrl);
-          }
-        }
-        convertToBase64();
-      })
-      .catch(() => {
-        convertToBase64();
-      });
-  });
+    return publicUrlData?.publicUrl ?? null;
+  } catch (err) {
+    console.error('Upload to product-media failed:', err);
+    return null;
+  }
 }
 
 /**

@@ -1,6 +1,9 @@
 {
   "name": "Sara Power-trading-showcase-root",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",

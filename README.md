@@ -48,7 +48,7 @@
 
 ```text
 .
-├── frontend/                     # Next.js 14 App Router Frontend
+├── frontend/                     # Next.js 16 App Router Frontend (React 19, Node 22+)
 │   ├── src/
 │   │   ├── app/                  # Page routes (HomePage, Catalog, Calculator, Admin, About, Services)
 │   │   ├── components/           # UI Components (Navbar, Footer, ProductCard, QuickViewModal, FilterSidebar)
@@ -76,17 +76,26 @@
 
 ### 1. Frontend Setup
 
+Requires **Node.js 22+** (see `frontend/.nvmrc`).
+
 ```bash
 cd frontend
+cp .env.example .env.local
+# Fill NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
 npm install
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+Before the admin panel can write data, apply the security migration and create an admin user:
+see [`docs/SECURITY.md`](docs/SECURITY.md).
+
 ### 2. Backend & Telegram Bot Setup
 
 ```bash
 cd backend
+cp .env.example .env
+# Fill BOT_TOKEN, ALLOWED_ADMIN_IDS, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 python -m venv venv
 # On Windows:
 venv\Scripts\activate
@@ -115,7 +124,7 @@ Backend API will run on [http://localhost:8000](http://localhost:8000).
 1. Create a Web Service on [Render](https://render.com).
 2. Set **Root Directory** to `backend`.
 3. Set **Start Command** to: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Add environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ADMIN_IDS`).
+4. Add environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ADMIN_IDS`, `FRONTEND_URL`).
 
 ---
 

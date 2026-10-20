@@ -102,40 +102,97 @@ ALTER TABLE public.product_images ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.solar_attributes ENABLE ROW LEVEL SECURITY;
 
--- 4.1 Categories Policies (Public Read, Open Write)
+-- 4.0 Admin Allowlist & Security Helper
+-- Only users listed in public.admin_users can write catalog data.
+-- Create the first admin after running this schema by following
+-- supabase/migrations/20261019000000_security_hardening.sql.
+CREATE TABLE IF NOT EXISTS public.admin_users (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE public.admin_users FROM anon, authenticated;
+GRANT SELECT ON TABLE public.admin_users TO service_role;
+
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+    SELECT EXISTS (
+        SELECT 1 FROM public.admin_users WHERE user_id = auth.uid()
+    );
+$$;
+
+REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+
+-- 4.1 Categories Policies (Public Read, Admin Write)
 DROP POLICY IF EXISTS "Public Read Categories" ON public.categories;
-CREATE POLICY "Public Read Categories" ON public.categories FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read categories" ON public.categories;
+CREATE POLICY "Public read categories" ON public.categories
+FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "Allow Admin Write Categories" ON public.categories;
-CREATE POLICY "Allow Admin Write Categories" ON public.categories FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Admin manage categories" ON public.categories;
+CREATE POLICY "Admin manage categories" ON public.categories
+FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 4.2 Products Policies (Public Read, Open Write)
+-- 4.2 Products Policies (Public Read Visible, Admin Write)
 DROP POLICY IF EXISTS "Public Read Products" ON public.products;
-CREATE POLICY "Public Read Products" ON public.products FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read visible products" ON public.products;
+CREATE POLICY "Public read visible products" ON public.products
+FOR SELECT TO anon, authenticated USING (is_visible = true);
 
 DROP POLICY IF EXISTS "Allow Admin Write Products" ON public.products;
-CREATE POLICY "Allow Admin Write Products" ON public.products FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Admin manage products" ON public.products;
+CREATE POLICY "Admin manage products" ON public.products
+FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 4.3 Product Images Policies (Public Read, Open Write)
+-- 4.3 Product Images Policies (Public Read of Visible Products, Admin Write)
 DROP POLICY IF EXISTS "Public Read Product Images" ON public.product_images;
-CREATE POLICY "Public Read Product Images" ON public.product_images FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read images of visible products" ON public.product_images;
+CREATE POLICY "Public read images of visible products" ON public.product_images
+FOR SELECT TO anon, authenticated
+USING (EXISTS (
+    SELECT 1 FROM public.products p
+    WHERE p.id = product_images.product_id AND p.is_visible = true
+));
 
 DROP POLICY IF EXISTS "Allow Admin Write Product Images" ON public.product_images;
-CREATE POLICY "Allow Admin Write Product Images" ON public.product_images FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Admin manage product images" ON public.product_images;
+CREATE POLICY "Admin manage product images" ON public.product_images
+FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 4.4 Services Policies (Public Read, Open Write)
+-- 4.4 Services Policies (Public Read Active, Admin Write)
 DROP POLICY IF EXISTS "Public Read Services" ON public.services;
-CREATE POLICY "Public Read Services" ON public.services FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read active services" ON public.services;
+CREATE POLICY "Public read active services" ON public.services
+FOR SELECT TO anon, authenticated USING (is_active = true);
 
 DROP POLICY IF EXISTS "Allow Admin Write Services" ON public.services;
-CREATE POLICY "Allow Admin Write Services" ON public.services FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Admin manage services" ON public.services;
+CREATE POLICY "Admin manage services" ON public.services
+FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 4.5 Solar Attributes Policies (Public Read, Open Write)
+-- 4.5 Solar Attributes Policies (Public Read of Visible Products, Admin Write)
 DROP POLICY IF EXISTS "Public Read Solar Attributes" ON public.solar_attributes;
-CREATE POLICY "Public Read Solar Attributes" ON public.solar_attributes FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read attributes of visible products" ON public.solar_attributes;
+CREATE POLICY "Public read attributes of visible products" ON public.solar_attributes
+FOR SELECT TO anon, authenticated
+USING (EXISTS (
+    SELECT 1 FROM public.products p
+    WHERE p.id = solar_attributes.product_id AND p.is_visible = true
+));
 
 DROP POLICY IF EXISTS "Allow Admin Write Solar Attributes" ON public.solar_attributes;
-CREATE POLICY "Allow Admin Write Solar Attributes" ON public.solar_attributes FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Admin manage solar attributes" ON public.solar_attributes;
+CREATE POLICY "Admin manage solar attributes" ON public.solar_attributes
+FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- ====================================================================
 -- 5. STORAGE BUCKET CONFIGURATION (product-media)
@@ -145,20 +202,25 @@ VALUES ('product-media', 'product-media', true)
 ON CONFLICT (id) DO UPDATE SET public = true;
 
 DROP POLICY IF EXISTS "Public View Bucket Objects" ON storage.objects;
-CREATE POLICY "Public View Bucket Objects" ON storage.objects
-FOR SELECT USING (bucket_id = 'product-media');
+DROP POLICY IF EXISTS "Public read product-media" ON storage.objects;
+CREATE POLICY "Public read product-media" ON storage.objects
+FOR SELECT TO anon, authenticated USING (bucket_id = 'product-media');
 
 DROP POLICY IF EXISTS "Allow Upload Bucket Objects" ON storage.objects;
-CREATE POLICY "Allow Upload Bucket Objects" ON storage.objects
-FOR INSERT WITH CHECK (bucket_id = 'product-media');
+DROP POLICY IF EXISTS "Admin upload product-media" ON storage.objects;
+CREATE POLICY "Admin upload product-media" ON storage.objects
+FOR INSERT TO authenticated WITH CHECK (bucket_id = 'product-media' AND public.is_admin());
 
 DROP POLICY IF EXISTS "Allow Update Bucket Objects" ON storage.objects;
-CREATE POLICY "Allow Update Bucket Objects" ON storage.objects
-FOR UPDATE USING (bucket_id = 'product-media');
+DROP POLICY IF EXISTS "Admin update product-media" ON storage.objects;
+CREATE POLICY "Admin update product-media" ON storage.objects
+FOR UPDATE TO authenticated USING (bucket_id = 'product-media' AND public.is_admin())
+WITH CHECK (bucket_id = 'product-media' AND public.is_admin());
 
 DROP POLICY IF EXISTS "Allow Delete Bucket Objects" ON storage.objects;
-CREATE POLICY "Allow Delete Bucket Objects" ON storage.objects
-FOR DELETE USING (bucket_id = 'product-media');
+DROP POLICY IF EXISTS "Admin delete product-media" ON storage.objects;
+CREATE POLICY "Admin delete product-media" ON storage.objects
+FOR DELETE TO authenticated USING (bucket_id = 'product-media' AND public.is_admin());
 
 -- ====================================================================
 -- 6. INITIAL SEED DATA
@@ -400,8 +462,12 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
 );
 
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow public read access to site settings" ON public.site_settings FOR SELECT USING (true);
-CREATE POLICY "Allow all access to site settings" ON public.site_settings FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public read access to site settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Public read site settings" ON public.site_settings;
+CREATE POLICY "Public read site settings" ON public.site_settings FOR SELECT TO anon, authenticated USING (true);
+DROP POLICY IF EXISTS "Allow all access to site settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Admin manage site settings" ON public.site_settings;
+CREATE POLICY "Admin manage site settings" ON public.site_settings FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 INSERT INTO public.site_settings (key, name, url, category, alt_text, recommended_dimensions)
 VALUES

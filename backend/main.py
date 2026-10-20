@@ -9,7 +9,7 @@ from bot.instance import create_bot_and_dp
 from db.supabase_client import db
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("kith-backend")
+logger = logging.getLogger("sara-power-backend")
 
 bot, dp = create_bot_and_dp()
 
@@ -54,9 +54,9 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=settings.cors_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "OPTIONS"],
     allow_headers=["*"],
 )
 

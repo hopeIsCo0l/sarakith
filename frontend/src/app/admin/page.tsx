@@ -41,6 +41,9 @@ import {
   getDatabaseDiagnostics,
   getSiteSettings,
   updateSiteSetting,
+  checkAdminAccess,
+  signInAdmin,
+  signOutAdmin,
   supabase,
   DEFAULT_SITE_SETTINGS,
 } from '@/lib/supabase';
@@ -50,8 +53,11 @@ import { COMPANY_NAME } from '@/lib/constants';
 export default function AdminPage() {
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passcode, setPasscode] = useState('');
-  const [authError, setAuthError] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authSubmitting, setAuthSubmitting] = useState(false);
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'services' | 'settings'>('products');
@@ -138,12 +144,75 @@ export default function AdminPage() {
   const [srvSpecsText, setSrvSpecsText] = useState('');
   const [srvPriceRange, setSrvPriceRange] = useState('Custom Quote');
 
-  // Check Session Auth on Mount
+  // Verify the Supabase Auth session on mount and react to sign-out.
   useEffect(() => {
-    const savedAuth = sessionStorage.getItem('Sara Power_admin_auth');
-    if (savedAuth === 'true') {
-      setIsAuthenticated(true);
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    const verifySession = async () => {
+      if (!supabase) {
+        if (!cancelled) {
+          setAuthError(
+            'Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to frontend/.env.local.'
+          );
+          setAuthChecking(false);
+        }
+        return;
+      }
+
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (cancelled) return;
+
+        if (!session) {
+          setAuthChecking(false);
+          return;
+        }
+
+        const { isAdmin, error } = await checkAdminAccess();
+        if (cancelled) return;
+
+        if (!isAdmin) {
+          await signOutAdmin();
+          if (!cancelled) {
+            setAuthError(
+              error || 'This account is not authorized for the admin dashboard.'
+            );
+          }
+        }
+
+        setIsAuthenticated(isAdmin);
+      } catch (err) {
+        if (!cancelled) {
+          setAuthError(
+            err instanceof Error
+              ? err.message
+              : 'Could not restore the admin session.'
+          );
+        }
+      } finally {
+        if (!cancelled) setAuthChecking(false);
+      }
+    };
+
+    void verifySession();
+
+    if (supabase) {
+      const { data } = supabase.auth.onAuthStateChange((event) => {
+        if (event === 'SIGNED_OUT') {
+          setIsAuthenticated(false);
+          setAuthError(null);
+        }
+      });
+      unsubscribe = () => data.subscription.unsubscribe();
     }
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, []);
 
   // Cross-Tab & Realtime Sync Helper
@@ -230,22 +299,9 @@ export default function AdminPage() {
         },
       }));
     } else {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Url = reader.result as string;
-        const currentSetting = siteSettingsMap[key];
-        setSiteSettingsMap((prev) => ({
-          ...prev,
-          [key]: {
-            ...currentSetting,
-            key,
-            name: currentSetting?.name || key,
-            url: base64Url,
-            category: currentSetting?.category || 'branding',
-          },
-        }));
-      };
-      reader.readAsDataURL(file);
+      showErrorToast(
+        'Image upload failed. Use a JPEG, PNG, WebP, or AVIF under 5 MB, and confirm Storage policies allow admins to upload.'
+      );
     }
     setSavingSettingKey(null);
   };
@@ -256,21 +312,37 @@ export default function AdminPage() {
     }
   }, [isAuthenticated]);
 
-  // Auth Handler
-  const handleLogin = (e: React.FormEvent) => {
+  // Auth Handlers
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcode === 'Sara Power2026' || passcode === 'admin') {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('Sara Power_admin_auth', 'true');
-      setAuthError(false);
-    } else {
-      setAuthError(true);
+    if (authSubmitting) return;
+
+    setAuthSubmitting(true);
+    setAuthError(null);
+
+    const { error: signInError } = await signInAdmin(email.trim(), password);
+    if (signInError) {
+      setAuthError(signInError);
+      setAuthSubmitting(false);
+      return;
     }
+
+    const { isAdmin, error } = await checkAdminAccess();
+    if (error || !isAdmin) {
+      await signOutAdmin();
+      setAuthError(error || 'This account is not authorized for the admin dashboard.');
+      setAuthSubmitting(false);
+      return;
+    }
+
+    setPassword('');
+    setIsAuthenticated(true);
+    setAuthSubmitting(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOutAdmin();
     setIsAuthenticated(false);
-    sessionStorage.removeItem('Sara Power_admin_auth');
   };
 
   // -------------------------------------------------------------
@@ -517,13 +589,22 @@ export default function AdminPage() {
 
     setUploadingImage(true);
     const newUploadedUrls: string[] = [];
+    let failedUploads = 0;
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const url = await uploadImageToSupabase(file);
       if (url) {
         newUploadedUrls.push(url);
+      } else {
+        failedUploads += 1;
       }
+    }
+
+    if (failedUploads > 0) {
+      showErrorToast(
+        `${failedUploads} image${failedUploads > 1 ? 's' : ''} failed to upload. Use JPEG, PNG, WebP, or AVIF under 5 MB.`
+      );
     }
 
     setProdImageUrls((prev) => [...prev, ...newUploadedUrls]);
@@ -784,6 +865,16 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   // LOGIN SCREEN
   // -------------------------------------------------------------
+  if (authChecking) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+        <p className="text-xs font-mono text-kith-muted uppercase tracking-widest animate-pulse">
+          VERIFYING ADMIN SESSION...
+        </p>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
@@ -802,32 +893,62 @@ export default function AdminPage() {
 
           <form onSubmit={handleLogin} className="space-y-4 pt-2">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-mono tracking-superwide text-kith-muted uppercase">
-                ENTER ADMIN PASSCODE
+              <label
+                htmlFor="admin-email"
+                className="text-[10px] font-mono tracking-superwide text-kith-muted uppercase"
+              >
+                ADMIN EMAIL
               </label>
               <input
-                type="password"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Passcode (Default: Sara Power2026)"
+                id="admin-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@example.com"
+                autoComplete="email"
+                required
                 className="w-full bg-kith-subBg border border-kith-border px-4 py-3 text-xs font-mono text-kith-bone focus:outline-none focus:border-kith-bone transition-colors"
                 autoFocus
               />
             </div>
 
+            <div className="space-y-1.5">
+              <label
+                htmlFor="admin-password"
+                className="text-[10px] font-mono tracking-superwide text-kith-muted uppercase"
+              >
+                PASSWORD
+              </label>
+              <input
+                id="admin-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                required
+                className="w-full bg-kith-subBg border border-kith-border px-4 py-3 text-xs font-mono text-kith-bone focus:outline-none focus:border-kith-bone transition-colors"
+              />
+            </div>
+
             {authError && (
-              <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs font-mono flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                Invalid passcode. Try "Sara Power2026".
+              <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs font-mono flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span>{authError}</span>
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-kith-btnPrimaryBg text-kith-btnPrimaryText hover:bg-kith-btnPrimaryHover text-xs font-mono uppercase tracking-widest font-bold transition-all shadow-lg"
+              disabled={authSubmitting}
+              className="w-full py-3.5 bg-kith-btnPrimaryBg text-kith-btnPrimaryText hover:bg-kith-btnPrimaryHover disabled:opacity-50 disabled:cursor-not-allowed text-xs font-mono uppercase tracking-widest font-bold transition-all shadow-lg"
             >
-              UNLOCK ADMIN DASHBOARD →
+              {authSubmitting ? 'SIGNING IN...' : 'UNLOCK ADMIN DASHBOARD →'}
             </button>
+
+            <p className="text-[10px] font-mono text-kith-muted text-center uppercase tracking-wider">
+              Authorized Supabase administrators only.
+            </p>
           </form>
         </div>
       </div>
@@ -1397,7 +1518,7 @@ export default function AdminPage() {
                               <span>UPLOAD NEW</span>
                               <input
                                 type="file"
-                                accept="image/*"
+                                accept="image/jpeg,image/png,image/webp,image/avif"
                                 onChange={(e) => handleAssetFileUpload(key, e)}
                                 className="hidden"
                               />
@@ -1938,7 +2059,7 @@ export default function AdminPage() {
                     <input
                       type="file"
                       multiple
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/webp,image/avif"
                       onChange={handleMultipleFilesUpload}
                       className="hidden"
                     />
@@ -2129,7 +2250,7 @@ export default function AdminPage() {
                     <span className="text-[8px] text-kith-muted uppercase text-center">Upload<br/>Image</span>
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/webp,image/avif"
                       className="hidden"
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
@@ -2137,7 +2258,13 @@ export default function AdminPage() {
                           setSubmitting(true);
                           try {
                             const url = await uploadImageToSupabase(file, `category-${Date.now()}`);
-                            if (url) setCatImageUrl(url);
+                            if (url) {
+                              setCatImageUrl(url);
+                            } else {
+                              showErrorToast(
+                                'Image upload failed. Use a JPEG, PNG, WebP, or AVIF under 5 MB.'
+                              );
+                            }
                           } catch (err) {
                             showErrorToast('Failed to upload category image.');
                           } finally {
