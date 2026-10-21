@@ -1,7 +1,5 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import {
   ShieldCheck,
   Sun,
@@ -16,10 +14,22 @@ import {
   Mail,
   ArrowRight,
 } from 'lucide-react';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getServerSiteSettings, readSetting } from '@/lib/server/data';
+import { buildPageMetadata, JsonLd, breadcrumbJsonLd } from '@/lib/server/seo';
 
-export default function AboutPage() {
-  const { getSettingValue } = useSiteSettings();
+export const revalidate = 300;
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'About Our Company',
+  description:
+    'Sara Power Solution plc is an Ethiopian renewable-energy company supplying Tier-1 solar hardware and turnkey solar engineering from Addis Ababa.',
+  path: '/about',
+  keywords: ['solar company Ethiopia', 'solar distributor Addis Ababa', 'solar engineering contractor'],
+});
+
+export default async function AboutPage() {
+  const settings = await getServerSiteSettings();
+  const getSettingValue = (key: string, fallback = '') => readSetting(settings, key, fallback);
 
   const companyName = getSettingValue('company_name', 'Sara Power Solution PLC');
   const aboutOverview = getSettingValue(
@@ -73,6 +83,12 @@ export default function AboutPage() {
 
   return (
     <div className="bg-kith-bg pb-24 transition-colors">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'About', path: '/about' },
+        ])}
+      />
       {/* Header Banner */}
       <div className="border-b border-sara-red/30 bg-kith-subBg/80 pt-16 pb-14 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-sara-red/10 rounded-full blur-3xl pointer-events-none -z-10" />

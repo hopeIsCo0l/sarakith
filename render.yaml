@@ -17,5 +17,7 @@ services:
         value: "https://krkefcpvcmhqiuixgnyd.supabase.co"
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
+      - key: FRONTEND_URL
+        sync: false
       - key: ENVIRONMENT
         value: "production"

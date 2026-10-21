@@ -1,7 +1,10 @@
 from typing import Callable, Dict, Any, Awaitable
+import logging
 from aiogram import BaseMiddleware
 from aiogram.types import Message, CallbackQuery
 from config import settings
+
+logger = logging.getLogger("sara-power-backend")
 
 class AdminAuthMiddleware(BaseMiddleware):
     """Middleware checking if user Telegram ID is authorized to access admin features."""
@@ -18,12 +21,16 @@ class AdminAuthMiddleware(BaseMiddleware):
 
         allowed_ids = settings.admin_id_list
 
-        # If no allowed IDs specified in env, allow access in dev mode but log warning
+        # Fail closed: an empty allowlist denies every admin action.
         if not allowed_ids:
-            return await handler(event, data)
+            logger.error(
+                "ALLOWED_ADMIN_IDS is empty. Denying Telegram admin access for user %s.",
+                user.id,
+            )
+            allowed_ids = []
 
         if user.id not in allowed_ids:
-            msg_text = f"⛔ ACCESS DENIED: Telegram ID {user.id} is not authorized for KITH Admin Desk."
+            msg_text = f"⛔ ACCESS DENIED: Telegram ID {user.id} is not authorized for the Sara Power admin desk."
             if isinstance(event, Message):
                 await event.answer(msg_text)
             elif isinstance(event, CallbackQuery):

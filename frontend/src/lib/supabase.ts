@@ -17,6 +17,87 @@ export function isValidUUID(str?: string | null): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 }
 
+// ----------------------------------------------------------------------
+// ADMIN AUTHENTICATION HELPERS (Supabase Auth)
+// ----------------------------------------------------------------------
+
+/**
+ * Sign an administrator in with email + password.
+ */
+export async function signInAdmin(
+  email: string,
+  password: string
+): Promise<{ error: string | null }> {
+  if (!supabase) {
+    return {
+      error:
+        'Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to frontend/.env.local.',
+    };
+  }
+
+  try {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error ? error.message : null };
+  } catch (err) {
+    return {
+      error:
+        err instanceof Error
+          ? err.message
+          : 'Could not reach Supabase Auth. Check your network connection.',
+    };
+  }
+}
+
+/**
+ * Sign the current administrator out.
+ */
+export async function signOutAdmin(): Promise<void> {
+  if (!supabase) return;
+  try {
+    await supabase.auth.signOut();
+  } catch (err) {
+    console.warn('Supabase sign-out failed:', err);
+  }
+}
+
+/**
+ * Ask the database whether the current authenticated user is an admin.
+ * The check is enforced by the public.is_admin() SECURITY DEFINER function
+ * created in supabase/migrations/20261019000000_security_hardening.sql.
+ */
+export async function checkAdminAccess(): Promise<{
+  isAdmin: boolean;
+  error: string | null;
+}> {
+  if (!supabase) {
+    return {
+      isAdmin: false,
+      error:
+        'Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to frontend/.env.local.',
+    };
+  }
+
+  try {
+    const { data, error } = await supabase.rpc('is_admin');
+    if (error) {
+      return {
+        isAdmin: false,
+        error: `Could not verify admin access: ${error.message}. Make sure the Phase 1 security migration has been applied to Supabase.`,
+      };
+    }
+
+    return { isAdmin: data === true, error: null };
+  } catch (err) {
+    return {
+      isAdmin: false,
+      error:
+        err instanceof Error
+          ? `Could not verify admin access: ${err.message}`
+          : 'Could not verify admin access.',
+    };
+  }
+}
+
 /**
  * Diagnostic utility to test Supabase connection, schema, and record counts
  */
@@ -267,43 +348,70 @@ export async function getServices(): Promise<Service[]> {
 // ----------------------------------------------------------------------
 
 /**
- * Upload an image file with automatic Base64 Data URL fallback
+ * Image upload constraints for the product-media bucket.
  */
-export async function uploadImageToSupabase(file: File, folderPrefix?: string): Promise<string | null> {
-  return new Promise((resolve) => {
-    const convertToBase64 = () => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = () => resolve(null);
-      reader.readAsDataURL(file);
-    };
+const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/avif',
+]);
 
-    if (!supabase) {
-      return convertToBase64();
+export function validateImageFile(file: File): string | null {
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    return 'Unsupported image format. Use JPEG, PNG, WebP, or AVIF.';
+  }
+  if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+    return 'Image is larger than 5 MB.';
+  }
+  return null;
+}
+
+/**
+ * Upload an image file to Supabase Storage.
+ * Returns null when Storage is unavailable or the upload/validation fails.
+ * There is intentionally no base64 fallback: data URLs bloat the database.
+ */
+export async function uploadImageToSupabase(
+  file: File,
+  folderPrefix?: string
+): Promise<string | null> {
+  if (!supabase) {
+    console.warn('uploadImageToSupabase: Supabase is not configured.');
+    return null;
+  }
+
+  const validationError = validateImageFile(file);
+  if (validationError) {
+    console.warn(`uploadImageToSupabase: ${validationError}`);
+    return null;
+  }
+
+  const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '');
+  const filename = folderPrefix
+    ? `${folderPrefix}_${Date.now()}_${cleanName}`
+    : `${Date.now()}_${cleanName}`;
+
+  try {
+    const { data, error } = await supabase.storage
+      .from('product-media')
+      .upload(filename, file, { upsert: true });
+
+    if (error || !data) {
+      console.error('Upload to product-media failed:', error?.message);
+      return null;
     }
 
-    const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, '');
-    const filename = folderPrefix ? `${folderPrefix}_${Date.now()}_${cleanName}` : `${Date.now()}_${cleanName}`;
-
-    supabase.storage
+    const { data: publicUrlData } = supabase.storage
       .from('product-media')
-      .upload(filename, file, { upsert: true })
-      .then(({ data, error }) => {
-        if (!error && data) {
-          const { data: publicUrlData } = supabase.storage
-            .from('product-media')
-            .getPublicUrl(filename);
+      .getPublicUrl(filename);
 
-          if (publicUrlData?.publicUrl) {
-            return resolve(publicUrlData.publicUrl);
-          }
-        }
-        convertToBase64();
-      })
-      .catch(() => {
-        convertToBase64();
-      });
-  });
+    return publicUrlData?.publicUrl ?? null;
+  } catch (err) {
+    console.error('Upload to product-media failed:', err);
+    return null;
+  }
 }
 
 /**
@@ -612,231 +720,11 @@ export async function deleteService(id: string): Promise<{ success: boolean; err
 // SITE SETTINGS & BRANDING MANAGED ASSETS
 // ----------------------------------------------------------------------
 
-export const DEFAULT_SITE_SETTINGS: Record<string, { key: string; name: string; url: string; category: string; alt_text?: string; recommended_dimensions?: string }> = {
-  logo_light: {
-    key: 'logo_light',
-    name: 'Light Mode Primary Logo',
-    url: '/logo.png',
-    category: 'logo',
-    alt_text: 'Sara Power Solution Light Logo',
-    recommended_dimensions: '512 x 512 px (1:1 Ratio, Transparent PNG or SVG)',
-  },
-  logo_dark: {
-    key: 'logo_dark',
-    name: 'Dark Mode Primary Logo',
-    url: '/logo.png',
-    category: 'logo',
-    alt_text: 'Sara Power Solution Dark Logo',
-    recommended_dimensions: '512 x 512 px (1:1 Ratio, Transparent PNG or SVG)',
-  },
-  hero_banner_light_1: {
-    key: 'hero_banner_light_1',
-    name: 'Light Mode Hero Banner (Slide 1)',
-    url: '/cinematic_hero.png',
-    category: 'banner',
-    alt_text: 'Light Theme Hero Slide 1',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  hero_banner_light_2: {
-    key: 'hero_banner_light_2',
-    name: 'Light Mode Hero Banner (Slide 2)',
-    url: '',
-    category: 'banner',
-    alt_text: 'Light Theme Hero Slide 2',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  hero_banner_light_3: {
-    key: 'hero_banner_light_3',
-    name: 'Light Mode Hero Banner (Slide 3)',
-    url: '',
-    category: 'banner',
-    alt_text: 'Light Theme Hero Slide 3',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  hero_banner_light_4: {
-    key: 'hero_banner_light_4',
-    name: 'Light Mode Hero Banner (Slide 4)',
-    url: '',
-    category: 'banner',
-    alt_text: 'Light Theme Hero Slide 4',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  hero_banner_dark_1: {
-    key: 'hero_banner_dark_1',
-    name: 'Dark Mode Hero Banner (Slide 1)',
-    url: '/cinematic_hero.png',
-    category: 'banner',
-    alt_text: 'Dark Theme Hero Slide 1',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  hero_banner_dark_2: {
-    key: 'hero_banner_dark_2',
-    name: 'Dark Mode Hero Banner (Slide 2)',
-    url: '',
-    category: 'banner',
-    alt_text: 'Dark Theme Hero Slide 2',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  hero_banner_dark_3: {
-    key: 'hero_banner_dark_3',
-    name: 'Dark Mode Hero Banner (Slide 3)',
-    url: '',
-    category: 'banner',
-    alt_text: 'Dark Theme Hero Slide 3',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  hero_banner_dark_4: {
-    key: 'hero_banner_dark_4',
-    name: 'Dark Mode Hero Banner (Slide 4)',
-    url: '',
-    category: 'banner',
-    alt_text: 'Dark Theme Hero Slide 4',
-    recommended_dimensions: '1920 x 1080 px (Edge-to-Edge Cinematic, WebP/JPEG, < 600KB)',
-  },
-  catalog_banner: {
-    key: 'catalog_banner',
-    name: 'Equipment Catalog Header Banner',
-    url: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1600&auto=format&fit=crop',
-    category: 'banner',
-    alt_text: 'Solar Equipment Catalog Header',
-    recommended_dimensions: '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)',
-  },
-  services_banner: {
-    key: 'services_banner',
-    name: 'Solar Engineering Services Banner',
-    url: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?q=80&w=1600&auto=format&fit=crop',
-    category: 'banner',
-    alt_text: 'Engineering Services Header',
-    recommended_dimensions: '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)',
-  },
-  calculator_banner: {
-    key: 'calculator_banner',
-    name: 'Solar Load Calculator Banner',
-    url: 'https://images.unsplash.com/photo-1548337138-e87d889cc369?q=80&w=1600&auto=format&fit=crop',
-    category: 'banner',
-    alt_text: 'Solar Sizing Engine Header',
-    recommended_dimensions: '1920 x 600 px (16:5 Wide Banner, WebP/JPEG, < 500KB)',
-  },
-  company_name: {
-    key: 'company_name',
-    name: 'Company Official Name',
-    url: 'Sara Power Solution PLC',
-    category: 'company',
-    alt_text: 'Official registered company title',
-  },
-  about_mission: {
-    key: 'about_mission',
-    name: 'Company Mission & Overview',
-    url: "Sara Power Solution PLC is Ethiopia's premier distributor and systems engineering contractor for high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery energy storage.",
-    category: 'about',
-    alt_text: 'Full company mission statement',
-  },
-  about_overview: {
-    key: 'about_overview',
-    name: 'Corporate Overview Text',
-    url: 'SARA POWER SOLUTION PLC IS AN ETHIOPIAN RENEWABLE-ENERGY AND POWER-SOLUTIONS COMPANY ESTABLISHED WITH THE OBJECTIVE OF CONTRIBUTING TO THE EXPANSION OF RELIABLE, AFFORDABLE, AND SUSTAINABLE ENERGY ACCESS IN ETHIOPIA...',
-    category: 'about',
-    alt_text: 'Corporate Overview paragraph',
-  },
-  about_vision: {
-    key: 'about_vision',
-    name: 'Company Vision Statement',
-    url: 'Powering homes, commercial facilities, and agricultural projects across Ethiopia with reliable, clean solar energy.',
-    category: 'about',
-    alt_text: 'Company long-term vision',
-  },
-  contact_address: {
-    key: 'contact_address',
-    name: 'Physical Showroom & Office Address',
-    url: 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia',
-    category: 'contact',
-    alt_text: 'Headquarters physical address',
-  },
-  contact_phone_primary: {
-    key: 'contact_phone_primary',
-    name: 'Primary Contact Phone',
-    url: '+251 91 123 4567',
-    category: 'contact',
-    alt_text: 'Main hotline phone number',
-  },
-  contact_phone_secondary: {
-    key: 'contact_phone_secondary',
-    name: 'Secondary Contact Phone',
-    url: '+251 91 765 4321',
-    category: 'contact',
-    alt_text: 'Alternative hotline phone number',
-  },
-  contact_email: {
-    key: 'contact_email',
-    name: 'Official Email Address',
-    url: 'info@sarapowersolution.com',
-    category: 'contact',
-    alt_text: 'Official contact email',
-  },
-  contact_business_hours: {
-    key: 'contact_business_hours',
-    name: 'Business Operating Hours',
-    url: 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)',
-    category: 'contact',
-    alt_text: 'Weekly operating hours',
-  },
-  contact_whatsapp: {
-    key: 'contact_whatsapp',
-    name: 'WhatsApp Direct Contact Link',
-    url: 'https://wa.me/251911234567',
-    category: 'contact',
-    alt_text: 'Direct WhatsApp chat URL',
-  },
-  social_telegram: {
-    key: 'social_telegram',
-    name: 'Telegram Official Channel / Group',
-    url: 'https://t.me/sarapower',
-    category: 'social',
-    alt_text: 'Telegram Official Link',
-  },
-  social_instagram: {
-    key: 'social_instagram',
-    name: 'Instagram Official Profile',
-    url: 'https://instagram.com/sarapower',
-    category: 'social',
-    alt_text: 'Instagram Official Link',
-  },
-  social_tiktok: {
-    key: 'social_tiktok',
-    name: 'TikTok Official Page',
-    url: 'https://tiktok.com/@sarapower',
-    category: 'social',
-    alt_text: 'TikTok Official Link',
-  },
-  social_linkedin: {
-    key: 'social_linkedin',
-    name: 'LinkedIn Company Page',
-    url: 'https://linkedin.com/company/sarapower',
-    category: 'social',
-    alt_text: 'LinkedIn Official Link',
-  },
-  stat_installed_mw: {
-    key: 'stat_installed_mw',
-    name: 'Installed Capacity Metric',
-    url: '5.5+ MW',
-    category: 'about',
-    alt_text: 'Total installed capacity in megawatts',
-  },
-  stat_completed_projects: {
-    key: 'stat_completed_projects',
-    name: 'Completed Projects Count',
-    url: '500+',
-    category: 'about',
-    alt_text: 'Total completed solar installations',
-  },
-  stat_warranty_years: {
-    key: 'stat_warranty_years',
-    name: 'Standard Local Warranty',
-    url: '5 YEARS',
-    category: 'about',
-    alt_text: 'Official local warranty duration',
-  },
-};
+
+// Default branding assets and editable copy live in their own module so that
+// server components can use them without importing the browser client.
+export { DEFAULT_SITE_SETTINGS } from './siteSettings';
+import { DEFAULT_SITE_SETTINGS } from './siteSettings';
 
 /**
  * Fetch all site settings / branding images

@@ -48,12 +48,13 @@
 
 ```text
 .
-├── frontend/                     # Next.js 14 App Router Frontend
+├── frontend/                     # Next.js 16 App Router Frontend (React 19, Node 22+)
 │   ├── src/
 │   │   ├── app/                  # Page routes (HomePage, Catalog, Calculator, Admin, About, Services)
 │   │   ├── components/           # UI Components (Navbar, Footer, ProductCard, QuickViewModal, FilterSidebar)
 │   │   ├── context/              # ThemeContext (System, Dark, Light mode provider)
 │   │   ├── lib/                  # Constants, Types, Mock Data, Supabase Client
+│   │   │   └── server/           # Server-only data layer (cached queries) and SEO helpers
 │   │   └── styles/               # Semantic design system CSS tokens (globals.css)
 │   └── tailwind.config.js
 │
@@ -65,7 +66,8 @@
 │   └── seed_db.py                # Database population script
 │
 ├── supabase-schema.sql           # PostgreSQL schema & Row Level Security (RLS) policies
-├── docs/                         # Project Specifications (SRS, Proposals)
+├── supabase/migrations/          # Versioned, append-only database migrations
+├── docs/                         # Project Specifications (SRS, Proposals, SECURITY.md)
 ├── CHANGELOG.md                  # Project versions and new features
 └── README.md
 ```
@@ -76,17 +78,54 @@
 
 ### 1. Frontend Setup
 
+Requires **Node.js 22+** (see `frontend/.nvmrc`).
+
 ```bash
 cd frontend
+cp .env.example .env.local
+# Fill NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
+# Add NEXT_PUBLIC_SITE_URL (canonical origin, no trailing slash)
 npm install
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+Before the admin panel can write data, apply the security migration and create an admin user:
+see [`docs/SECURITY.md`](docs/SECURITY.md).
+
+---
+
+## Rendering, Caching & SEO
+
+The public site is **server rendered and statically regenerated**:
+
+- **Server components** fetch catalog data on the server through
+  `frontend/src/lib/server/data.ts`. Interactive pieces (hero carousel, catalog
+  filters, product gallery, quick view) stay as small client islands.
+- **ISR** — every public page is prerendered and refreshed in the background
+  every 5 minutes; product pages are additionally prerendered per slug.
+- **On-demand revalidation** — saving a product, category, service, or site
+  setting in `/admin` calls `POST /api/revalidate` with the admin's access
+  token, so the public pages update immediately instead of waiting for the
+  background refresh. The endpoint verifies the session and the admin
+  allowlist before dropping any cache entry.
+- **Metadata** — every route exports its own title, description, canonical URL,
+  Open Graph and Twitter tags. `NEXT_PUBLIC_SITE_URL` is required for absolute
+  URLs; without it the site still renders, but canonical tags and the sitemap
+  are omitted rather than pointing at a guessed domain.
+- **Structured data** — `LocalBusiness` (site-wide), `Product` and
+  `BreadcrumbList` (product pages) and `FAQPage` (calculator).
+- **Discovery** — `sitemap.xml` is generated from the live catalog, and
+  `robots.txt` blocks `/admin` and `/api/`.
+- **Resilience** — `loading.tsx`, `error.tsx` and `not-found.tsx` give every
+  route a skeleton, a retry screen, and a 404 page.
+
 ### 2. Backend & Telegram Bot Setup
 
 ```bash
 cd backend
+cp .env.example .env
+# Fill BOT_TOKEN, ALLOWED_ADMIN_IDS, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 python -m venv venv
 # On Windows:
 venv\Scripts\activate
@@ -115,7 +154,7 @@ Backend API will run on [http://localhost:8000](http://localhost:8000).
 1. Create a Web Service on [Render](https://render.com).
 2. Set **Root Directory** to `backend`.
 3. Set **Start Command** to: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Add environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ADMIN_IDS`).
+4. Add environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ADMIN_IDS`, `FRONTEND_URL`).
 
 ---
 
