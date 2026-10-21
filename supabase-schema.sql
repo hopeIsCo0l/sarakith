@@ -546,7 +546,7 @@ VALUES
 (
     'contact_address',
     'Physical Showroom & Office Address',
-    'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia',
+    'Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422',
     'contact',
     'Headquarters physical address',
     'Full street address'
@@ -562,7 +562,7 @@ VALUES
 (
     'contact_email',
     'Official Email Address',
-    'info@sarapowersolution.com',
+    'info@sarasolars.com',
     'contact',
     'Official contact email',
     'Valid email address'
@@ -578,7 +578,7 @@ VALUES
 (
     'contact_whatsapp',
     'WhatsApp Direct Contact Link',
-    'https://wa.me/251911234567',
+    'https://wa.me/251910809090',
     'contact',
     'Direct WhatsApp chat URL',
     'Full https URL'
@@ -586,7 +586,7 @@ VALUES
 (
     'social_telegram',
     'Telegram Official Channel / Group',
-    'https://t.me/sarapower',
+    '',
     'social',
     'Telegram Official Link',
     'Full https URL'
@@ -594,7 +594,7 @@ VALUES
 (
     'social_instagram',
     'Instagram Official Profile',
-    'https://instagram.com/sarapower',
+    '',
     'social',
     'Instagram Official Link',
     'Full https URL'
@@ -602,7 +602,7 @@ VALUES
 (
     'social_tiktok',
     'TikTok Official Page',
-    'https://tiktok.com/@sarapower',
+    '',
     'social',
     'TikTok Official Link',
     'Full https URL'
@@ -610,7 +610,7 @@ VALUES
 (
     'social_linkedin',
     'LinkedIn Company Page',
-    'https://linkedin.com/company/sarapower',
+    '',
     'social',
     'LinkedIn Official Link',
     'Full https URL'

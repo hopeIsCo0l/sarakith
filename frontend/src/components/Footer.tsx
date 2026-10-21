@@ -71,15 +71,15 @@ export const Footer: React.FC = () => {
     : getSettingUrl('logo_dark', '/logo.png');
 
   const companyName = getSettingValue('company_name', 'Sara Power Solution PLC');
-  const physicalAddress = getSettingValue('contact_address', 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia');
+  const physicalAddress = getSettingValue('contact_address', PHYSICAL_ADDRESS);
   const primaryPhone = getSettingValue('contact_phone_primary', PRIMARY_PHONE);
-  const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
+  const officialEmail = getSettingValue('contact_email', OFFICIAL_EMAIL);
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
-  const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251910809090');
-  const telegramUrl = getSettingValue('social_telegram', 'https://t.me/sarapower');
-  const instagramUrl = getSettingValue('social_instagram', 'https://instagram.com/sarapower');
-  const tiktokUrl = getSettingValue('social_tiktok', 'https://tiktok.com/@sarapower');
-  const linkedinUrl = getSettingValue('social_linkedin', 'https://linkedin.com/company/sarapower');
+  const whatsappUrl = getSettingValue('contact_whatsapp', WHATSAPP_LINK);
+  const telegramUrl = getSettingValue('social_telegram', '');
+  const instagramUrl = getSettingValue('social_instagram', '');
+  const tiktokUrl = getSettingValue('social_tiktok', '');
+  const linkedinUrl = getSettingValue('social_linkedin', '');
 
   return (
     <footer className="border-t border-sara-red/30 bg-kith-subBg text-kith-bone relative overflow-hidden transition-colors print:hidden">

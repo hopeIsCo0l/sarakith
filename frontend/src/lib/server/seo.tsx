@@ -7,16 +7,18 @@ import {
   OFFICIAL_EMAIL,
   GOOGLE_MAPS_LINK,
   WHATSAPP_LINK,
+  CANONICAL_SITE_URL,
 } from '@/lib/constants';
 import { Product } from '@/lib/types';
 
 /**
  * SEO helpers for server components.
  *
- * The canonical origin comes from NEXT_PUBLIC_SITE_URL. When it is missing we
- * deliberately omit absolute URLs instead of guessing a domain.
+ * The canonical origin comes from NEXT_PUBLIC_SITE_URL when it is set, and
+ * falls back to the production domain otherwise, so canonical tags, Open
+ * Graph URLs, the sitemap and robots.txt are always correct.
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/$/, '');
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || CANONICAL_SITE_URL).replace(/\/$/, '');
 
 export function absoluteUrl(path: string): string | undefined {
   if (!SITE_URL) return undefined;

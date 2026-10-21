@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { getServerSiteSettings, readSetting } from '@/lib/server/data';
 import { buildPageMetadata, JsonLd, breadcrumbJsonLd } from '@/lib/server/seo';
-import { PRIMARY_PHONE } from '@/lib/constants';
+import { PRIMARY_PHONE, PHYSICAL_ADDRESS, OFFICIAL_EMAIL, WHATSAPP_LINK } from '@/lib/constants';
 
 export const revalidate = 300;
 
@@ -41,11 +41,11 @@ export default async function AboutPage() {
     'about_mission',
     "Sara Power Solution PLC is Ethiopia's premier distributor and systems engineering contractor for high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery energy storage."
   );
-  const physicalAddress = getSettingValue('contact_address', 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia');
+  const physicalAddress = getSettingValue('contact_address', PHYSICAL_ADDRESS);
   const primaryPhone = getSettingValue('contact_phone_primary', PRIMARY_PHONE);
-  const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
+  const officialEmail = getSettingValue('contact_email', OFFICIAL_EMAIL);
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
-  const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251910809090');
+  const whatsappUrl = getSettingValue('contact_whatsapp', WHATSAPP_LINK);
 
   const statMW = getSettingValue('stat_installed_mw', '5.5+ MW');
   const statProjects = getSettingValue('stat_completed_projects', '500+');

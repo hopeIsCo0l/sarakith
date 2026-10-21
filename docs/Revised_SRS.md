@@ -3,7 +3,7 @@
 
 **System:** Sara Power Solutions Web Platform
 **Author:** Hope Labs Engineering
-**Domain:** sarapower.et
+**Domain:** sarasolars.com
 **Stack:** Next.js + Vercel + Supabase DB
 
 ---
@@ -73,5 +73,5 @@ CREATE TABLE site_settings (
 ```
 
 ### 3. Deployment Architecture
-- **Domain delegation:** Ethio Telecom domain (`sarapower.et`) CNAME/A-record pointing to Vercel edge IP.
+- **Domain delegation:** `sarasolars.com` CNAME/A-record pointing to the Vercel edge, with MX/SPF/DKIM records for the `info@sarasolars.com` mailbox.
 - **Zero-downtime CI/CD:** Automated git push deployments via GitHub integration.

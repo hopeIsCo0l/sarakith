@@ -12,7 +12,6 @@ admin allowlist enforced by RLS, locked-down storage, and a restricted CORS poli
 - Public product reads now only return rows where `is_visible = true`.
 - Storage uploads/updates/deletes in the `product-media` bucket are admin-only.
 - The backend CORS policy uses `FRONTEND_URL` instead of `*`.
-- The Telegram bot fails closed when `ALLOWED_ADMIN_IDS` is empty.
 - Frontend upgraded to Next.js 16 + React 19; Node.js 22+ is required.
 
 ## Required environment variables
@@ -22,13 +21,13 @@ Frontend (`frontend/.env.local`):
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY
+# Optional: overrides the built-in canonical origin (https://sarasolars.com)
+NEXT_PUBLIC_SITE_URL=https://sarasolars.com
 ```
 
-Backend (`backend/.env`):
+Backend (`backend/.env`) — the optional status service:
 
 ```bash
-BOT_TOKEN=...
-ALLOWED_ADMIN_IDS=123456789
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=...
 FRONTEND_URL=https://your-production-frontend-url
@@ -107,9 +106,15 @@ curl -sS -o /dev/null -w '%{http_code}\n' -X POST \
 4. Confirm an anonymous upload to `product-media` is rejected from the
    Supabase Dashboard's storage API tester or with the anon key.
 5. Confirm hidden products (`is_visible = false`) are not returned by the
-   public `products` query, but are visible inside the admin panel.
-6. Confirm the Telegram bot rejects a Telegram account that is not in
-   `ALLOWED_ADMIN_IDS`.
+   public `products` query, but are visible inside the admin panel. The
+   count of visible products must not be zero, otherwise the site falls
+   back to the mock catalog:
+
+   ```sql
+   SELECT count(*) FILTER (WHERE is_visible = true) AS visible,
+          count(*) AS total
+   FROM public.products;
+   ```
 
 SQL-level checks:
 

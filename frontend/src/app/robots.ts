@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
+import { CANONICAL_SITE_URL } from '@/lib/constants';
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/$/, '');
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || CANONICAL_SITE_URL).replace(/\/$/, '');
 
   return {
     rules: [
