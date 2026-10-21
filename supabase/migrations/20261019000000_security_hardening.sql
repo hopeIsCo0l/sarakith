@@ -208,17 +208,45 @@ CREATE POLICY "Admin delete product-media"
     USING (bucket_id = 'product-media' AND public.is_admin());
 
 -- --------------------------------------------------------------------
--- 10. SINGLE CONTACT NUMBER
+-- 10. CONTACT DETAILS
 -- --------------------------------------------------------------------
--- Sara Power Solution publishes a single phone number. Remove the retired
--- secondary line and normalise the primary number when it still holds one of
--- the old placeholders.
+-- Sara Power Solution publishes a single phone number, one company email
+-- address and one WhatsApp line. Remove the retired secondary line and
+-- normalise the stored values when they still hold an old placeholder.
 DELETE FROM public.site_settings WHERE key = 'contact_phone_secondary';
 
 UPDATE public.site_settings
 SET url = '+251 91 080 9090', updated_at = now()
 WHERE key = 'contact_phone_primary'
   AND url IN ('+251 91 123 4567', '+251 91 765 4321', '+251 95 483 4159');
+
+UPDATE public.site_settings
+SET url = 'info@sarasolars.com', updated_at = now()
+WHERE key = 'contact_email'
+  AND url IN ('info@sarapowersolution.com', 'mube@gmail.com', 'mube123@gmail.com');
+
+UPDATE public.site_settings
+SET url = 'https://wa.me/251910809090', updated_at = now()
+WHERE key = 'contact_whatsapp'
+  AND url LIKE 'https://wa.me/%';
+
+UPDATE public.site_settings
+SET url = 'Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422', updated_at = now()
+WHERE key = 'contact_address'
+  AND url = 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia';
+
+-- The seeded social profiles point at unverified placeholder accounts. Clear
+-- them so the footer does not link out to them; the admin panel can publish
+-- the real URLs at any time.
+UPDATE public.site_settings
+SET url = '', updated_at = now()
+WHERE key IN ('social_telegram', 'social_instagram', 'social_tiktok', 'social_linkedin')
+  AND url IN (
+    'https://t.me/sarapower',
+    'https://instagram.com/sarapower',
+    'https://tiktok.com/@sarapower',
+    'https://linkedin.com/company/sarapower'
+  );
 
 -- --------------------------------------------------------------------
 -- 11. FIRST ADMIN (run manually after creating the Auth user)

@@ -37,7 +37,8 @@
 | **Legal Company Name** | **Sara Power Solution plc** |
 | **Physical Address** | Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422 |
 | **WhatsApp / Phone** | `+251 91 080 9090` |
-| **Primary Email** | `mube@gmail.com` \| `mube123@gmail.com` |
+| **Primary Email** | `info@sarasolars.com` |
+| **Website** | [sarasolars.com](https://sarasolars.com) |
 | **Business Hours** | Mon - Sat: 8:30 AM - 6:00 PM |
 | **Google Maps** | [Location Link](https://maps.app.goo.gl/CFdZ3HqwP3SCszAd7) |
 | **Telegram Bot** | [@sebrtradebot](https://t.me/sebrtradebot) |
