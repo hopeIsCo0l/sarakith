@@ -554,17 +554,9 @@ VALUES
 (
     'contact_phone_primary',
     'Primary Contact Phone',
-    '+251 91 123 4567',
+    '+251 91 080 9090',
     'contact',
     'Main hotline phone number',
-    'International phone format'
-),
-(
-    'contact_phone_secondary',
-    'Secondary Contact Phone',
-    '+251 91 765 4321',
-    'contact',
-    'Alternative hotline phone number',
     'International phone format'
 ),
 (

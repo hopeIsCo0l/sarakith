@@ -18,11 +18,11 @@ async def cb_admin_categories(callback: CallbackQuery):
 async def cb_admin_services(callback: CallbackQuery):
     stats = await db.get_stats()
     text = (
-        "✂️ **BESPOKE SERVICES SHOWCASE DESK**\n\n"
+        "🔧 **ENGINEERING SERVICES DESK**\n\n"
         f"Active Showcase Services: `{stats['services']}`\n\n"
-        "• Bespoke Garment Manufacturing ($2,500 - $12,000)\n"
-        "• Brand Identity & Aesthetic Direction ($1,800 - $6,500)\n"
-        "• Limited Capsule Drop Strategy ($1,200 - $4,500)\n\n"
+        "• Residential & Commercial Solar System Installation (Custom Quote)\n"
+        "• Off-Grid Micro-Grid & Hybrid Design (Custom Quote)\n"
+        "• LiFePO4 Battery Bank Upgrade & Commissioning (Custom Quote)\n\n"
         "Clients can submit project briefs directly through the website to this Telegram Bot."
     )
     await callback.message.edit_text(text, reply_markup=get_main_admin_keyboard(), parse_mode="Markdown")

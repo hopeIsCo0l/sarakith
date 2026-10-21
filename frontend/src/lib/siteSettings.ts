@@ -147,16 +147,9 @@ export const DEFAULT_SITE_SETTINGS: Record<string, { key: string; name: string; 
   contact_phone_primary: {
     key: 'contact_phone_primary',
     name: 'Primary Contact Phone',
-    url: '+251 91 123 4567',
+    url: '+251 91 080 9090',
     category: 'contact',
     alt_text: 'Main hotline phone number',
-  },
-  contact_phone_secondary: {
-    key: 'contact_phone_secondary',
-    name: 'Secondary Contact Phone',
-    url: '+251 91 765 4321',
-    category: 'contact',
-    alt_text: 'Alternative hotline phone number',
   },
   contact_email: {
     key: 'contact_email',

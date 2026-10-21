@@ -15,7 +15,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const primaryImage = product.images.find((img) => img.is_primary)?.url || product.images[0]?.url || 'https://images.unsplash.com/photo-1544441893-675973e31985';
+  const primaryImage = product.images.find((img) => img.is_primary)?.url || product.images[0]?.url || 'https://images.unsplash.com/photo-1509391366360-2e959784a276';
   const secondaryImage = product.images.find((img) => !img.is_primary)?.url || primaryImage;
 
   const stockBadgeStyles = {
@@ -99,9 +99,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
           {/* Category & Details */}
           <div className="flex items-center justify-between text-[9px] font-mono font-bold tracking-superwide text-sara-red dark:text-red-400 uppercase mb-3">
             <span className="flex items-center gap-1.5"><Terminal className="w-3 h-3" /> {product.category?.name || 'CLASS_UNDEF'}</span>
-            {product.details?.material && (
+            {product.details?.brand && (
               <span className="truncate max-w-[120px] text-kith-muted">
-                {product.details.material}
+                {product.details.brand}
               </span>
             )}
           </div>

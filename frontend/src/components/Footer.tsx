@@ -8,7 +8,6 @@ import {
   COMPANY_NAME,
   COMPANY_SHORT_NAME,
   PRIMARY_PHONE,
-  SECONDARY_PHONE,
   OFFICIAL_EMAIL,
   PHYSICAL_ADDRESS,
   BUSINESS_HOURS,
@@ -73,8 +72,7 @@ export const Footer: React.FC = () => {
 
   const companyName = getSettingValue('company_name', 'Sara Power Solution PLC');
   const physicalAddress = getSettingValue('contact_address', 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia');
-  const primaryPhone = getSettingValue('contact_phone_primary', '+251 91 123 4567');
-  const secondaryPhone = getSettingValue('contact_phone_secondary', '+251 91 765 4321');
+  const primaryPhone = getSettingValue('contact_phone_primary', PRIMARY_PHONE);
   const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
   const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251910809090');
@@ -217,9 +215,7 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0" />
-                <span>
-                  {primaryPhone} {secondaryPhone ? `/ ${secondaryPhone}` : ''}
-                </span>
+                <span>{primaryPhone}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-sara-red dark:text-red-400 shrink-0" />

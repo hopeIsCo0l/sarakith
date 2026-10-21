@@ -4,6 +4,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from db.supabase_client import db
 from bot.keyboards import get_main_admin_keyboard
+from config import settings
 
 router = Router()
 
@@ -13,7 +14,7 @@ async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     args = message.text.split(maxsplit=1)
     
-    # Handle deep-linking from website inquiries (e.g. /start inquire_sterling-bomber)
+    # Handle deep-linking from website inquiries (e.g. /start inquire_must-5-5kw-inverter)
     if len(args) > 1:
         param = args[1]
         if param.startswith("inquire_"):
@@ -28,8 +29,8 @@ async def cmd_start(message: Message, state: FSMContext):
         elif param.startswith("service_"):
             slug = param.replace("service_", "")
             await message.answer(
-                f"✂️ **NEW BESPOKE SERVICE INQUIRY:** `{slug}`\n\n"
-                f"User `{message.from_user.full_name}` (@{message.from_user.username or 'N/A'}) submitted a bespoke project request.",
+                f"🔧 **NEW SERVICE INQUIRY:** `{slug}`\n\n"
+                f"User `{message.from_user.full_name}` (@{message.from_user.username or 'N/A'}) submitted a project request.",
                 parse_mode="Markdown"
             )
             return
@@ -51,7 +52,7 @@ async def cmd_menu(message: Message, state: FSMContext):
 @router.callback_query(F.data == "admin_menu")
 async def cb_admin_menu(callback: CallbackQuery, state: FSMContext):
     await state.clear()
-    await callback.message.edit_text("🎛️ **KITH Admin Control Panel:**", reply_markup=get_main_admin_keyboard(), parse_mode="Markdown")
+    await callback.message.edit_text("🎛️ **Sara Power Admin Control Panel:**", reply_markup=get_main_admin_keyboard(), parse_mode="Markdown")
 
 @router.callback_query(F.data == "admin_stats")
 async def cb_admin_stats(callback: CallbackQuery):
@@ -62,7 +63,7 @@ async def cb_admin_stats(callback: CallbackQuery):
         f"📦 Total Active Products: `{stats['total_products']}`\n"
         f"⚠️ Low Stock Products: `{stats['low_stock']}`\n"
         f"📁 Active Categories: `{stats['categories']}`\n"
-        f"✂️ Active Services: `{stats['services']}`\n"
+        f"🔧 Active Services: `{stats['services']}`\n"
         "------------------------------------\n"
         "🟢 Database Connection: Supabase PostgreSQL Active"
     )
@@ -70,7 +71,7 @@ async def cb_admin_stats(callback: CallbackQuery):
 
 @router.callback_query(F.data == "web_link")
 async def cb_web_link(callback: CallbackQuery):
-    await callback.answer("🌐 KITH Showcase Web App: http://localhost:3000", show_alert=True)
+    await callback.answer(f"🌐 Sara Power Web App: {settings.FRONTEND_URL}", show_alert=True)
 
 @router.callback_query(F.data == "cancel_fsm")
 async def cb_cancel_fsm(callback: CallbackQuery, state: FSMContext):
