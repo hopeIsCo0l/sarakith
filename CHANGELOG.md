@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.7.0] - 2026-10-21
+
+### Added
+- **Server rendering & ISR** — home, catalog, product, services, about and calculator pages now render on the server and are statically regenerated every 5 minutes; product pages are prerendered per slug.
+- **On-demand revalidation** — `POST /api/revalidate` lets administrators refresh cached pages immediately after a catalog edit; the endpoint verifies the admin session and the `admin_users` allowlist.
+- **SEO surface** — per-route metadata, canonical URLs, Open Graph/Twitter tags, dynamic `sitemap.xml`, `robots.txt`, and `LocalBusiness`, `Product`, `BreadcrumbList` and `FAQPage` structured data.
+- **Route resilience** — `loading.tsx`, `error.tsx` and `not-found.tsx` skeletons and retry screens.
+- **Catalog deep links** — `/catalog?category=slug` now applies the category filter.
+
+### Changed
+- Catalog, product, services, about and calculator pages converted to server components with focused client islands (hero carousel, filters, gallery, quick view).
+- Server-only data layer in `frontend/src/lib/server/data.ts` with tagged caching; site settings are now rendered on the server and handed to the client provider.
+- `NEXT_PUBLIC_SITE_URL` drives canonical URLs, Open Graph tags and the sitemap.
+
+---
+
 ## [1.6.0] - 2026-10-19
 
 ### Security

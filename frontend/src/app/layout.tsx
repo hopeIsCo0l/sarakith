@@ -12,6 +12,9 @@ import {
   PHYSICAL_ADDRESS,
   PRIMARY_PHONE,
 } from '@/lib/constants';
+import { SITE_URL, JsonLd, localBusinessJsonLd } from '@/lib/server/seo';
+import { getServerSiteSettings } from '@/lib/server/data';
+import { SiteSetting } from '@/lib/types';
 
 const fontMostin = localFont({
   src: [
@@ -36,21 +39,45 @@ const fontMostin = localFont({
 });
 
 export const metadata: Metadata = {
-  title: `${COMPANY_NAME} | Tier-1 Solar Inverters, Lithium Batteries & Panels`,
+  metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
+  title: {
+    default: `${COMPANY_NAME} | Tier-1 Solar Inverters, Lithium Batteries & Panels`,
+    template: `%s | ${COMPANY_NAME}`,
+  },
   description: `${BRAND_TAGLINE}. Discover high-efficiency hybrid solar inverters, LiFePO4 lithium batteries, and engineering installation services in Addis Ababa, Ethiopia.`,
   keywords: SEARCH_KEYWORDS,
+  applicationName: COMPANY_NAME,
+  category: 'technology',
+  alternates: { canonical: '/' },
   openGraph: {
     title: `${COMPANY_NAME} | Solar Energy Systems`,
     description: `Leading supplier of solar inverters, lithium batteries, and engineering installations in Addis Ababa, Ethiopia.`,
+    url: SITE_URL || undefined,
+    siteName: COMPANY_NAME,
     type: 'website',
+    locale: 'en_ET',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${COMPANY_NAME} | Solar Energy Systems`,
+    description: `Leading supplier of solar inverters, lithium batteries, and engineering installations in Addis Ababa, Ethiopia.`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Rendered on the server so the navigation, footer and hero use the same
+  // settings without an extra client-side round trip.
+  const siteSettings = await getServerSiteSettings();
+
   return (
     <html lang="en" suppressHydrationWarning className={fontMostin.variable}>
       <head>
@@ -78,8 +105,11 @@ export default function RootLayout({
         />
       </head>
       <body className={fontMostin.className}>
+        <JsonLd data={localBusinessJsonLd()} />
         <ThemeProvider>
-          <SiteSettingsProvider>
+          <SiteSettingsProvider
+            initialSettings={siteSettings as Record<string, SiteSetting>}
+          >
             <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="flex-grow pt-20 sm:pt-24 print:pt-0 print:m-0">{children}</main>

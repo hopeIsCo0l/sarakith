@@ -1,51 +1,27 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { getServices, supabase } from '@/lib/supabase';
-import { Service } from '@/lib/types';
+import type { Metadata } from 'next';
+import { getServerServices } from '@/lib/server/data';
 import { ServiceCard } from '@/components/ServiceCard';
 import { PRIMARY_PHONE, WHATSAPP_LINK } from '@/lib/constants';
 import { Layers, Sun, Phone, CheckCircle, Terminal, Zap } from 'lucide-react';
+import { buildPageMetadata, JsonLd, breadcrumbJsonLd } from '@/lib/server/seo';
 
-export default function ServicesPage() {
-  const [services, setServices] = useState<Service[]>([]);
+export const revalidate = 300;
 
-  useEffect(() => {
-    async function loadServices() {
-      const data = await getServices();
-      setServices(data);
-    }
-    loadServices();
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Turnkey Solar & Electrical Engineering Services',
+  description:
+    'Solar system design, structural mounting, LiFePO4 battery commissioning and micro-grid engineering delivered by Sara Power Solution plc across Addis Ababa and regional zones.',
+  path: '/services',
+  keywords: [
+    'solar installation Ethiopia',
+    'solar system commissioning Addis Ababa',
+    'LiFePO4 battery commissioning',
+    'solar micro grid contractor',
+  ],
+});
 
-    // 1. Instant re-fetch on window focus
-    const handleFocus = () => loadServices();
-    window.addEventListener('focus', handleFocus);
-
-    // 2. Cross-tab & intra-window broadcast sync
-    const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('sara_power_sync') : null;
-    if (broadcast) {
-      broadcast.onmessage = () => loadServices();
-    }
-    window.addEventListener('sara_data_updated', loadServices);
-
-    // 3. Live Supabase Realtime Postgres Changes Subscription
-    let channel: any;
-    if (supabase) {
-      channel = supabase
-        .channel('realtime_services_page')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'services' }, () => {
-          loadServices();
-        })
-        .subscribe();
-    }
-
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('sara_data_updated', loadServices);
-      if (broadcast) broadcast.close();
-      if (channel && supabase) supabase.removeChannel(channel);
-    };
-  }, []);
+export default async function ServicesPage() {
+  const services = await getServerServices();
 
   const workflowSteps = [
     {
@@ -72,6 +48,12 @@ export default function ServicesPage() {
 
   return (
     <div className="bg-kith-bg pb-24 transition-colors">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Services', path: '/services' },
+        ])}
+      />
       {/* Header Banner */}
       <div className="border-b border-sara-red/30 bg-kith-subBg/80 pt-16 pb-14 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-sara-red/10 rounded-full blur-3xl pointer-events-none -z-10" />

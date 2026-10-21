@@ -49,6 +49,7 @@ import {
 } from '@/lib/supabase';
 import { Category, Product, Service, StockStatus, SiteSetting } from '@/lib/types';
 import { COMPANY_NAME } from '@/lib/constants';
+import { CACHE_TAGS } from '@/lib/cacheTags';
 
 export default function AdminPage() {
   // Authentication State
@@ -215,6 +216,32 @@ export default function AdminPage() {
     };
   }, []);
 
+  // Ask the server to drop its cached pages so the catalog updates at once.
+  const revalidateServerCache = async () => {
+    if (!supabase) return;
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) return;
+
+      await fetch('/api/revalidate', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          tags: Object.values(CACHE_TAGS),
+          paths: ['/', '/catalog', '/services', '/about', '/calculator'],
+        }),
+      });
+    } catch (err) {
+      console.warn('Cache revalidation request failed', err);
+    }
+  };
+
   // Cross-Tab & Realtime Sync Helper
   const notifyDataChanged = () => {
     try {
@@ -225,6 +252,8 @@ export default function AdminPage() {
         broadcast.close();
       }
     } catch (err) {}
+
+    void revalidateServerCache();
   };
 
   // Toast Helpers

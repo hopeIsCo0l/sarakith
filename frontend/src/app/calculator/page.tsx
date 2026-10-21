@@ -1,39 +1,68 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { Sun, Zap, ArrowRight, ShieldCheck, Phone, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Phone } from 'lucide-react';
 import { SolarCalculator } from '@/components/SolarCalculator';
-import { ProductGrid } from '@/components/ProductGrid';
-import { QuickViewModal } from '@/components/QuickViewModal';
-import { getProducts } from '@/lib/supabase';
-import { Product } from '@/lib/types';
-import { PRIMARY_PHONE, WHATSAPP_LINK, TELEGRAM_LINK } from '@/lib/constants';
+import { ProductGridSection } from '@/components/ProductGridSection';
+import { getServerProducts } from '@/lib/server/data';
+import { buildPageMetadata, JsonLd, breadcrumbJsonLd, faqJsonLd } from '@/lib/server/seo';
+import { PRIMARY_PHONE, WHATSAPP_LINK } from '@/lib/constants';
 
-export default function SolarCalculatorPage() {
-  const [solarProducts, setSolarProducts] = useState<Product[]>([]);
-  const [selectedQuickView, setSelectedQuickView] = useState<Product | null>(null);
+export const revalidate = 300;
 
-  useEffect(() => {
-    async function loadSolarItems() {
-      const all = await getProducts();
-      // Filter solar category products
-      const filtered = all.filter(
-        (p) =>
-          p.category?.slug === 'solar-panels-inverters' ||
-          p.category?.slug === 'solar-batteries-controllers' ||
-          p.name.toLowerCase().includes('solar') ||
-          p.name.toLowerCase().includes('battery') ||
-          p.name.toLowerCase().includes('inverter')
-      );
-      setSolarProducts(filtered.slice(0, 4));
-    }
-    loadSolarItems();
-  }, []);
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Household Solar Power & Inverter Sizing Calculator',
+  description:
+    'Size your solar system in real time: enter household appliances or your peak kW load and get the recommended inverter capacity, LiFePO4 battery storage and PV array for Addis Ababa.',
+  path: '/calculator',
+  keywords: [
+    'solar calculator Ethiopia',
+    'inverter sizing calculator',
+    'battery bank sizing Addis Ababa',
+    'solar panel array calculator',
+  ],
+});
+
+const FAQ = [
+  {
+    question: 'How do I size a solar system for my house?',
+    answer:
+      'Add your appliances and daily run hours, or enter your peak load in kilowatts. The calculator converts that into continuous load, storage autonomy and array size using Ethiopia peak sun hours.',
+  },
+  {
+    question: 'How much battery backup do I need in Addis Ababa?',
+    answer:
+      'Most households choose 8 to 12 hours of night-time autonomy. The calculator sizes the LiFePO4 bank from your night-time load and the selected autonomy window.',
+  },
+  {
+    question: 'Which inverter capacity should I install?',
+    answer:
+      'The inverter should cover your continuous load with headroom for surge currents from pumps and air conditioners. The calculator applies a safety margin to the measured peak load.',
+  },
+];
+
+export default async function SolarCalculatorPage() {
+  const allProducts = await getServerProducts();
+  const solarProducts = allProducts
+    .filter(
+      (p) =>
+        p.category?.slug === 'solar-panels-inverters' ||
+        p.category?.slug === 'solar-batteries-controllers' ||
+        p.name.toLowerCase().includes('solar') ||
+        p.name.toLowerCase().includes('battery') ||
+        p.name.toLowerCase().includes('inverter')
+    )
+    .slice(0, 4);
 
   return (
     <div className="max-w-[1700px] mx-auto px-4 sm:px-8 py-10 space-y-12 print:p-0 print:m-0 print:max-w-none print:space-y-0">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Calculator', path: '/calculator' },
+        ])}
+      />
+      <JsonLd data={faqJsonLd(FAQ)} />
+
       {/* Top Breadcrumb & Page Banner */}
       <div className="border-b border-kith-border pb-6 space-y-2 print:hidden">
         <div className="flex items-center gap-2 text-[10px] font-mono tracking-superwide text-kith-muted uppercase">
@@ -74,11 +103,7 @@ export default function SolarCalculatorPage() {
           </Link>
         </div>
 
-        {/* Product Grid */}
-        <ProductGrid
-          products={solarProducts}
-          onQuickView={(p) => setSelectedQuickView(p)}
-        />
+        <ProductGridSection products={solarProducts} />
       </section>
 
       {/* Turnkey Engineering Callout */}
@@ -88,9 +113,9 @@ export default function SolarCalculatorPage() {
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>FULL TURNKEY ENGINEERING & COMMISSIONING</span>
           </div>
-          <h3 className="text-xl font-bold font-mono uppercase text-kith-bone">
+          <h2 className="text-xl font-bold font-mono uppercase text-kith-bone">
             Need a Custom Site Assessment or Commercial Solar Engineering?
-          </h3>
+          </h2>
           <p className="text-xs font-mono text-kith-muted leading-relaxed">
             Our certified electrical engineers provide on-site roof irradiance analysis, 3-phase inverter load balancing, and battery bank upgrades throughout Addis Ababa and regional zones.
           </p>
@@ -114,12 +139,6 @@ export default function SolarCalculatorPage() {
           </Link>
         </div>
       </section>
-
-      {/* Quick View Modal Overlay */}
-      <QuickViewModal
-        product={selectedQuickView}
-        onClose={() => setSelectedQuickView(null)}
-      />
     </div>
   );
 }

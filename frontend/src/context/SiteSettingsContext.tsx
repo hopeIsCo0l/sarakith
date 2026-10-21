@@ -20,11 +20,20 @@ const SiteSettingsContext = createContext<SiteSettingsContextType>({
   getSettingValue: () => '',
 });
 
-export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface SiteSettingsProviderProps {
+  children: React.ReactNode;
+  /** Settings rendered on the server, so the client can skip the first fetch. */
+  initialSettings?: Record<string, SiteSetting>;
+}
+
+export const SiteSettingsProvider: React.FC<SiteSettingsProviderProps> = ({
+  children,
+  initialSettings,
+}) => {
   const [settings, setSettings] = useState<Record<string, SiteSetting>>(
-    DEFAULT_SITE_SETTINGS as Record<string, SiteSetting>
+    initialSettings ?? (DEFAULT_SITE_SETTINGS as Record<string, SiteSetting>)
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialSettings);
 
   const fetchSettings = async () => {
     try {
@@ -38,7 +47,11 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   useEffect(() => {
-    fetchSettings();
+    // The server already rendered the settings, so only fetch when they are
+    // missing. Live updates keep the client in sync afterwards.
+    if (!initialSettings) {
+      fetchSettings();
+    }
 
     // Listen to window custom broadcast event
     const handleBroadcast = () => fetchSettings();

@@ -1,210 +1,40 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sun, ShieldCheck, Zap, Sparkles, Terminal, Activity, CheckCircle, Building2, Award, Users, ChevronLeft, ChevronRight, Layers } from 'lucide-react';
-import { getCategories, supabase } from '@/lib/supabase';
-import { Product, Category } from '@/lib/types';
-import { ProductGrid } from '@/components/ProductGrid';
-import { QuickViewModal } from '@/components/QuickViewModal';
-import { HERO_HEADER, BRAND_TAGLINE } from '@/lib/constants';
-import { useSiteSettings } from '@/context/SiteSettingsContext';
-import { useTheme } from '@/context/ThemeContext';
+import {
+  ArrowRight,
+  Sun,
+  ShieldCheck,
+  Zap,
+  Terminal,
+  Building2,
+  Award,
+  Users,
+  Layers,
+} from 'lucide-react';
+import { getServerCategories } from '@/lib/server/data';
+import { HeroCarousel } from '@/components/home/HeroCarousel';
+import { buildPageMetadata, JsonLd, localBusinessJsonLd } from '@/lib/server/seo';
+import { BRAND_TAGLINE, SEARCH_KEYWORDS } from '@/lib/constants';
 
-export default function HomePage() {
-  const { getSettingUrl } = useSiteSettings();
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [parentCategories, setParentCategories] = useState<Category[]>([]);
-  const [selectedQuickView, setSelectedQuickView] = useState<Product | null>(null);
+export const revalidate = 300;
 
-  // Carousel State
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
-  const [lastInteraction, setLastInteraction] = useState(Date.now());
+export const metadata = buildPageMetadata({
+  title: 'Tier-1 Solar Inverters, Lithium Batteries & Panels',
+  description: `${BRAND_TAGLINE}. Discover high-efficiency hybrid solar inverters, LiFePO4 lithium batteries, and engineering installation services in Addis Ababa, Ethiopia.`,
+  path: '/',
+  keywords: SEARCH_KEYWORDS,
+});
 
-  const { theme } = useTheme();
-
-  // Gather valid banner URLs based on theme
-  const bannerUrls = theme === 'light'
-    ? [
-      getSettingUrl('hero_banner_light_1', '/cinematic_hero.webp'),
-      getSettingUrl('hero_banner_light_2', ''),
-      getSettingUrl('hero_banner_light_3', ''),
-      getSettingUrl('hero_banner_light_4', ''),
-    ].filter(url => url && url.trim() !== '')
-    : [
-      getSettingUrl('hero_banner_dark_1', '/cinematic_hero.webp'),
-      getSettingUrl('hero_banner_dark_2', ''),
-      getSettingUrl('hero_banner_dark_3', ''),
-      getSettingUrl('hero_banner_dark_4', ''),
-    ].filter(url => url && url.trim() !== '');
-
-  useEffect(() => {
-    if (bannerUrls.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentBannerIndex((prev) => (prev + 1) % bannerUrls.length);
-    }, 15000);
-    return () => clearInterval(interval);
-  }, [bannerUrls.length, lastInteraction]);
-
-  const handleNextBanner = () => {
-    setCurrentBannerIndex((prev) => (prev + 1) % bannerUrls.length);
-    setLastInteraction(Date.now());
-  };
-
-  const handlePrevBanner = () => {
-    setCurrentBannerIndex((prev) => (prev - 1 + bannerUrls.length) % bannerUrls.length);
-    setLastInteraction(Date.now());
-  };
-
-  useEffect(() => {
-    async function loadData() {
-      const cats = await getCategories();
-      setParentCategories(cats.filter((c) => !c.parent_id));
-    }
-    loadData();
-
-    // 1. Instant re-fetch on window focus
-    const handleFocus = () => loadData();
-    window.addEventListener('focus', handleFocus);
-
-    // 2. Cross-tab & intra-window broadcast sync
-    const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('sara_power_sync') : null;
-    if (broadcast) {
-      broadcast.onmessage = () => loadData();
-    }
-    window.addEventListener('sara_data_updated', loadData);
-
-    // 3. Live Supabase Realtime Postgres Changes Subscription
-    let channel: any;
-    if (supabase) {
-      channel = supabase
-        .channel('realtime_home_products')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
-          loadData();
-        })
-        .subscribe();
-    }
-
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('sara_data_updated', loadData);
-      if (broadcast) broadcast.close();
-      if (channel && supabase) supabase.removeChannel(channel);
-    };
-  }, []);
+export default async function HomePage() {
+  const categories = await getServerCategories();
+  const parentCategories = categories.filter((c) => !c.parent_id);
 
   return (
     <div className="-mt-20 sm:-mt-24 space-y-20 pb-24 transition-colors">
+      <JsonLd data={localBusinessJsonLd()} />
+
       {/* Hero Section */}
-      <section className="relative w-full h-[85vh] sm:h-screen flex flex-col justify-end overflow-hidden border-b border-sara-red/25">
-        {/* Full Bleed Background Carousel */}
-        <div className="absolute inset-0 z-0 bg-black">
-          {bannerUrls.map((url, idx) => (
-            <div
-              key={idx}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentBannerIndex ? 'opacity-100 z-0' : 'opacity-0 -z-10 pointer-events-none'
-                }`}
-            >
-              <Image
-                src={url}
-                alt={`Sara Power Solution Systems - Slide ${idx + 1}`}
-                fill
-                priority={idx === 0}
-                sizes="100vw"
-                className="object-cover object-center scale-105"
-              />
-            </div>
-          ))}
-          {/* Subtle gradient overlay to make text pop */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 pointer-events-none z-10" />
-        </div>
-
-        {/* Navigation Arrows & Counter (only show if > 1 banner) */}
-        {bannerUrls.length > 1 && (
-          <>
-            <button
-              onClick={handlePrevBanner}
-              aria-label="Previous slide"
-              className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 min-w-[48px] min-h-[48px] p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:flex items-center justify-center shadow-xl"
-            >
-              <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 group-hover:-translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={handleNextBanner}
-              aria-label="Next slide"
-              className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 min-w-[48px] min-h-[48px] p-2 sm:p-3 bg-black/20 hover:bg-black/50 text-white backdrop-blur-md border border-white/20 transition-all rounded-sm group hidden sm:flex items-center justify-center shadow-xl"
-            >
-              <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            {/* Slide Counter / Indicators */}
-            <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 border border-white/20 rounded-sm shadow-xl">
-              <span className="text-[10px] font-mono font-bold tracking-widest text-white uppercase">
-                {String(currentBannerIndex + 1).padStart(2, '0')} <span className="text-white/80">/ {String(bannerUrls.length).padStart(2, '0')}</span>
-              </span>
-              <div className="flex items-center gap-1.5 ml-2 border-l border-white/20 pl-4">
-                {bannerUrls.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setCurrentBannerIndex(idx);
-                      setLastInteraction(Date.now());
-                    }}
-                    aria-label={`Go to slide ${idx + 1}`}
-                    className="p-2 -my-2 flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-white rounded-sm"
-                  >
-                    <span
-                      className={`h-1.5 transition-all duration-300 rounded-sm block ${idx === currentBannerIndex ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/80'
-                        }`}
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Hero Content Overlaid */}
-        <div className="relative z-10 max-w-[1700px] mx-auto px-4 sm:px-8 pb-20 sm:pb-32 w-full flex flex-col items-center text-center">
-
-          {/* Tag */}
-          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 border border-white/20 bg-black/40 backdrop-blur-md text-[10px] sm:text-xs font-mono font-bold tracking-superwide uppercase text-white shadow-xl rounded-sm">
-            <Terminal className="w-3.5 h-3.5 text-white" />
-            SARA POWER SOLUTION PLC // TIER-1 SYSTEMS
-          </div>
-
-          {/* Title */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white uppercase leading-[0.95] font-mono drop-shadow-2xl">
-            {HERO_HEADER}
-          </h1>
-
-          {/* Description */}
-          <div className="mt-6 px-4 py-3 sm:px-6 sm:py-4 border border-white/20 bg-black/40 backdrop-blur-md shadow-xl rounded-sm inline-flex items-center justify-center max-w-3xl">
-            <p className="text-left text-xs sm:text-sm md:text-base font-mono text-gray-200 leading-relaxed drop-shadow-lg uppercase tracking-wide">
-              {BRAND_TAGLINE}. Discover high-efficiency monocrystalline solar panels, hybrid pure sine wave inverters, and LiFePO4 lithium batteries engineered for lasting performance across Ethiopia.
-            </p>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-            <Link
-              href="/catalog"
-              className="w-full sm:w-auto px-10 py-4 bg-white text-black hover:bg-gray-200 text-xs font-mono font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 rounded-sm"
-            >
-              EXPLORE EQUIPMENT
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/calculator"
-              className="w-full sm:w-auto px-10 py-4 bg-black/40 backdrop-blur-md text-white border border-white/30 hover:bg-black/60 hover:border-white text-xs font-mono font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 rounded-sm"
-            >
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
-              LOAD CALCULATOR
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HeroCarousel />
 
       {/* Parent Categories Section */}
       <section className="max-w-[1700px] mx-auto px-4 sm:px-8 space-y-6 relative z-10 pt-10">
@@ -226,10 +56,8 @@ export default function HomePage() {
               href={`/catalog?category=${cat.slug}`}
               className={`group relative overflow-hidden bg-transparent rounded-sm border border-white/5 transition-all duration-700 hover:border-sara-red/40 hover:shadow-2xl flex flex-col ${index === 0 ? 'lg:col-span-2 lg:row-span-2 h-[400px] lg:h-[632px]' : 'h-[350px]'}`}
             >
-              {/* Cinematic Gradient Overlay (Only at the very bottom for text readability) */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
-              
-              {/* Image */}
+
               {cat.image_url ? (
                 <Image
                   src={cat.image_url}
@@ -243,17 +71,14 @@ export default function HomePage() {
                   <span className="text-xs font-mono text-kith-muted uppercase">No Image</span>
                 </div>
               )}
-              
-              {/* Content Panel */}
+
               <div className="relative z-20 flex flex-col justify-end h-full p-6 sm:p-10">
-                {/* Animated Accent Line */}
                 <div className="w-10 h-[2px] bg-sara-red mb-4 sm:mb-6 transform origin-left transition-transform duration-500 scale-x-50 group-hover:scale-x-100"></div>
-                
+
                 <h3 className={`font-black font-sans uppercase text-white tracking-widest drop-shadow-2xl leading-[0.9] ${index === 0 ? 'text-4xl sm:text-6xl mb-4' : 'text-2xl sm:text-3xl mb-3'}`}>
                   {cat.name}
                 </h3>
-                
-                {/* CTA sliding in */}
+
                 <div className="flex items-center gap-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                   <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-superwide text-gray-300 group-hover:text-white transition-colors">
                     Explore Collection
@@ -267,7 +92,6 @@ export default function HomePage() {
         </div>
       </section>
 
-
       {/* Capabilities Showcase */}
       <section className="max-w-[1700px] mx-auto px-4 sm:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -275,9 +99,9 @@ export default function HomePage() {
             <div className="w-12 h-12 bg-sara-red/10 border border-sara-red/30 flex items-center justify-center mb-6 group-hover:bg-sara-red/20 transition-colors shadow-sm">
               <Sun className="w-6 h-6 text-sara-red dark:text-red-400" />
             </div>
-            <h3 className="text-lg font-black font-mono text-kith-bone uppercase tracking-widest">
+            <h2 className="text-lg font-black font-mono text-kith-bone uppercase tracking-widest">
               Complete Solar Solutions
-            </h3>
+            </h2>
             <p className="text-xs font-mono text-kith-muted leading-relaxed">
               Tier-1 monocrystalline panels, hybrid pure sine wave inverters, MPPT controllers, and long-life lithium battery storage systems designed for Ethiopian conditions.
             </p>
@@ -287,9 +111,9 @@ export default function HomePage() {
             <div className="w-12 h-12 bg-sara-red/10 border border-sara-red/30 flex items-center justify-center mb-6 group-hover:bg-sara-red/20 transition-colors shadow-sm">
               <ShieldCheck className="w-6 h-6 text-sara-red dark:text-red-400" />
             </div>
-            <h3 className="text-lg font-black font-mono text-kith-bone uppercase tracking-widest">
+            <h2 className="text-lg font-black font-mono text-kith-bone uppercase tracking-widest">
               Verified Technical Specs
-            </h3>
+            </h2>
             <p className="text-xs font-mono text-kith-muted leading-relaxed">
               Detailed voltage rating, frequency response, wattage output, and dimensional specifications rigorously verified for every single catalog item.
             </p>
@@ -300,8 +124,6 @@ export default function HomePage() {
       {/* FR-2 Solar Sizing Calculator Feature Section */}
       <section className="max-w-[1700px] mx-auto px-4 sm:px-8 relative z-10">
         <div className="p-8 sm:p-14 tech-panel flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative overflow-hidden rounded-sm border border-sara-red/30">
-
-          {/* Decorative background element */}
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-sara-red/10 rounded-full blur-[80px] pointer-events-none"></div>
 
           <div className="space-y-6 max-w-2xl relative z-10">
@@ -377,7 +199,6 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Pillars Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
             <div className="p-6 bg-kith-subBg/60 border border-sara-red/20 space-y-2 rounded-sm hover:border-sara-red/40 transition-colors">
               <div className="w-10 h-10 bg-sara-red/10 border border-sara-red/30 flex items-center justify-center mb-3">
@@ -411,12 +232,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Quick View Modal Overlay */}
-      <QuickViewModal
-        product={selectedQuickView}
-        onClose={() => setSelectedQuickView(null)}
-      />
     </div>
   );
 }
