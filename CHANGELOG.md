@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Catalog, product, services, about and calculator pages converted to server components with focused client islands (hero carousel, filters, gallery, quick view).
 - Server-only data layer in `frontend/src/lib/server/data.ts` with tagged caching; site settings are now rendered on the server and handed to the client provider.
 - `NEXT_PUBLIC_SITE_URL` drives canonical URLs, Open Graph tags and the sitemap.
+- **Contact details consolidated** — the company now publishes a single phone number, `+251 91 080 9090`, on every page, in the WhatsApp payload, in the printed calculator report and in the structured data.
+- **Legacy clothing-brand copy removed** from the Telegram bot, the backend fallbacks and the product cards; catalog search now covers specification fields and product cards show the manufacturer.
+- **Unused assets removed** — 3.2 MB of orphaned images, five unused font weights, the font archive and a LibreOffice lock file.
 
 ---
 

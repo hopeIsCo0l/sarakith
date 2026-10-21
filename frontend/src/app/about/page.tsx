@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { getServerSiteSettings, readSetting } from '@/lib/server/data';
 import { buildPageMetadata, JsonLd, breadcrumbJsonLd } from '@/lib/server/seo';
+import { PRIMARY_PHONE } from '@/lib/constants';
 
 export const revalidate = 300;
 
@@ -41,8 +42,7 @@ export default async function AboutPage() {
     "Sara Power Solution PLC is Ethiopia's premier distributor and systems engineering contractor for high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery energy storage."
   );
   const physicalAddress = getSettingValue('contact_address', 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia');
-  const primaryPhone = getSettingValue('contact_phone_primary', '+251 91 123 4567');
-  const secondaryPhone = getSettingValue('contact_phone_secondary', '+251 91 765 4321');
+  const primaryPhone = getSettingValue('contact_phone_primary', PRIMARY_PHONE);
   const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
   const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251910809090');
@@ -221,10 +221,9 @@ export default async function AboutPage() {
 
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sara-red dark:text-red-400 font-bold uppercase">
-                <Phone className="w-4 h-4" /> Direct Phone Lines
+                <Phone className="w-4 h-4" /> Direct Phone Line
               </div>
               <p className="text-kith-bone">{primaryPhone}</p>
-              {secondaryPhone && <p className="text-kith-bone">{secondaryPhone}</p>}
             </div>
 
             <div className="space-y-2">

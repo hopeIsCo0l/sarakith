@@ -24,7 +24,7 @@ async def start_add_product_wizard(callback: CallbackQuery, state: FSMContext):
     await state.set_state(ProductForm.waiting_for_name)
     await callback.message.edit_text(
         "➕ **ADD NEW PRODUCT (STEP 1/7)**\n\n"
-        "Please send the **Product Name** (e.g. `KITH Sterling Oversized Shearling Bomber`):",
+        "Please send the **Product Name** (e.g. `Must 5.5kW Hybrid Solar Inverter`):",
         reply_markup=get_cancel_keyboard(),
         parse_mode="Markdown"
     )
@@ -194,7 +194,7 @@ async def cb_list_products(callback: CallbackQuery):
         await callback.message.edit_text("📦 No products found in catalog.", reply_markup=get_main_admin_keyboard())
         return
 
-    text = "📦 **KITH ARCHIVAL PRODUCT LIST (Top 10)**\nSelect a product to edit or toggle stock status:\n\n"
+    text = "📦 **PRODUCT LIST (Top 10)**\nSelect a product to edit or toggle stock status:\n\n"
     for p in products:
         stock_emoji = "🟢" if p.get("stock_status") == "in_stock" else "🔴"
         text += f"{stock_emoji} **{p.get('name')}** — `${p.get('price')}` (SKU: `{p.get('sku', 'N/A')}`)\n"

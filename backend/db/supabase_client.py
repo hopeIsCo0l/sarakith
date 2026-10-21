@@ -17,8 +17,9 @@ class SupabaseDB:
     async def get_stats(self) -> Dict[str, Any]:
         """Fetch dashboard analytics summary."""
         if not self.client:
-            return {"total_products": 8, "low_stock": 1, "categories": 4, "services": 3}
-        
+            print("[SupabaseDB] Supabase is not configured. Reporting zeroed stats.")
+            return {"total_products": 0, "low_stock": 0, "categories": 0, "services": 0}
+
         try:
             products_res = self.client.table("products").select("id, stock_status", count="exact").execute()
             categories_res = self.client.table("categories").select("id", count="exact").execute()
@@ -42,13 +43,9 @@ class SupabaseDB:
     async def get_categories(self) -> List[Dict[str, Any]]:
         """Fetch all category records."""
         if not self.client:
-            return [
-                {"id": "cat-1", "name": "Outerwear", "slug": "outerwear"},
-                {"id": "cat-2", "name": "Tops & Hoodies", "slug": "tops-hoodies"},
-                {"id": "cat-3", "name": "Footwear", "slug": "footwear"},
-                {"id": "cat-4", "name": "Accessories", "slug": "accessories"},
-            ]
-        
+            print("[SupabaseDB] Supabase is not configured. Returning no categories.")
+            return []
+
         try:
             res = self.client.table("categories").select("*").order("display_order").execute()
             return res.data
@@ -59,11 +56,9 @@ class SupabaseDB:
     async def get_products(self, query: str = "", limit: int = 10) -> List[Dict[str, Any]]:
         """Fetch products with optional search query."""
         if not self.client:
-            return [
-                {"id": "prod-1", "name": "Sterling Oversized Shearling Bomber", "price": 895.0, "stock_status": "in_stock", "sku": "KTH-OUT-001"},
-                {"id": "prod-2", "name": "Monochrome 450 GSM Cyber Hoodie", "price": 245.0, "stock_status": "in_stock", "sku": "KTH-TOP-004"},
-            ]
-        
+            print("[SupabaseDB] Supabase is not configured. Returning no products.")
+            return []
+
         try:
             q = self.client.table("products").select("*, category:categories(name)").order("created_at", desc=True).limit(limit)
             if query:
@@ -107,8 +102,8 @@ class SupabaseDB:
     async def upload_photo_file(self, file_bytes: bytes, filename: str) -> Optional[str]:
         """Upload raw image bytes directly to Supabase Storage bucket 'product-media'."""
         if not self.client:
-            # Fallback mock image link
-            return "https://images.unsplash.com/photo-1544441893-675973e31985"
+            # Fallback image link used only when Supabase Storage is unreachable.
+            return "https://images.unsplash.com/photo-1509391366360-2e959784a276"
         
         try:
             bucket_name = "product-media"

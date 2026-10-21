@@ -47,7 +47,6 @@ import {
 import {
   WHATSAPP_NUMBER,
   PRIMARY_PHONE,
-  SECONDARY_PHONE,
   OFFICIAL_EMAIL,
   PHYSICAL_ADDRESS,
   COMPANY_NAME,
@@ -300,7 +299,7 @@ Recommended Inverter: ${calculation.recommendedInverterKW} kW (${calculation.rec
 Recommended Battery Storage: ${calculation.recommendedBatteryKWh} kWh LiFePO4
 Recommended Solar PV Array: ${calculation.recommendedPanelCount550W}x 550W Panels (${calculation.recommendedSolarArrayWp} Wp)
 Recommended Package: ${activePackage?.name || 'Custom Setup'}
-Inquiries: +251 95 483 4159 (WhatsApp)`;
+Inquiries: ${PRIMARY_PHONE} (WhatsApp)`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -367,7 +366,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
                   {PHYSICAL_ADDRESS} • Addis Ababa, Ethiopia
                 </p>
                 <p className="text-[9px] text-slate-600">
-                  Tel: {PRIMARY_PHONE} / {SECONDARY_PHONE} • Email: {OFFICIAL_EMAIL}
+                  Tel: {PRIMARY_PHONE} • Email: {OFFICIAL_EMAIL}
                 </p>
               </div>
             </div>
@@ -764,7 +763,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
         {/* Report Footer Strip */}
         <div className="border-t border-slate-300 pt-1.5 flex items-center justify-between text-[7.5px] text-slate-500 font-mono">
           <div>
-            Sara Power Solution plc • Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422 • Hotline: {PRIMARY_PHONE} / {SECONDARY_PHONE}
+            Sara Power Solution plc • Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422 • Hotline: {PRIMARY_PHONE}
           </div>
           <div>
             Report Ref: SPS-SIZ-{reportRefId} • Page 1 of 1
@@ -1582,7 +1581,7 @@ Inquiries: +251 95 483 4159 (WhatsApp)`;
                     type="text"
                     value={clientPhone}
                     onChange={(e) => setClientPhone(e.target.value)}
-                    placeholder="e.g. +251 91 123 4567"
+                    placeholder="e.g. +251 91 080 9090"
                     className="w-full bg-kith-card border border-kith-border text-kith-bone px-3 py-2 text-xs font-mono focus:outline-none focus:border-amber-500"
                   />
                 </div>

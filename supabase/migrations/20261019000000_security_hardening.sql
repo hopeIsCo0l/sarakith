@@ -208,7 +208,20 @@ CREATE POLICY "Admin delete product-media"
     USING (bucket_id = 'product-media' AND public.is_admin());
 
 -- --------------------------------------------------------------------
--- 10. FIRST ADMIN (run manually after creating the Auth user)
+-- 10. SINGLE CONTACT NUMBER
+-- --------------------------------------------------------------------
+-- Sara Power Solution publishes a single phone number. Remove the retired
+-- secondary line and normalise the primary number when it still holds one of
+-- the old placeholders.
+DELETE FROM public.site_settings WHERE key = 'contact_phone_secondary';
+
+UPDATE public.site_settings
+SET url = '+251 91 080 9090', updated_at = now()
+WHERE key = 'contact_phone_primary'
+  AND url IN ('+251 91 123 4567', '+251 91 765 4321', '+251 95 483 4159');
+
+-- --------------------------------------------------------------------
+-- 11. FIRST ADMIN (run manually after creating the Auth user)
 -- --------------------------------------------------------------------
 -- Replace the email below with the admin account you created in
 -- Supabase Dashboard > Authentication > Users, then run:

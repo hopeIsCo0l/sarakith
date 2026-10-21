@@ -59,8 +59,10 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ categories, products }
           const matchName = p.name.toLowerCase().includes(q);
           const matchDesc = p.description.toLowerCase().includes(q);
           const matchSku = p.sku?.toLowerCase().includes(q);
-          const matchMaterial = p.details?.material?.toLowerCase().includes(q);
-          if (!matchName && !matchDesc && !matchSku && !matchMaterial) return false;
+          const matchDetails = Object.values(p.details || {}).some(
+            (value) => typeof value === 'string' && value.toLowerCase().includes(q)
+          );
+          if (!matchName && !matchDesc && !matchSku && !matchDetails) return false;
         }
 
         if (filters.stockStatus !== 'all' && p.stock_status !== filters.stockStatus) {

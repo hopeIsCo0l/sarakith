@@ -24,7 +24,7 @@
 - **Automated Solar Power Sizing Calculator**: Interactive appliance modeling and direct kW power input with real-time telemetry dials. Matches household power load to recommended items and matched system packages.
 - **Dynamic Specifications Matrix**: Admins can build fully custom, arbitrary technical attribute matrices for each equipment item.
 - **Adaptive System Theme**: Supports System Mode, Dark Mode (Obsidian), and Light Mode (Alabaster) with zero flash of unstyled content (FOUC).
-- **1-Click WhatsApp Direct Inquiries**: Instant pre-filled spec inquiry links directly to Sara Power Solution's sales desk (+251 95 483 4159).
+- **1-Click WhatsApp Direct Inquiries**: Instant pre-filled spec inquiry links directly to Sara Power Solution's sales desk (+251 91 080 9090).
 - **Telegram Admin Bot Panel**: Async Python Telegram Bot ([@sebrtradebot](https://t.me/sebrtradebot)) powered by aiogram 3 and FastAPI for updating stock levels, uploading photos to Supabase Storage, and managing catalog items.
 - **Real-time UI Synchronization**: Built with Supabase Realtime WebSockets to update inventory and site settings on active customer browsers instantly.
 
@@ -36,7 +36,7 @@
 | :--- | :--- |
 | **Legal Company Name** | **Sara Power Solution plc** |
 | **Physical Address** | Addis Ababa, Bole Road, Dhabi Building, 4th Floor, Office 422 |
-| **WhatsApp / Phone** | `+251 95 483 4159` |
+| **WhatsApp / Phone** | `+251 91 080 9090` |
 | **Primary Email** | `mube@gmail.com` \| `mube123@gmail.com` |
 | **Business Hours** | Mon - Sat: 8:30 AM - 6:00 PM |
 | **Google Maps** | [Location Link](https://maps.app.goo.gl/CFdZ3HqwP3SCszAd7) |

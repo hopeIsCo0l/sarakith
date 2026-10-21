@@ -11,7 +11,7 @@ def get_main_admin_keyboard() -> InlineKeyboardMarkup:
             ],
             [
                 InlineKeyboardButton(text="🏷️ Categories", callback_data="admin_categories"),
-                InlineKeyboardButton(text="✂️ Services Showcase", callback_data="admin_services")
+                InlineKeyboardButton(text="🔧 Engineering Services", callback_data="admin_services")
             ],
             [
                 InlineKeyboardButton(text="📊 Analytics & Stats", callback_data="admin_stats"),
