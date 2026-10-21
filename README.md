@@ -3,9 +3,8 @@
 > **High-Performance Equipment Showcase, Solar Calculator & Admin Panel**  
 > *Addis Ababa, Ethiopia*
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![aiogram](https://img.shields.io/badge/aiogram-3.x-26A69A?style=flat-square&logo=telegram)](https://aiogram.dev/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase)](https://supabase.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
@@ -13,7 +12,7 @@
 
 ## Overview
 
-**Sara Power Solution plc Showcase** is a modern, high-density showcase platform and admin management ecosystem engineered for **Sara Power Solution plc** based in **Addis Ababa, Ethiopia**. The platform displays commercial solar power systems, hybrid inverters, and deep cycle energy storage with full technical specifications, an advanced solar sizing calculator, and direct WhatsApp inquiry integration. It features a premium "Kith-style" cinematic UI redesign.
+**Sara Power Solution plc Showcase** is a modern, high-density showcase platform and admin management ecosystem engineered for **Sara Power Solution plc** based in **Addis Ababa, Ethiopia**. The platform displays commercial solar power systems, hybrid inverters, and deep cycle energy storage with full technical specifications, an advanced solar sizing calculator, and direct WhatsApp inquiry integration. It features a premium cinematic UI with a glassmorphic design language.
 
 ---
 
@@ -25,7 +24,6 @@
 - **Dynamic Specifications Matrix**: Admins can build fully custom, arbitrary technical attribute matrices for each equipment item.
 - **Adaptive System Theme**: Supports System Mode, Dark Mode (Obsidian), and Light Mode (Alabaster) with zero flash of unstyled content (FOUC).
 - **1-Click WhatsApp Direct Inquiries**: Instant pre-filled spec inquiry links directly to Sara Power Solution's sales desk (+251 91 080 9090).
-- **Telegram Admin Bot Panel**: Async Python Telegram Bot ([@sebrtradebot](https://t.me/sebrtradebot)) powered by aiogram 3 and FastAPI for updating stock levels, uploading photos to Supabase Storage, and managing catalog items.
 - **Real-time UI Synchronization**: Built with Supabase Realtime WebSockets to update inventory and site settings on active customer browsers instantly.
 
 ---
@@ -41,7 +39,6 @@
 | **Website** | [sarasolars.com](https://sarasolars.com) |
 | **Business Hours** | Mon - Sat: 8:30 AM - 6:00 PM |
 | **Google Maps** | [Location Link](https://maps.app.goo.gl/CFdZ3HqwP3SCszAd7) |
-| **Telegram Bot** | [@sebrtradebot](https://t.me/sebrtradebot) |
 
 ---
 
@@ -59,11 +56,10 @@
 │   │   └── styles/               # Semantic design system CSS tokens (globals.css)
 │   └── tailwind.config.js
 │
-├── backend/                      # Python Async FastAPI & Telegram Bot Backend
-│   ├── bot/                      # aiogram 3 bot handlers, keyboards, middlewares & states
+├── backend/                      # Python FastAPI status service
 │   ├── db/                       # Supabase client wrapper & database methods
 │   ├── config.py                 # Pydantic environment configuration
-│   ├── main.py                   # FastAPI server entry point with bot polling task
+│   ├── main.py                   # FastAPI server entry point
 │   └── seed_db.py                # Database population script
 │
 ├── supabase-schema.sql           # PostgreSQL schema & Row Level Security (RLS) policies
@@ -111,9 +107,8 @@ The public site is **server rendered and statically regenerated**:
   background refresh. The endpoint verifies the session and the admin
   allowlist before dropping any cache entry.
 - **Metadata** — every route exports its own title, description, canonical URL,
-  Open Graph and Twitter tags. `NEXT_PUBLIC_SITE_URL` is required for absolute
-  URLs; without it the site still renders, but canonical tags and the sitemap
-  are omitted rather than pointing at a guessed domain.
+  Open Graph and Twitter tags. `NEXT_PUBLIC_SITE_URL` sets the canonical
+  origin and falls back to `https://sarasolars.com`.
 - **Structured data** — `LocalBusiness` (site-wide), `Product` and
   `BreadcrumbList` (product pages) and `FAQPage` (calculator).
 - **Discovery** — `sitemap.xml` is generated from the live catalog, and
@@ -121,12 +116,15 @@ The public site is **server rendered and statically regenerated**:
 - **Resilience** — `loading.tsx`, `error.tsx` and `not-found.tsx` give every
   route a skeleton, a retry screen, and a 404 page.
 
-### 2. Backend & Telegram Bot Setup
+### 2. Status Service Setup
+
+The catalog is served entirely by the Next.js frontend. The backend is an
+optional health/statistics service; the site does not depend on it.
 
 ```bash
 cd backend
 cp .env.example .env
-# Fill BOT_TOKEN, ALLOWED_ADMIN_IDS, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+# Fill SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and FRONTEND_URL
 python -m venv venv
 # On Windows:
 venv\Scripts\activate
@@ -136,26 +134,37 @@ source venv/bin/activate
 pip install -r requirements.txt
 python main.py
 ```
-Backend API will run on [http://localhost:8000](http://localhost:8000).
+
+The service runs on [http://localhost:8000](http://localhost:8000) and exposes
+`/` and `/api/health`.
 
 ---
 
 ## 1-Click Deployment Guide
 
-### Host Frontend on Vercel
+### Frontend (Vercel)
 1. Push repository to GitHub.
 2. Import repository on [Vercel](https://vercel.com).
-3. Set **Root Directory** to `frontend`.
-4. Add environment variables:
+3. Set **Root Directory** to `frontend` — the repo root also contains a
+   `package.json`, so a wrong root builds to the wrong output directory.
+4. Set **Node.js Version** to **22.x** (Next.js 16 does not run on Node 20).
+5. Add environment variables for **Production**:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-5. Click **Deploy**.
+   - `NEXT_PUBLIC_SITE_URL` — canonical origin, defaults to
+     `https://sarasolars.com` when unset
+6. Add the domain under **Settings → Domains** and point the DNS A/CNAME
+   record at Vercel. `sarasolars.com` also needs MX/SPF/DKIM records for the
+   `info@sarasolars.com` mailbox.
+7. Click **Deploy**. Redeploy after changing any `NEXT_PUBLIC_*` variable —
+   they are inlined at build time.
 
-### Host Backend on Render / Railway
-1. Create a Web Service on [Render](https://render.com).
-2. Set **Root Directory** to `backend`.
-3. Set **Start Command** to: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Add environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ADMIN_IDS`, `FRONTEND_URL`).
+### Status Service (Render / Railway) — optional
+1. Create a Web Service on [Render](https://render.com) using the
+   `render.yaml` blueprint, or set the **Root Directory** to `backend`.
+2. Set **Start Command** to: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+3. Add environment variables (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
+   `FRONTEND_URL`).
 
 ---
 

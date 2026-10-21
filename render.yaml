@@ -9,10 +9,6 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.9"
-      - key: BOT_TOKEN
-        sync: false
-      - key: ALLOWED_ADMIN_IDS
-        value: "5581361893"
       - key: SUPABASE_URL
         value: "https://krkefcpvcmhqiuixgnyd.supabase.co"
       - key: SUPABASE_SERVICE_ROLE_KEY

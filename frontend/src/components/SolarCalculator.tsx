@@ -50,7 +50,6 @@ import {
   OFFICIAL_EMAIL,
   PHYSICAL_ADDRESS,
   COMPANY_NAME,
-  TELEGRAM_LINK,
 } from '@/lib/constants';
 import { getDynamicSolarPackages } from '@/lib/supabase';
 import { Product } from '@/lib/types';
