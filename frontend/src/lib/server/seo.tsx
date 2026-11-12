@@ -1,22 +1,25 @@
 import type { Metadata } from 'next';
 import {
   COMPANY_NAME,
+  SITE_NAME,
   BRAND_TAGLINE,
   PHYSICAL_ADDRESS,
   PRIMARY_PHONE,
   OFFICIAL_EMAIL,
   GOOGLE_MAPS_LINK,
   WHATSAPP_LINK,
+  CANONICAL_SITE_URL,
 } from '@/lib/constants';
 import { Product } from '@/lib/types';
 
 /**
  * SEO helpers for server components.
  *
- * The canonical origin comes from NEXT_PUBLIC_SITE_URL. When it is missing we
- * deliberately omit absolute URLs instead of guessing a domain.
+ * The canonical origin comes from NEXT_PUBLIC_SITE_URL when it is set, and
+ * falls back to the production domain otherwise, so canonical tags, Open
+ * Graph URLs, the sitemap and robots.txt are always correct.
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/$/, '');
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || CANONICAL_SITE_URL).replace(/\/$/, '');
 
 export function absoluteUrl(path: string): string | undefined {
   if (!SITE_URL) return undefined;
@@ -29,6 +32,8 @@ interface PageMetadataInput {
   path: string;
   keywords?: string[];
   type?: 'website' | 'article';
+  absoluteTitle?: boolean;
+  image?: string;
 }
 
 export function buildPageMetadata({
@@ -37,30 +42,45 @@ export function buildPageMetadata({
   path,
   keywords,
   type = 'website',
+  absoluteTitle = false,
+  image,
 }: PageMetadataInput): Metadata {
   const canonical = absoluteUrl(path);
-  const images = absoluteUrl('/icon.png');
+  const images = image ? (/^https?:\/\//.test(image) ? image : absoluteUrl(image)) : absoluteUrl('/icon.png');
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     keywords,
     alternates: canonical ? { canonical } : undefined,
     openGraph: {
-      title: `${title} | ${COMPANY_NAME}`,
+      title: absoluteTitle ? title : `${title} | ${SITE_NAME}`,
       description,
       url: canonical,
-      siteName: COMPANY_NAME,
+      siteName: SITE_NAME,
       type,
       locale: 'en_ET',
-      images: images ? [{ url: images, width: 512, height: 512, alt: title }] : undefined,
+      images: images ? [{ url: images, alt: title }] : undefined,
     },
     twitter: {
       card: 'summary',
-      title: `${title} | ${COMPANY_NAME}`,
+      title: absoluteTitle ? title : `${title} | ${SITE_NAME}`,
       description,
       images: images ? [images] : undefined,
     },
+  };
+}
+
+export function websiteJsonLd(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': absoluteUrl('/#website'),
+    url: absoluteUrl('/'),
+    name: SITE_NAME,
+    alternateName: [COMPANY_NAME, 'Sara Solars'],
+    publisher: { '@id': absoluteUrl('/#business') },
+    inLanguage: 'en',
   };
 }
 
@@ -70,6 +90,7 @@ export function localBusinessJsonLd(): Record<string, unknown> {
     '@type': 'LocalBusiness',
     '@id': absoluteUrl('/#business') || '#business',
     name: COMPANY_NAME,
+    alternateName: SITE_NAME,
     description: BRAND_TAGLINE,
     url: SITE_URL || undefined,
     telephone: PRIMARY_PHONE,
@@ -96,7 +117,8 @@ export function localBusinessJsonLd(): Record<string, unknown> {
 }
 
 export function productJsonLd(product: Product): Record<string, unknown> {
-  const image = product.images?.[0]?.url;
+  const image = (product.images?.find((image) => image.is_primary) || product.images?.[0])?.url;
+  const price = Number(product.price);
   const url = absoluteUrl(`/catalog/${product.slug}`);
 
   return {
@@ -112,7 +134,7 @@ export function productJsonLd(product: Product): Record<string, unknown> {
       name: product.details?.brand || COMPANY_NAME,
     },
     category: product.category?.name || 'Solar equipment',
-    offers: {
+    offers: Number.isFinite(price) && price > 0 ? {
       '@type': 'Offer',
       availability:
         product.stock_status === 'sold_out'
@@ -121,10 +143,10 @@ export function productJsonLd(product: Product): Record<string, unknown> {
             ? 'https://schema.org/PreOrder'
             : 'https://schema.org/InStock',
       priceCurrency: product.currency || 'ETB',
-      price: Number(product.price) > 0 ? Number(product.price) : undefined,
+      price,
       url,
-      seller: { '@type': 'Organization', name: COMPANY_NAME },
-    },
+      seller: { '@id': absoluteUrl('/#business') },
+    } : undefined,
   };
 }
 
@@ -158,14 +180,13 @@ export function faqJsonLd(
 }
 
 /**
- * Renders a JSON-LD block. Next escapes the payload, so the script stays
- * inert for crawlers and safe from injection.
+ * Escape HTML delimiters so catalogue text cannot close the script element.
  */
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
     />
   );
 }

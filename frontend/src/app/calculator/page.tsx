@@ -76,12 +76,23 @@ export default async function SolarCalculatorPage() {
           HOUSEHOLD SOLAR POWER & INVERTER SIZING CALCULATOR
         </h1>
         <p className="text-xs sm:text-sm font-mono text-kith-muted max-w-3xl leading-relaxed">
-          Accurately size your solar energy system for homes, villas, commercial buildings, and off-grid facilities in Ethiopia. Calculate exact Kilowatt (kW) inverter capacity, Lithium (LiFePO4) storage, and solar panel arrays with real-time equipment matching.
+          Estimate the size of your solar energy system for homes, villas, commercial buildings, and off-grid facilities in Ethiopia. Estimate Kilowatt (kW) inverter capacity, Lithium (LiFePO4) storage, and solar panel arrays with real-time equipment matching.
         </p>
       </div>
 
       {/* Main Interactive Solar Calculator Component */}
       <SolarCalculator initialMode="appliance" />
+
+      <section className="space-y-6 print:hidden" aria-labelledby="solar-faq-heading">
+        <h2 id="solar-faq-heading" className="text-2xl font-bold text-kith-bone">Solar sizing questions</h2>
+        <p className="text-sm text-kith-muted">Results are planning estimates. A site assessment should confirm roof space, shading, appliance starting loads and installation requirements.</p>
+        {FAQ.map(({ question, answer }) => (
+          <div key={question} className="space-y-2">
+            <h3 className="font-bold text-kith-bone">{question}</h3>
+            <p className="text-sm text-kith-muted">{answer}</p>
+          </div>
+        ))}
+      </section>
 
       {/* Matching Catalog Hardware Section */}
       <section className="space-y-6 pt-8 border-t border-kith-border print:hidden">

@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Zap, Terminal, ChevronLeft, ChevronRight } from 'lucide-react';
-import { HERO_HEADER, BRAND_TAGLINE } from '@/lib/constants';
+import { HERO_HEADER, BRAND_TAGLINE, SITE_NAME } from '@/lib/constants';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { useTheme } from '@/context/ThemeContext';
 
@@ -134,6 +134,7 @@ export const HeroCarousel: React.FC = () => {
         </div>
 
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white uppercase leading-[0.95] font-mono drop-shadow-2xl">
+          <span className="block mb-3 text-xl sm:text-3xl tracking-wide">{SITE_NAME} Ethiopia</span>
           {HERO_HEADER}
         </h1>
 

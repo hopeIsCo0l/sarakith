@@ -1,3 +1,6 @@
+export const SITE_NAME = 'Sara Solar';
+export const HOME_SEO_TITLE = 'Sara Solar | Solar Panels, Inverters & Batteries in Ethiopia';
+export const HOME_SEO_DESCRIPTION = 'Sara Solar by Sara Power Solution PLC supplies solar panels, hybrid inverters, lithium batteries and solar installation services in Addis Ababa, Ethiopia.';
 export const COMPANY_NAME = 'Sara Power Solution plc';
 export const COMPANY_SHORT_NAME = 'Sara Power Solution';
 export const BRAND_TAGLINE = 'Empowering Energy Excellence — Premium Solar Power Systems & Solutions';
@@ -31,3 +34,5 @@ export const SEARCH_KEYWORDS = [
   'Solar Water Pumping',
   'Solar Irrigation Ethiopia',
 ];
+
+export const CANONICAL_SITE_URL = 'https://sarasolars.com';
