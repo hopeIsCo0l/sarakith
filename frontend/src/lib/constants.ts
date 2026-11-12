@@ -7,7 +7,7 @@ export const BRAND_TAGLINE = 'Empowering Energy Excellence — Premium Solar Pow
 export const HERO_HEADER = 'ADVANCED SOLAR ENERGY EQUIPMENT';
 export const SHORT_ABOUT_US = 'Sara Power Solution plc is a premier supplier based in Addis Ababa, Ethiopia, specializing in high-efficiency solar panels, hybrid inverters, and deep-cycle solar batteries.';
 
-export const PRIMARY_EMAIL = 'mube@gmail.com';
+export const PRIMARY_EMAIL = 'info@sarasolars.com';
 export const SECONDARY_EMAIL = 'mube123@gmail.com';
 export const OFFICIAL_EMAIL = PRIMARY_EMAIL;
 export const PRIMARY_PHONE = '+251 91 080 9090';

@@ -11,11 +11,11 @@ import sitemap from '@/app/sitemap';
 describe('sitemap', () => {
   it('lists canonical pages without filters or invented modification dates', async () => {
     const entries = await sitemap();
-    expect(entries).toHaveLength(8);
+    expect(entries).toHaveLength(10);
     expect(entries.every(({ url }) => !url.includes('?'))).toBe(true);
     expect(entries[0].lastModified).toBeUndefined();
-    expect(entries[5].lastModified).toEqual(new Date('2026-10-20T12:00:00Z'));
-    expect(entries[6].lastModified).toBeUndefined();
-    expect(entries[7].lastModified).toBeUndefined();
+    expect(entries[7].lastModified).toEqual(new Date('2026-10-20T12:00:00Z'));
+    expect(entries[8].lastModified).toBeUndefined();
+    expect(entries[9].lastModified).toBeUndefined();
   });
 });
