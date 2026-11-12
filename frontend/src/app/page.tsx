@@ -12,7 +12,6 @@ import {
   Layers,
 } from 'lucide-react';
 import { getServerCategories } from '@/lib/server/data';
-import { SolarIntroduction } from '@/components/home/SolarIntroduction';
 import { HeroCarousel } from '@/components/home/HeroCarousel';
 import { buildPageMetadata, JsonLd, websiteJsonLd } from '@/lib/server/seo';
 import { HOME_SEO_TITLE, HOME_SEO_DESCRIPTION, SEARCH_KEYWORDS } from '@/lib/constants';
@@ -37,8 +36,6 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <HeroCarousel />
-
-      <SolarIntroduction />
 
       {/* Parent Categories Section */}
       <section className="max-w-[1700px] mx-auto px-4 sm:px-8 space-y-6 relative z-10 pt-10">
