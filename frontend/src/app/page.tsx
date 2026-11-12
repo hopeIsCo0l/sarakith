@@ -13,14 +13,15 @@ import {
 } from 'lucide-react';
 import { getServerCategories } from '@/lib/server/data';
 import { HeroCarousel } from '@/components/home/HeroCarousel';
-import { buildPageMetadata, JsonLd, localBusinessJsonLd } from '@/lib/server/seo';
-import { BRAND_TAGLINE, SEARCH_KEYWORDS } from '@/lib/constants';
+import { buildPageMetadata, JsonLd, websiteJsonLd } from '@/lib/server/seo';
+import { HOME_SEO_TITLE, HOME_SEO_DESCRIPTION, SEARCH_KEYWORDS } from '@/lib/constants';
 
 export const revalidate = 300;
 
 export const metadata = buildPageMetadata({
-  title: 'Tier-1 Solar Inverters, Lithium Batteries & Panels',
-  description: `${BRAND_TAGLINE}. Discover high-efficiency hybrid solar inverters, LiFePO4 lithium batteries, and engineering installation services in Addis Ababa, Ethiopia.`,
+  title: HOME_SEO_TITLE,
+  absoluteTitle: true,
+  description: HOME_SEO_DESCRIPTION,
   path: '/',
   keywords: SEARCH_KEYWORDS,
 });
@@ -31,7 +32,7 @@ export default async function HomePage() {
 
   return (
     <div className="-mt-20 sm:-mt-24 space-y-20 pb-24 transition-colors">
-      <JsonLd data={localBusinessJsonLd()} />
+      <JsonLd data={websiteJsonLd()} />
 
       {/* Hero Section */}
       <HeroCarousel />
@@ -89,6 +90,33 @@ export default async function HomePage() {
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      <section className="max-w-[1700px] mx-auto px-4 sm:px-8 space-y-6" aria-labelledby="solar-buying-heading">
+        <h2 id="solar-buying-heading" className="text-2xl sm:text-3xl font-bold text-kith-bone">
+          Choosing a solar system in Ethiopia
+        </h2>
+        <p className="text-sm text-kith-muted max-w-3xl leading-relaxed">
+          Start with the appliances you need to power, how many hours they run, and how long you need backup during an outage.
+          Sara Solar supplies panels, inverters and battery storage from Addis Ababa, with engineering services to help match the equipment to your site.
+        </p>
+        <div className="grid md:grid-cols-3 gap-6">
+          <article className="tech-panel p-6 space-y-3">
+            <h3 className="text-lg font-bold text-kith-bone">Solar panels and roof space</h3>
+            <p className="text-sm text-kith-muted leading-relaxed">Panel wattage alone does not determine daily energy production. Shade, roof orientation, available space and seasonal sunlight affect the array size your home or business needs.</p>
+            <Link href="/catalog" className="inline-block underline text-kith-bone">Browse solar panels and equipment</Link>
+          </article>
+          <article className="tech-panel p-6 space-y-3">
+            <h3 className="text-lg font-bold text-kith-bone">Inverters and battery backup</h3>
+            <p className="text-sm text-kith-muted leading-relaxed">Size the inverter for appliances running together and their starting loads. Choose battery capacity for the energy needed during backup, then check battery voltage and inverter compatibility.</p>
+            <Link href="/calculator" className="inline-block underline text-kith-bone">Estimate your solar and battery size</Link>
+          </article>
+          <article className="tech-panel p-6 space-y-3">
+            <h3 className="text-lg font-bold text-kith-bone">Installation and quotations</h3>
+            <p className="text-sm text-kith-muted leading-relaxed">A complete quotation should cover equipment, mounting, cables, electrical protection and installation. Share your appliance list and location so a site assessment can confirm the design and total cost.</p>
+            <Link href="/services" className="inline-block underline text-kith-bone">Explore solar installation services</Link>
+          </article>
         </div>
       </section>
 
@@ -187,7 +215,7 @@ export default async function HomePage() {
                 ENGINEERING EXCELLENCE & TIER-1 SOLAR SYSTEMS
               </h2>
               <p className="text-xs font-mono text-kith-muted leading-relaxed border-l-2 border-sara-red/50 pl-4">
-                Sara Power Solution PLC is Ethiopia's premier distributor and systems contractor for high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery storage systems.
+                Sara Solar is the solar equipment and installation website of Sara Power Solution PLC in Addis Ababa, Ethiopia. We supply high-efficiency monocrystalline solar panels, pure sine wave hybrid inverters, and high-voltage LiFePO4 battery storage systems.
               </p>
             </div>
             <Link

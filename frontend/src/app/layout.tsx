@@ -7,6 +7,9 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
 import {
   COMPANY_NAME,
+  SITE_NAME,
+  HOME_SEO_TITLE,
+  HOME_SEO_DESCRIPTION,
   BRAND_TAGLINE,
   SEARCH_KEYWORDS,
   PHYSICAL_ADDRESS,
@@ -41,26 +44,27 @@ const fontMostin = localFont({
 export const metadata: Metadata = {
   metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
   title: {
-    default: `${COMPANY_NAME} | Tier-1 Solar Inverters, Lithium Batteries & Panels`,
-    template: `%s | ${COMPANY_NAME}`,
+    default: HOME_SEO_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: `${BRAND_TAGLINE}. Discover high-efficiency hybrid solar inverters, LiFePO4 lithium batteries, and engineering installation services in Addis Ababa, Ethiopia.`,
+  description: HOME_SEO_DESCRIPTION,
   keywords: SEARCH_KEYWORDS,
-  applicationName: COMPANY_NAME,
+  applicationName: SITE_NAME,
   category: 'technology',
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
   alternates: { canonical: '/' },
   openGraph: {
-    title: `${COMPANY_NAME} | Solar Energy Systems`,
-    description: `Leading supplier of solar inverters, lithium batteries, and engineering installations in Addis Ababa, Ethiopia.`,
+    title: HOME_SEO_TITLE,
+    description: HOME_SEO_DESCRIPTION,
     url: SITE_URL || undefined,
-    siteName: COMPANY_NAME,
+    siteName: SITE_NAME,
     type: 'website',
     locale: 'en_ET',
   },
   twitter: {
-    card: 'summary_large_image',
-    title: `${COMPANY_NAME} | Solar Energy Systems`,
-    description: `Leading supplier of solar inverters, lithium batteries, and engineering installations in Addis Ababa, Ethiopia.`,
+    card: 'summary',
+    title: HOME_SEO_TITLE,
+    description: HOME_SEO_DESCRIPTION,
   },
   robots: {
     index: true,

@@ -21,9 +21,9 @@ import { PRIMARY_PHONE } from '@/lib/constants';
 export const revalidate = 300;
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'About Our Company',
+  title: 'About Sara Solar in Addis Ababa',
   description:
-    'Sara Power Solution plc is an Ethiopian renewable-energy company supplying Tier-1 solar hardware and turnkey solar engineering from Addis Ababa.',
+    'Meet Sara Power Solution PLC, the company behind Sara Solar. Find our Addis Ababa office, contact details, solar equipment and installation services.',
   path: '/about',
   keywords: ['solar company Ethiopia', 'solar distributor Addis Ababa', 'solar engineering contractor'],
 });

@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       product.description?.slice(0, 180) ||
       `${product.name} — technical specifications and availability from Sara Power Solution plc.`,
     path: `/catalog/${product.slug}`,
-    type: 'article',
+    image: (product.images?.find((image) => image.is_primary) || product.images?.[0])?.url,
     keywords: [product.name, product.sku || '', product.category?.name || ''].filter(
       Boolean
     ),
