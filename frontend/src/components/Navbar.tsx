@@ -16,7 +16,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
   const pathname = usePathname();
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const { getSettingUrl, getSettingValue } = useSiteSettings();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,15 +32,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
       }
     };
 
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const isHomeAtTop = pathname === '/' && !isScrolled;
 
-  const activeLogoUrl = isHomeAtTop
-    ? getSettingUrl('logo_dark', '/logo.png')
-    : theme === 'light'
+  const activeLogoUrl = resolvedTheme === 'light'
       ? getSettingUrl('logo_light', '/logo.png')
       : getSettingUrl('logo_dark', '/logo.png');
 
@@ -69,7 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 print:hidden ${isScrolled
         ? 'bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-md border-b border-slate-200/80 dark:border-sara-red/30'
         : isHomeAtTop
-          ? 'bg-transparent border-b border-white/10'
+          ? 'bg-white/95 backdrop-blur-md border-b border-slate-200/80 dark:bg-black/80 dark:border-sara-red/30'
           : 'bg-kith-bg/85 dark:bg-black/80 backdrop-blur-sm border-b border-sara-red/20'
         }`}
     >
@@ -102,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
                   : link.highlight
                     ? 'text-amber-600 dark:text-amber-400 hover:text-amber-500 hover:bg-amber-500/10 border-transparent hover:border-amber-500/30'
                     : isHomeAtTop
-                      ? 'text-white/90 hover:text-white hover:bg-white/10 border-transparent'
+                      ? 'text-slate-800 hover:text-sara-red hover:bg-sara-red/5 dark:text-white/90 dark:hover:text-white dark:hover:bg-white/10 border-transparent'
                       : isScrolled
                         ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 border-transparent dark:text-slate-300 dark:hover:text-red-400 dark:hover:bg-sara-red/10'
                         : 'text-slate-800 dark:text-kith-bone hover:text-sara-red dark:hover:text-red-400 hover:bg-sara-red/5 border-transparent'
@@ -128,14 +127,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
             {/* Text Stack */}
             <div className="relative z-10 flex flex-col justify-between py-0.5">
               <span className={`text-[24px] sm:text-[32px] font-black leading-[0.8] tracking-wide transition-colors font-sans uppercase translate-y-[4px] sm:translate-y-[6px] ${isHomeAtTop
-                ? 'text-white group-hover:text-white/80'
+                ? 'text-[#1a1f2e] group-hover:text-sara-red dark:text-white dark:group-hover:text-white/80'
                 : isScrolled
                   ? 'text-[#1a1f2e] dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
                   : 'text-[#1a1f2e] dark:text-kith-bone group-hover:text-sara-red dark:group-hover:text-red-400'
                 }`}>
                 SARA
               </span>
-              <span className={`text-[9px] sm:text-[11px] tracking-widest uppercase font-bold leading-none ${isHomeAtTop ? 'text-white/80' : 'text-[#6a1f20] dark:text-red-400'}`}>
+              <span className={`text-[9px] sm:text-[11px] tracking-widest uppercase font-bold leading-none ${isHomeAtTop ? 'text-[#6a1f20] dark:text-white/80' : 'text-[#6a1f20] dark:text-red-400'}`}>
                 POWER SOLUTIONS PLC
               </span>
             </div>
@@ -169,7 +168,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchToggle }) => {
               onClick={onSearchToggle}
               aria-label="Search Database"
               className={`p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-sm transition-colors ${isHomeAtTop
-                ? 'text-white/90 hover:text-white hover:bg-white/10'
+                ? 'text-slate-800 hover:text-sara-red hover:bg-sara-red/5 dark:text-white/90 dark:hover:text-white dark:hover:bg-white/10'
                 : isScrolled
                   ? 'text-slate-700 hover:text-sara-red hover:bg-slate-100 dark:text-red-400 dark:hover:bg-sara-red/10'
                   : 'text-sara-red dark:text-red-400 hover:bg-sara-red/10'
