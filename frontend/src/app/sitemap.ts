@@ -8,7 +8,7 @@ export const revalidate = 3600;
 // Omit lastModified unless there is a real content update timestamp.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getServerProducts();
-  const staticRoutes = ['/', '/catalog', '/calculator', '/services', '/about'];
+  const staticRoutes = ['/', '/catalog', '/calculator', '/services', '/about', '/terms', '/privacy-policy'];
   return [
     ...staticRoutes.map((path) => ({ url: absoluteUrl(path)! })),
     ...products.map((product) => {

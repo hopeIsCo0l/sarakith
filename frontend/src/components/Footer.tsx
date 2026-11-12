@@ -73,7 +73,7 @@ export const Footer: React.FC = () => {
   const companyName = getSettingValue('company_name', 'Sara Power Solution PLC');
   const physicalAddress = getSettingValue('contact_address', 'Sara Building, Lideta Sub-City, Addis Ababa, Ethiopia');
   const primaryPhone = getSettingValue('contact_phone_primary', PRIMARY_PHONE);
-  const officialEmail = getSettingValue('contact_email', 'info@sarapowersolution.com');
+  const officialEmail = getSettingValue('contact_email', OFFICIAL_EMAIL);
   const businessHours = getSettingValue('contact_business_hours', 'Mon - Sat: 8:00 AM - 6:00 PM (Local Time)');
   const whatsappUrl = getSettingValue('contact_whatsapp', 'https://wa.me/251910809090');
   const telegramUrl = getSettingValue('social_telegram', 'https://t.me/sarapower');
@@ -229,6 +229,12 @@ export const Footer: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <nav aria-label="Legal" className="mt-12 border-t border-sara-red/20 pt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+          <span className="font-bold">Legal</span>
+          <Link href="/terms" className="underline underline-offset-4 hover:text-sara-red">Terms of Use</Link>
+          <Link href="/privacy-policy" className="underline underline-offset-4 hover:text-sara-red">Privacy Policy</Link>
+        </nav>
 
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-sara-red/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-kith-darkMuted">

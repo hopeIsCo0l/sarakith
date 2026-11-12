@@ -154,7 +154,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, { key: string; name: string; 
   contact_email: {
     key: 'contact_email',
     name: 'Official Email Address',
-    url: 'info@sarapowersolution.com',
+    url: 'info@sarasolars.com',
     category: 'contact',
     alt_text: 'Official contact email',
   },
