@@ -11,7 +11,7 @@ const solutions = [
 
 function SolarIllustration() {
   return (
-    <div className="relative min-h-[300px] sm:min-h-[380px] overflow-hidden bg-[#210c10] border border-white/15">
+    <div className="relative min-h-[300px] sm:min-h-[380px] overflow-hidden bg-[#210c10] border border-kith-border">
       <svg viewBox="0 0 640 400" className="absolute inset-0 h-full w-full" role="img" aria-label="Sunlight reaching rooftop solar panels and powering a home">
         <defs>
           <radialGradient id="solar-sun-glow"><stop stopColor="#ffe5a3" stopOpacity=".5" /><stop offset="1" stopColor="#ffe5a3" stopOpacity="0" /></radialGradient>
@@ -33,7 +33,7 @@ function SolarIllustration() {
         <path d="M237 320H260V342H237ZM387 320H410V342H387Z" fill="#ffe5a3" />
         <path d="M120 371H520" stroke="#e8c983" opacity=".4" />
       </svg>
-      <div className="relative p-6 text-[#ffe5a3]"><p className="text-4xl sm:text-5xl font-light">Sunlight. Reimagined.</p><p className="mt-3 text-[10px] uppercase tracking-[.25em]">From your rooftop to your everyday</p></div>
+      <div className="relative p-6 text-[#ffe5a3]"><p className="text-3xl sm:text-5xl font-light">Sunlight. Reimagined.</p><p className="mt-3 text-[10px] uppercase tracking-[.25em]">From your rooftop to your everyday</p></div>
       <p className="absolute bottom-5 left-6 text-[10px] uppercase tracking-[.25em] text-[#ffe5a3]">Light becomes power.</p>
     </div>
   );
@@ -53,7 +53,7 @@ export async function SolarIntroduction() {
       <section aria-labelledby="solar-intro-heading" className="mx-auto max-w-[1700px] px-4 sm:px-8 pb-14 sm:pb-20 grid lg:grid-cols-[.85fr_1.15fr] gap-10 lg:gap-16 items-center">
         <div className="space-y-6">
           <p className="text-xs uppercase tracking-[.25em] text-sara-red dark:text-red-300">The standard <span aria-hidden="true" className="inline-block ml-3 mb-1 w-12 border-t border-current" /></p>
-          <h2 id="solar-intro-heading" className="text-4xl sm:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.05] text-kith-bone">The sun doesn’t<br />send a bill.</h2>
+          <h2 id="solar-intro-heading" className="scroll-mt-28 text-4xl sm:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.05] text-kith-bone">The sun doesn’t<br />send a bill.</h2>
           <p className="text-2xl sm:text-3xl text-sara-red dark:text-red-300">Make its energy work for you.</p>
           <p className="max-w-lg text-sm sm:text-base leading-7 text-kith-muted">Solar for homes, businesses and industry — designed around your energy needs, engineered for the long term, and supported here in Ethiopia.</p>
           <div className="flex flex-wrap gap-2">{solutions.map(({ name, id }) => <a key={id} href={`#solar-${id}`} className="border border-kith-border px-4 py-3 text-[10px] uppercase tracking-widest text-kith-bone hover:bg-sara-red hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current">{name}</a>)}</div>
@@ -71,16 +71,16 @@ export async function SolarIntroduction() {
         </div>
       </section>
 
-      <section aria-labelledby="solar-solutions-heading" className="bg-[#210c10] py-14 sm:py-20 text-white">
+      <section aria-labelledby="solar-solutions-heading" className="bg-kith-subBg dark:bg-[#210c10] py-14 sm:py-20 text-kith-bone transition-colors">
         <div className="mx-auto max-w-[1700px] px-4 sm:px-8">
-          <p className="text-xs uppercase tracking-[.25em] text-[#e8c983] mb-5">Built for every need</p>
+          <p className="text-xs uppercase tracking-[.25em] text-sara-red dark:text-[#e8c983] mb-5">Built for every need</p>
           <h2 id="solar-solutions-heading" className="text-4xl sm:text-6xl tracking-tight font-bold">Solar, built around you.</h2>
-          <p className="max-w-xl text-sm sm:text-base leading-7 text-white/75 mt-5 mb-10">Three scales of system. One standard of care — from a home rooftop to commercial facilities and industrial projects.</p>
+          <p className="max-w-xl text-sm sm:text-base leading-7 text-kith-muted mt-5 mb-10">Three scales of system. One standard of care — from a home rooftop to commercial facilities and industrial projects.</p>
           <div className="grid md:grid-cols-3 gap-4">
-            {solutions.map(({ name, id, image, description, detail, href }, index) => <Link id={`solar-${id}`} href={href} key={id} aria-label={detail} className="group relative min-h-[380px] lg:min-h-[500px] overflow-hidden border border-white/20 scroll-mt-28 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e8c983]">
+            {solutions.map(({ name, id, image, description, detail, href }, index) => <Link id={`solar-${id}`} href={href} key={id} aria-label={detail} className="group relative min-h-[380px] lg:min-h-[500px] overflow-hidden bg-[#210c10] text-white border border-kith-border scroll-mt-28 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sara-red dark:focus-visible:outline-[#e8c983]">
               <Image src={`https://images.unsplash.com/${image}?auto=format&fit=crop&w=1000&q=80`} alt="" fill sizes="(max-width: 767px) 100vw, 33vw" className="object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
-              <span className="absolute top-6 left-6 text-2xl text-[#ffe5a3]">0{index + 1}</span>
+              <span className="absolute top-6 left-6 text-2xl text-[#ffe5a3] bg-black/60 px-3 py-1">0{index + 1}</span>
               <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 space-y-4">
                 <div className="flex items-center justify-between gap-3"><h3 className="text-3xl lg:text-4xl font-bold">{name}</h3><ArrowUpRight aria-hidden="true" className="shrink-0 w-5 h-5" /></div>
                 <p className="text-sm leading-6 text-white/85">{description}</p>
