@@ -230,17 +230,15 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <nav aria-label="Legal" className="mt-12 border-t border-sara-red/20 pt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-          <span className="font-bold">Legal</span>
-          <Link href="/terms" className="underline underline-offset-4 hover:text-sara-red">Terms of Use</Link>
-          <Link href="/privacy-policy" className="underline underline-offset-4 hover:text-sara-red">Privacy Policy</Link>
-        </nav>
-
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-sara-red/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-kith-darkMuted">
+        <div className="mt-16 pt-8 border-t border-sara-red/20 flex flex-col lg:flex-row flex-wrap items-center justify-between gap-4 text-[11px] font-mono text-kith-darkMuted">
           <div>
             © {new Date().getFullYear()} {companyName}. All engineering telemetry rights reserved.
           </div>
+          <nav aria-label="Legal" className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 text-kith-muted">
+            <Link href="/terms" className="py-2 underline underline-offset-4 hover:text-sara-red dark:hover:text-red-300">Terms of Use</Link>
+            <Link href="/privacy-policy" className="py-2 underline underline-offset-4 hover:text-sara-red dark:hover:text-red-300">Privacy Policy</Link>
+          </nav>
           <div className="flex items-center gap-1">
             Developed by <a href="https://www.linkedin.com/in/abdellah-fita" target="_blank" rel="noopener noreferrer" className="text-sara-red dark:text-red-400 font-bold hover:underline">HopeLabs</a>
           </div>
